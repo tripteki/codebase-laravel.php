@@ -1,0 +1,8 @@
+README.md
+.git*
+.gitignore
+Dockerfile*
+Vagrantfile*
+
+vendor/
+node_modules/

@@ -1,0 +1,326 @@
+#!/bin/sh
+
+#-https://github.com/tripteki/convention/blob/main/src/schema-#
+
+environment="${APP_ENV:=development}"
+project=basecode
+color="\033[0;34m"
+
+usage ()
+{
+    echo "Usage: $0 [-d (serve-development-mode)] [-p (serve-production-mode)] [-n (name-project) <...>] [-o (create-project) <center|tripteki>] [-b (build)] [-l (lint)] [-t (test)] [-e (e2e)] [-c (cache)]"
+
+    exit 1
+}
+
+build ()
+{
+    echo "\n${color}Listening to Event : Build...\n"
+
+    isCache=0
+
+    if [ -e .cache ]
+    then
+        mv .cache .latest_cache
+        yes | cache 1> /dev/null
+        if [ $(cat .latest_cache) = $(cat .cache) ]
+        then
+            isCache=1
+        fi
+    fi
+    if [ $isCache = 0 ]
+    then
+        if [ $environment = "development" ]
+        then
+            npm install --legacy-peer-deps
+            composer install
+        else
+            npm install --only=production --legacy-peer-deps
+            composer install --no-dev
+        fi
+
+        composer require tripteki/laravelphp-foundation
+        if [ $environment = "development" ]
+        then
+            php artisan vendor:publish --tag=tripteki-laravelphp-foundation --ansi
+        fi
+        npm install pm2 && npm install --save-dev chokidar
+        composer require tripteki/laravelphp-supervisor
+        if [ $environment = "development" ]
+        then
+            php artisan vendor:publish --tag=tripteki-laravelphp-supervisor --ansi
+        fi
+        composer require tripteki/laravelphp-docs
+
+        npm install --save-dev typescript eslint @tripteki/eslint-config --legacy-peer-deps
+        composer require --dev tripteki/laravelphp-lint
+        if [ $environment = "development" ]
+        then
+            php artisan vendor:publish --tag=tripteki-laravelphp-lint --ansi
+        fi
+
+        composer require --dev tripteki/laravelphp-test
+        if [ $environment = "development" ]
+        then
+            php artisan vendor:publish --tag=tripteki-laravelphp-test --ansi
+        fi
+    fi
+
+    php artisan key:generate --ansi
+    php artisan storage:link --ansi
+}
+
+lint ()
+{
+    echo "\n${color}Listening to Event : Lint...\n"
+
+    npx eslint . --fix --config ./node_modules/@tripteki/eslint-config/.eslintrc.json
+    ./vendor/bin/pint -v
+}
+
+test ()
+{
+    echo "\n${color}Listening to Event : Test...\n"
+
+    ./vendor/bin/phpunit --testsuite Unit,Integration,Feature,ModuleUnit,ModuleIntegration,ModuleFeature
+}
+
+e2e ()
+{
+    echo "\n${color}Listening to Event : E2E...\n"
+
+    ./vendor/bin/phpunit --testsuite E2E,ModuleE2E
+}
+
+cache ()
+{
+    echo "\n${color}Listening to Event : Cache...\n"
+
+    find . -not -path "*/vendor/*" -not -path "*/node_modules/*" -type f \( -iname composer.json -o -iname package.json \) -exec sha256sum {} + | awk '{print $1}' | tr -d "\n\r" 1> .cache
+
+    php artisan schedule:clear-cache --ansi
+    php artisan cache:clear --ansi
+    php artisan clear-compiled --ansi
+    php artisan optimize:clear --ansi
+
+    php artisan config:clear --ansi
+    php artisan route:clear --ansi
+    php artisan event:clear --ansi
+    php artisan view:clear --ansi
+
+    php artisan config:cache --ansi
+    php artisan route:cache --ansi
+    php artisan event:cache --ansi
+    php artisan view:cache --ansi
+}
+
+serveDevelopment ()
+{
+    php artisan octane:start --ansi
+}
+
+serveProduction ()
+{
+    php artisan supervisor:start foreground --ansi
+}
+
+create ()
+{
+    echo "\nCreating Project...\n"
+
+    usage ()
+    {
+        echo "Usage: $0 [-s (source) <center|tripteki>]"
+
+        exit 1
+    }
+
+    convention ()
+    {
+        curl -sL https://raw.githubusercontent.com/tripteki/convention/1.0.0/bin/apply | sh
+    }
+
+    clean ()
+    {
+        find . -type f -name "*.bak" -delete
+
+        find bin -type f -name "supervisord.conf" -delete
+        find bin -type f -name "httpd.conf" -delete
+        find bin -type f -name "nginx.conf" -delete
+        find bin -type f -name "Vagrantfile" -exec mv {} ./ \;
+        find bin -type f -name ".dockerignore" -exec mv {} ./ \;
+        find bin -type f -name "Dockerfile" -exec mv {} ./ \;
+        find bin -type f -name "docker-compose.yml" -delete;
+        find bin -type f -name "swarm.yml" -delete;
+        find bin -type f -name "README.md" -delete
+    }
+
+    local OPTIND
+
+    while getopts "s:h" option
+    do
+        case "$option" in
+
+            "s")
+                if [ $OPTARG = "center" ]
+                then
+                    composer create-project laravel/laravel $project
+                    cd $project
+                    mkdir -p {bin,src}
+                    convention
+
+                    build
+
+                    lint
+
+                    php artisan dusk:install --ansi
+                elif [ $OPTARG = "tripteki" ]
+                then
+                    mkdir -p $project && wget -qO- https://github.com/tripteki/laravel.php/archive/refs/heads/main.tar.gz | tar -xzv -C $project --strip-component 1
+                    cd $project
+                    sed -i'.bak' -e "s/basecode/"$project"/g" .env.example
+                    sed -i'.bak' -e "s/basecode/"$project"/g" bin/Vagrantfile
+                    sed -i'.bak' -e "s/basecode/"$project"/g" bin/Dockerfile
+                    sed -i'.bak' -e "s/basecode/"$project"/g" bin/docker-compose.yml
+                    sed -i'.bak' -e "s/basecode/"$project"/g" bin/swarm.yml
+                    cp .env.example .env
+                    convention
+                    clean
+
+                    build
+
+                    lint
+
+                    php artisan dusk:install --ansi
+                else
+                    usage
+                fi
+                ;;
+
+            "h")
+                usage
+                ;;
+
+        esac
+    done
+
+    shift $((OPTIND-1))
+}
+
+optionServeDevelopment=
+optionServeProduction=
+sourceCreate=tripteki
+optionCreate=
+optionBuild=
+optionLint=
+optionTest=
+optionE2E=
+optionCache=
+
+while getopts "n:o:dpbltech" option
+do
+    case "$option" in
+
+        "d")
+            optionServeDevelopment=1
+            ;;
+
+        "p")
+            optionServeProduction=1
+            ;;
+
+        "n")
+            optionCreate=1
+
+            if [ $OPTARG ]
+            then
+                project=$(echo $OPTARG | sed -e "s/ //g" | awk '{print tolower($0)}')
+            else
+                usage
+            fi
+            ;;
+
+        "o")
+            optionCreate=1
+
+            if [ $OPTARG = "center" ]
+            then
+                sourceCreate=center
+            elif [ $OPTARG = "tripteki" ]
+            then
+                sourceCreate=tripteki
+            else
+                usage
+            fi
+            ;;
+
+        "b")
+            optionBuild=1
+            ;;
+
+        "l")
+            optionLint=1
+            ;;
+
+        "t")
+            optionTest=1
+            ;;
+
+        "e")
+            optionE2E=1
+            ;;
+
+        "c")
+            optionCache=1
+            ;;
+
+        "h")
+            usage
+            ;;
+
+    esac
+done
+
+if [ $optionServeDevelopment ]
+then
+    serveDevelopment
+    exit 0
+fi
+
+if [ $optionServeProduction ]
+then
+    serveProduction
+    exit 0
+fi
+
+if [ $optionCreate ]
+then
+    create -s $sourceCreate
+    echo "Ok."
+    exit 0
+fi
+
+if [ $optionBuild ]
+then
+    build
+fi
+
+if [ $optionLint ]
+then
+    lint
+fi
+
+if [ $optionTest ]
+then
+    test
+fi
+
+if [ $optionE2E ]
+then
+    e2e
+fi
+
+if [ $optionCache ]
+then
+    cache
+fi

@@ -1,0 +1,50 @@
+{
+    "version": "1.0.0",
+
+    "type": "project",
+
+    "license": "proprietary",
+
+    "require": {
+        "php": "^8.0.2",
+        "tripteki/laravelphp-docs": "^1.0",
+        "tripteki/laravelphp-foundation": "^1.0",
+        "tripteki/laravelphp-supervisor": "^1.0"
+    },
+
+    "require-dev": {
+        "tripteki/laravelphp-lint": "^1.0",
+        "tripteki/laravelphp-test": "^1.0"
+    },
+
+    "autoload": {
+
+        "psr-4": {
+
+            "Src\\": "src/",
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+
+    "autoload-dev": {
+
+        "psr-4": {
+
+            "Tests\\": "tests/"
+        }
+    },
+
+    "scripts": {
+
+        "post-autoload-dump": [
+
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ]
+    },
+
+    "extra": { "laravel": { "dont-discover": [] } },
+    "config": { "preferred-install": "dist", "sort-packages": true, "optimize-autoloader": true, "allow-plugins": { "pestphp/pest-plugin": true } }, "minimum-stability": "dev", "prefer-stable": true
+}
