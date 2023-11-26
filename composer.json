@@ -9,7 +9,8 @@
         "php": "^8.0.2",
         "tripteki/laravelphp-docs": "^1.0",
         "tripteki/laravelphp-foundation": "^1.0",
-        "tripteki/laravelphp-supervisor": "^1.0"
+        "tripteki/laravelphp-supervisor": "^1.0",
+        "tripteki/laravelphp-unique": "^1.0"
     },
 
     "require-dev": {
