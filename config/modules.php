@@ -156,7 +156,7 @@ return [
 
     "cache" => [
 
-        "enabled" => true,
+        "enabled" => false,
         "driver" => "file",
         "key" => "modules",
         "lifetime" => 60,
