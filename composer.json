@@ -10,10 +10,13 @@
         "tripteki/laravelphp-docs": "^1.0",
         "tripteki/laravelphp-foundation": "^1.0",
         "tripteki/laravelphp-supervisor": "^1.0",
-        "tripteki/laravelphp-unique": "^1.0"
+        "tripteki/laravelphp-unique": "^1.0",
+        "tripteki/laravelphp-helpers": "^1.0",
+        "tymon/jwt-auth": "^2.0"
     },
 
     "require-dev": {
+        "laravel/breeze": "^1.19",
         "tripteki/laravelphp-lint": "^1.0",
         "tripteki/laravelphp-test": "^1.0"
     },
@@ -46,6 +49,17 @@
         ]
     },
 
-    "extra": { "laravel": { "dont-discover": [] } },
+    "extra": {
+
+        "laravel": {
+
+            "dont-discover": [
+
+                "Tymon\\JWTAuth\\Providers\\LumenServiceProvider",
+                "Tymon\\JWTAuth\\Providers\\LaravelServiceProvider"
+            ]
+        }
+    },
+
     "config": { "preferred-install": "dist", "sort-packages": true, "optimize-autoloader": true, "allow-plugins": { "pestphp/pest-plugin": true } }, "minimum-stability": "dev", "prefer-stable": true
 }
