@@ -12,7 +12,7 @@ return [
 
             "routes" => [
 
-                "api" => "api/documentation",
+                "api" => "api/docs",
             ],
 
             "paths" => [
@@ -37,7 +37,7 @@ return [
 
     "defaults" => [
 
-        "generate_always" => false,
+        "generate_always" => true,
         "generate_yaml_copy" => false,
 
         "additional_config_url" => null,
