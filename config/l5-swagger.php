@@ -1,39 +1,39 @@
 <?php
 
+$documentations = [
+
+    "default" => [
+
+        "api" => [ "title" => "Swagger", ],
+
+        "routes" => [
+
+            "api" => "api/docs",
+        ],
+
+        "paths" => [
+
+            "use_absolute_path" => true,
+
+            "docs_json" => "default.json",
+            "docs_yaml" => "default.yaml",
+
+            "format_to_use_for_docs" => env("SWAGGER_DEFAULT_FORMAT", "json"),
+
+            "annotations" => [
+
+                base_path("app"),
+                base_path("src"),
+            ],
+        ],
+    ],
+];
+
 return [
 
     "default" => env("SWAGGER", "default"),
 
-    "documentations" => [
-
-        "default" => [
-
-            "api" => [ "title" => "Swagger", ],
-
-            "routes" => [
-
-                "api" => "api/docs",
-            ],
-
-            "paths" => [
-
-                "use_absolute_path" => true,
-
-                "docs_json" => "default.json",
-                "docs_yaml" => "default.yaml",
-
-                "format_to_use_for_docs" => env("SWAGGER_DEFAULT_FORMAT", "json"),
-
-                "annotations" => [
-
-                    base_path("app"),
-                    base_path("src"),
-                ],
-            ],
-        ],
-    ],
-
-
+    "documentations" => env("IS_SWAGGER", false) ? $documentations : [],
 
     "defaults" => [
 
