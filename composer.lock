@@ -8,20 +8,20 @@
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
-            "version": "v2.1.1",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-dompdf.git",
-                "reference": "cb37868365f9b937039d316727a1fced1e87b31c"
+                "reference": "c96f90c97666cebec154ca1ffb67afed372114d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/cb37868365f9b937039d316727a1fced1e87b31c",
-                "reference": "cb37868365f9b937039d316727a1fced1e87b31c",
+                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/c96f90c97666cebec154ca1ffb67afed372114d8",
+                "reference": "c96f90c97666cebec154ca1ffb67afed372114d8",
                 "shasum": ""
             },
             "require": {
-                "dompdf/dompdf": "^2.0.3",
+                "dompdf/dompdf": "^2.0.7",
                 "illuminate/support": "^6|^7|^8|^9|^10|^11",
                 "php": "^7.2 || ^8.0"
             },
@@ -69,7 +69,7 @@
             ],
             "support": {
                 "issues": "https://github.com/barryvdh/laravel-dompdf/issues",
-                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v2.1.1"
+                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v2.2.0"
             },
             "funding": [
                 {
@@ -81,7 +81,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-15T12:48:39+00:00"
+            "time": "2024-04-25T13:16:04+00:00"
         },
         {
             "name": "beyondcode/laravel-websockets",
@@ -4734,20 +4734,20 @@
         },
         {
             "name": "psr/http-factory",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35"
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/e616d01114759c4c489f93b099585439f795fe35",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0",
+                "php": ">=7.1",
                 "psr/http-message": "^1.0 || ^2.0"
             },
             "type": "library",
@@ -4771,7 +4771,7 @@
                     "homepage": "https://www.php-fig.org/"
                 }
             ],
-            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "description": "PSR-17: Common interfaces for PSR-7 HTTP message factories",
             "keywords": [
                 "factory",
                 "http",
@@ -4783,9 +4783,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-factory/tree/1.0.2"
+                "source": "https://github.com/php-fig/http-factory"
             },
-            "time": "2023-04-10T20:10:41+00:00"
+            "time": "2024-04-15T12:06:14+00:00"
         },
         {
             "name": "psr/http-message",
@@ -4842,30 +4842,30 @@
         },
         {
             "name": "psr/log",
-            "version": "3.0.0",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001"
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe5ea303b0887d5caefd3d431c3e61ad47037001",
-                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.0"
+                "php": ">=5.3.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Psr\\Log\\": "src"
+                    "Psr\\Log\\": "Psr/Log/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -4886,9 +4886,9 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/3.0.0"
+                "source": "https://github.com/php-fig/log/tree/1.1.4"
             },
-            "time": "2021-07-14T16:46:02+00:00"
+            "time": "2021-05-03T11:20:27+00:00"
         },
         {
             "name": "psr/simple-cache",
@@ -5022,16 +5022,16 @@
         },
         {
             "name": "pusher/pusher-php-server",
-            "version": "7.2.4",
+            "version": "7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "de2f72296808f9cafa6a4462b15a768ff130cddb"
+                "reference": "a9a7f739a2a03e3fef33633499ba586cabd57686"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/de2f72296808f9cafa6a4462b15a768ff130cddb",
-                "reference": "de2f72296808f9cafa6a4462b15a768ff130cddb",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/a9a7f739a2a03e3fef33633499ba586cabd57686",
+                "reference": "a9a7f739a2a03e3fef33633499ba586cabd57686",
                 "shasum": ""
             },
             "require": {
@@ -5040,11 +5040,11 @@
                 "guzzlehttp/guzzle": "^7.2",
                 "paragonie/sodium_compat": "^1.6",
                 "php": "^7.3|^8.0",
-                "psr/log": "^1.0|^2.0|^3.0"
+                "psr/log": "^1.0"
             },
             "require-dev": {
                 "overtrue/phplint": "^2.3",
-                "phpunit/phpunit": "^9.3"
+                "phpunit/phpunit": "^8.5|^9.3"
             },
             "type": "library",
             "extra": {
@@ -5077,9 +5077,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pusher/pusher-http-php/issues",
-                "source": "https://github.com/pusher/pusher-http-php/tree/7.2.4"
+                "source": "https://github.com/pusher/pusher-http-php/tree/7.0.0"
             },
-            "time": "2023-12-15T10:58:53+00:00"
+            "time": "2021-05-10T15:22:51+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -6093,16 +6093,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v5.17.2",
+            "version": "v5.17.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "a88cce2cb3ce746dfb3eda1380ac42b33670da22"
+                "reference": "0291215a08c2e8a074c2f93caaa019308452c7c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/a88cce2cb3ce746dfb3eda1380ac42b33670da22",
-                "reference": "a88cce2cb3ce746dfb3eda1380ac42b33670da22",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/0291215a08c2e8a074c2f93caaa019308452c7c9",
+                "reference": "0291215a08c2e8a074c2f93caaa019308452c7c9",
                 "shasum": ""
             },
             "type": "library",
@@ -6148,9 +6148,9 @@
             ],
             "support": {
                 "issues": "https://github.com/swagger-api/swagger-ui/issues",
-                "source": "https://github.com/swagger-api/swagger-ui/tree/v5.17.2"
+                "source": "https://github.com/swagger-api/swagger-ui/tree/v5.17.12"
             },
-            "time": "2024-04-25T14:26:19+00:00"
+            "time": "2024-05-21T12:28:47+00:00"
         },
         {
             "name": "symfony/console",
@@ -9049,12 +9049,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tripteki/laravelphp-supervisor.git",
-                "reference": "3797f210fdf874a86dad074588e0237796066909"
+                "reference": "8bc33cd4e765d2f6237a4c0506829d5d1bf37c8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tripteki/laravelphp-supervisor/zipball/3797f210fdf874a86dad074588e0237796066909",
-                "reference": "3797f210fdf874a86dad074588e0237796066909",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-supervisor/zipball/8bc33cd4e765d2f6237a4c0506829d5d1bf37c8a",
+                "reference": "8bc33cd4e765d2f6237a4c0506829d5d1bf37c8a",
                 "shasum": ""
             },
             "require": {
@@ -9063,7 +9063,7 @@
                 "guzzlehttp/guzzle": "^7.5.0",
                 "laravel/octane": "^1.3.9",
                 "php": "^8.0.2",
-                "pusher/pusher-php-server": "^7.2.1",
+                "pusher/pusher-php-server": "7.0.0",
                 "tripteki/laravelphp-notification": "^1.0.0"
             },
             "type": "library",
@@ -9104,7 +9104,7 @@
                 "issues": "https://github.com/tripteki/laravelphp-supervisor/issues",
                 "source": "https://github.com/tripteki/laravelphp-supervisor/tree/1.0.0"
             },
-            "time": "2023-11-02T02:29:40+00:00"
+            "time": "2024-05-21T16:15:40+00:00"
         },
         {
             "name": "tripteki/laravelphp-unique",
@@ -9856,16 +9856,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.6.11",
+            "version": "1.6.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "81a161d0b135df89951abd52296adf97deb0723d"
+                "reference": "1f4efdd7d3beafe9807b08156dfcb176d18f1699"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/81a161d0b135df89951abd52296adf97deb0723d",
-                "reference": "81a161d0b135df89951abd52296adf97deb0723d",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/1f4efdd7d3beafe9807b08156dfcb176d18f1699",
+                "reference": "1f4efdd7d3beafe9807b08156dfcb176d18f1699",
                 "shasum": ""
             },
             "require": {
@@ -9935,7 +9935,7 @@
                 "security": "https://github.com/mockery/mockery/security/advisories",
                 "source": "https://github.com/mockery/mockery"
             },
-            "time": "2024-03-21T18:34:15+00:00"
+            "time": "2024-05-16T03:13:13+00:00"
         },
         {
             "name": "myclabs/deep-copy",
