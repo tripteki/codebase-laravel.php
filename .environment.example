@@ -1,0 +1,66 @@
+APP_NAME=tmt
+APP_KEY=base64:6lTrGcYHLaLVgnzv25Rh4xuHeD+t+bEpp0tYxddHS+c=
+
+APP_HOST=localhost
+SERVER_HOST=localhost # "0.0.0.0" #
+SERVER_PORT="8000"
+SERVER_HTTPS=false
+APP_URL=${APP_HOST}:${SERVER_PORT}
+IS_SWAGGER=true
+
+APP_TIMEZONE="Asia/Jakarta"
+APP_LOCALE=id
+APP_FALLBACKLOCALE=id
+APP_FAKERLOCALE=id_ID
+APP_ENV=development
+APP_DEBUG=true
+LOG_LEVEL=debug
+
+# ------------------------------------------------------------------ #
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=base
+DB_USERNAME=user
+DB_PASSWORD=password
+
+MM_CLIENT=predis# phpredis #
+MM_HOST=localhost
+MM_PORT=6379
+MM_USERNAME=
+MM_PASSWORD=password
+MM_DATABASE_DEFAULT=0
+MM_DATABASE_CACHE=0
+MM_DATABASE_SESSION=0
+MM_DATABASE_QUEUE=0
+MM_DATABASE_BROADCASTING=0
+
+FILESYSTEM_DISK=private
+CLOUDSYSTEM_DISK=
+
+# ------------------------------------------------------------------ #
+
+CACHE_DRIVER=redis# redis #
+SESSION_DRIVER=redis# redis #
+SESSION_STORE=
+
+QUEUE_CONNECTION=sync# redis #
+QUEUEFAILED_DRIVER=
+
+BROADCAST_DRIVER=websocket
+WEBSOCKET_ID=
+WEBSOCKET_KEY=
+WEBSOCKET_SECRET=
+WEBSOCKET_HOST=127.0.0.1
+WEBSOCKET_PORT=6001
+WEBSOCKET_SCHEME=http
+
+MAIL_MAILER=log
+MAIL_ADMIN_ADDRESS=admin@mail.com
+MAIL_ADMIN_NAME=Admin
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+
+# ------------------------------------------------------------------ #
