@@ -9,18 +9,17 @@ return [
         "websocket" => [
 
             "driver" => "pusher",
+            "app_id" => env("WEBSOCKET_ID"),
             "key" => env("WEBSOCKET_KEY"),
             "secret" => env("WEBSOCKET_SECRET"),
-            "app_id" => env("WEBSOCKET_ID"),
             "options" => [
 
-                "host" => env("WEBSOCKET_HOST", "api-".env("WEBSOCKET_CLUSTER", "mt1").".pusher.com") ?: "api-".env("WEBSOCKET_CLUSTER", "mt1").".pusher.com",
-                "port" => env("WEBSOCKET_PORT", 443),
+                "cluster" => env("WEBSOCKET_CLUSTER", "mt1"),
+                "host" => env("WEBSOCKET_HOST", "127.0.0.1"),
+                "port" => env("WEBSOCKET_PORT", 6001),
+                "scheme" => env("WEBSOCKET_SCHEME"),
                 "encrypted" => true,
-                "scheme" => env("WEBSOCKET_SCHEME", "https"),
-                "useTLS" => env("WEBSOCKET_SCHEME", "https") === "https",
             ],
-            "client_options" => [],
         ],
 
         "socket.io" => [

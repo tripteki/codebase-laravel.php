@@ -7,12 +7,10 @@ return [
         [
             "name" => env("APP_NAME"),
             "id" => env("WEBSOCKET_ID"),
-            "host" => env("WEBSOCKET_HOST"),
             "key" => env("WEBSOCKET_KEY"),
             "secret" => env("WEBSOCKET_SECRET"),
             "path" => env("WEBSOCKET_PATH"),
-            "allowed_origins" => [],
-            "capacity" => null,
+            "host" => env("WEBSOCKET_HOST", "127.0.0.1"),
             "enable_client_messages" => false,
             "enable_statistics" => true,
         ],
@@ -32,12 +30,12 @@ return [
 
         "domain" => env("WEBSOCKET_DASHBOARD_DOMAIN"),
         "path" => env("WEBSOCKET_DASHBOARD_PATH", "websocket"),
-        "port" => env("SERVER_PORT", "6001"),
+        "port" => env("WEBSOCKET_PORT", 6001),
 
         "middleware" => [
 
             "web",
-            \BeyondCode\LaravelWebSockets\Dashboard\Http\Middleware\Authorize::class,
+            // \BeyondCode\LaravelWebSockets\Dashboard\Http\Middleware\Authorize::class, //
         ],
     ],
 
