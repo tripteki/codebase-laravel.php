@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use Tripteki\SettingLocale\Http\Middleware\TranslationMiddleware;
 use App\Http\Middleware\Api as ApiMiddleware;
 use App\Http\Middleware\Authenticate as AuthenticateMiddleware;
 use App\Http\Middleware\EncryptCookies as EncryptCookiesMiddleware;
@@ -86,5 +87,6 @@ class Kernel extends HttpKernel
         "verified" => EnsureEmailIsVerifiedMiddleware::class,
         "throttle" => ThrottleRequestsResponsesMiddleware::class,
         "cache.headers" => SetCacheHeadersMiddleware::class,
+        "locale" => TranslationMiddleware::class,
     ];
 }
