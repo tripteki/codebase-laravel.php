@@ -2,6 +2,9 @@
 
 namespace App\Http;
 
+use Tripteki\ACL\Http\Middleware\RoleOrPermissionMiddleware;
+use Tripteki\ACL\Http\Middleware\PermissionMiddleware;
+use Tripteki\ACL\Http\Middleware\RoleMiddleware;
 use Tripteki\SettingLocale\Http\Middleware\TranslationMiddleware;
 use App\Http\Middleware\Api as ApiMiddleware;
 use App\Http\Middleware\Authenticate as AuthenticateMiddleware;
@@ -88,5 +91,8 @@ class Kernel extends HttpKernel
         "throttle" => ThrottleRequestsResponsesMiddleware::class,
         "cache.headers" => SetCacheHeadersMiddleware::class,
         "locale" => TranslationMiddleware::class,
+        "role" => RoleMiddleware::class,
+        "permission" => PermissionMiddleware::class,
+        "role_or_permission" => RoleOrPermissionMiddleware::class,
     ];
 }
