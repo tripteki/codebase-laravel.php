@@ -6,3 +6,5 @@ require __DIR__."/user/setting.php";
 require __DIR__."/admin/setting.php";
 require __DIR__."/user/setting/locale.php";
 require __DIR__."/admin/setting/locale.php";
+require __DIR__."/user/setting/profile.php";
+require __DIR__."/admin/setting/profile.php";
