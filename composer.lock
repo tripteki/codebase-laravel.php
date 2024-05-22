@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36f65e444ed2d2f24b3477ad05e617e8",
+    "content-hash": "a0516d01d4ea40c686801797fd1d45b6",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -9193,6 +9193,129 @@
                 "source": "https://github.com/tripteki/laravelphp-request-response-query/tree/1.0.0"
             },
             "time": "2024-05-03T08:54:51+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting.git",
+                "reference": "df600bfd26c915b8354e7bd33862a95b11c8b902"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting/zipball/df600bfd26c915b8354e7bd33862a95b11c8b902",
+                "reference": "df600bfd26c915b8354e7bd33862a95b11c8b902",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\Setting\\Providers\\SettingServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\Setting\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Settings",
+            "homepage": "https://github.com/tripteki/laravelphp-setting",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting/tree/1.0.2"
+            },
+            "time": "2023-11-26T00:52:20+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting-locale",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting-locale.git",
+                "reference": "ba4082127903c4d75e29ea9df633a23fe0832b9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-locale/zipball/ba4082127903c4d75e29ea9df633a23fe0832b9a",
+                "reference": "ba4082127903c4d75e29ea9df633a23fe0832b9a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0",
+                "tripteki/laravelphp-setting": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\SettingLocale\\Providers\\SettingLocaleServiceProvider",
+                        "Tripteki\\SettingLocale\\Providers\\TranslationServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/Locale.php"
+                ],
+                "psr-4": {
+                    "Tripteki\\SettingLocale\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Setting Locale",
+            "homepage": "https://github.com/tripteki/laravelphp-setting-locale",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting-locale/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting-locale/tree/1.1.2"
+            },
+            "time": "2023-11-26T01:13:30+00:00"
         },
         {
             "name": "tripteki/laravelphp-supervisor",
