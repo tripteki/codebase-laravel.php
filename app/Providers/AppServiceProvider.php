@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
         \Tripteki\Docs\Providers\DocsServiceProvider::ignoreConfig();
         \Tripteki\Adminer\Providers\AdminerServiceProvider::ignoreConfig();
         \Tripteki\Log\Providers\LogServiceProvider::ignoreConfig();
+        \Tripteki\ACL\Providers\ACLServiceProvider::ignoreConfig();
     }
 
     /**
