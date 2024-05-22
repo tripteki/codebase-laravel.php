@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Tripteki\Log\Traits\LogCauseTrait;
 use Tripteki\Uid\Traits\UniqueIdTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
@@ -18,7 +19,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
 {
-    use UniqueIdTrait, HasFactory, SoftDeletes, Notifiable, Authenticatable, Authorizable, MustVerifyEmail, CanResetPassword;
+    use UniqueIdTrait, HasFactory, SoftDeletes, Notifiable, Authenticatable, Authorizable, MustVerifyEmail, CanResetPassword, LogCauseTrait;
 
     const CREATED_AT = "created_at";
 
