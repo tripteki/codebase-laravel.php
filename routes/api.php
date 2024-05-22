@@ -10,3 +10,4 @@ require __DIR__."/user/setting/profile.php";
 require __DIR__."/admin/setting/profile.php";
 require __DIR__."/user/setting/menu.php";
 require __DIR__."/admin/setting/menu.php";
+require __DIR__."/admin/user.php";

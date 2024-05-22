@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ef7b8ab9b966246d200aec96167c0f18",
+    "content-hash": "234349ee3e5074bd7fe87f57f231dba6",
     "packages": [
         {
             "name": "awobaz/compoships",
@@ -9614,6 +9614,65 @@
                 "source": "https://github.com/tripteki/laravelphp-unique/tree/1.0.0"
             },
             "time": "2023-11-02T03:11:04+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-user",
+            "version": "1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-user.git",
+                "reference": "4059c94c4a040361584b628a7a1b0332aadc3e50"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-user/zipball/4059c94c4a040361584b628a7a1b0332aadc3e50",
+                "reference": "4059c94c4a040361584b628a7a1b0332aadc3e50",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\User\\Providers\\UserServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\User\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Users",
+            "homepage": "https://github.com/tripteki/laravelphp-user",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-user/issues",
+                "source": "https://github.com/tripteki/laravelphp-user/tree/1.1.8"
+            },
+            "time": "2024-01-07T04:43:34+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
