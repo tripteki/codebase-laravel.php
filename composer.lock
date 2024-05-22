@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0516d01d4ea40c686801797fd1d45b6",
+    "content-hash": "86495f7af7d69d191153fde19a54c38e",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -9316,6 +9316,66 @@
                 "source": "https://github.com/tripteki/laravelphp-setting-locale/tree/1.1.2"
             },
             "time": "2023-11-26T01:13:30+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting-profile",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting-profile.git",
+                "reference": "46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-profile/zipball/46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8",
+                "reference": "46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0",
+                "tripteki/laravelphp-setting": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\SettingProfile\\Providers\\SettingProfileServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\SettingProfile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Setting Profile",
+            "homepage": "https://github.com/tripteki/laravelphp-setting-profile",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting-profile/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting-profile/tree/1.1.2"
+            },
+            "time": "2023-11-26T01:01:41+00:00"
         },
         {
             "name": "tripteki/laravelphp-supervisor",
