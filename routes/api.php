@@ -13,3 +13,5 @@ require __DIR__."/admin/setting/menu.php";
 require __DIR__."/admin/user.php";
 require __DIR__."/user/acl.php";
 require __DIR__."/admin/acl.php";
+require __DIR__."/user/notification.php";
+require __DIR__."/admin/notification.php";
