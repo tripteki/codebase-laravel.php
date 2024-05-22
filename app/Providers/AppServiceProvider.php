@@ -13,6 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         \Tripteki\Docs\Providers\DocsServiceProvider::ignoreConfig();
+        \Tripteki\Adminer\Providers\AdminerServiceProvider::ignoreConfig();
     }
 
     /**
