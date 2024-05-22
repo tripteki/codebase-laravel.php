@@ -72,5 +72,37 @@ class Handler extends ExceptionHandler
 
             return iresponse($exception->errors(), Response::HTTP_UNPROCESSABLE_ENTITY, "Data not validated.");
         });
+
+        //
+
+        $this->renderable(function (\Tymon\JWTAuth\Exceptions\TokenInvalidException $exception) {
+
+            return iresponse([], Response::HTTP_UNAUTHORIZED, "Token is invalid.");
+        });
+
+        $this->renderable(function (\Tymon\JWTAuth\Exceptions\TokenExpiredException $exception) {
+
+            return iresponse([], Response::HTTP_UNAUTHORIZED, "Token has expired.");
+        });
+
+        $this->renderable(function (\Tymon\JWTAuth\Exceptions\TokenBlacklistedException $exception) {
+
+            return iresponse([], Response::HTTP_UNAUTHORIZED, "Token has blacklisted.");
+        });
+
+        $this->renderable(function (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $exception) {
+
+            return iresponse([], Response::HTTP_UNAUTHORIZED, "User is not defined.");
+        });
+
+        $this->renderable(function (\Tymon\JWTAuth\Exceptions\InvalidClaimException $exception) {
+
+            return iresponse([], Response::HTTP_UNAUTHORIZED, "Claim is invalid.");
+        });
+
+        $this->renderable(function (\Tymon\JWTAuth\Exceptions\PayloadException $exception) {
+
+            return iresponse([], Response::HTTP_UNAUTHORIZED, "Payload is invalid.");
+        });
     }
 }

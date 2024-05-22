@@ -6,6 +6,7 @@ return [
 
     "name" => env("APP_NAME", "Basecode"),
     "url" => env("APP_URL", "http://localhost"),
+    "frontend_url" => env("FRONTEND_URL", "http://frontend.localhost"),
     "asset_url" => env("ASSET_URL", ""),
     "env" => env("APP_ENV", "production"),
     "debug" => (bool) env("APP_DEBUG", false),
@@ -51,6 +52,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        App\Providers\AuthTokenServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventListenerServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,

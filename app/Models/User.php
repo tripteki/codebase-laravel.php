@@ -6,17 +6,18 @@ use Tripteki\Uid\Traits\UniqueIdTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as ResetableContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as VerifyableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Tymon\JWTAuth\Contracts\JWTSubject as IAuthJWT;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
+class User extends Model implements IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
 {
     use UniqueIdTrait, HasFactory, SoftDeletes, Notifiable, Authenticatable, Authorizable, MustVerifyEmail, CanResetPassword;
 
@@ -25,6 +26,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     const DELETED_AT = "deleted_at";
 
     const UPDATED_AT = null;
+
+    /**
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return (array) null;
+    }
 
     /**
      * @return string
