@@ -4,8 +4,70 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86495f7af7d69d191153fde19a54c38e",
+    "content-hash": "ef7b8ab9b966246d200aec96167c0f18",
     "packages": [
+        {
+            "name": "awobaz/compoships",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/topclaudy/compoships.git",
+                "reference": "25a4ed2aeeb22033cd951e71e661eed235d58698"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/topclaudy/compoships/zipball/25a4ed2aeeb22033cd951e71e661eed235d58698",
+                "reference": "25a4ed2aeeb22033cd951e71e661eed235d58698",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">=5.6 <12.0"
+            },
+            "require-dev": {
+                "ext-sqlite3": "*",
+                "fakerphp/faker": "^1.18",
+                "phpunit/phpunit": "^6.0|^8.0|^9.0|^10.0"
+            },
+            "suggest": {
+                "awobaz/blade-active": "Blade directives for the Laravel 'Active' package",
+                "awobaz/eloquent-auto-append": "Automatically append accessors to model serialization",
+                "awobaz/eloquent-mutators": "Reusable mutators (getters/setters) for Laravel 5's Eloquent",
+                "awobaz/syntactic": "Syntactic sugar for named and indexed parameters call."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Awobaz\\Compoships\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Claudin J. Daniel",
+                    "email": "cdaniel@awobaz.com"
+                }
+            ],
+            "description": "Laravel relationships with support for composite/multiple keys",
+            "keywords": [
+                "laravel",
+                "laravel composite keys",
+                "laravel relationships"
+            ],
+            "support": {
+                "issues": "https://github.com/topclaudy/compoships/issues",
+                "source": "https://github.com/topclaudy/compoships/tree/2.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/awobaz",
+                    "type": "custom"
+                }
+            ],
+            "time": "2024-02-28T22:21:15+00:00"
+        },
         {
             "name": "barryvdh/laravel-dompdf",
             "version": "v2.2.0",
@@ -9316,6 +9378,67 @@
                 "source": "https://github.com/tripteki/laravelphp-setting-locale/tree/1.1.2"
             },
             "time": "2023-11-26T01:13:30+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting-menu",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting-menu.git",
+                "reference": "ed54cce42f09c825355dd34f215db1d0174d842f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-menu/zipball/ed54cce42f09c825355dd34f215db1d0174d842f",
+                "reference": "ed54cce42f09c825355dd34f215db1d0174d842f",
+                "shasum": ""
+            },
+            "require": {
+                "awobaz/compoships": "^2.0",
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0",
+                "tripteki/laravelphp-setting": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\SettingMenu\\Providers\\SettingMenuServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\SettingMenu\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Setting Menu",
+            "homepage": "https://github.com/tripteki/laravelphp-setting-menu",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting-menu/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting-menu/tree/1.1.2"
+            },
+            "time": "2023-11-26T02:22:19+00:00"
         },
         {
             "name": "tripteki/laravelphp-setting-profile",

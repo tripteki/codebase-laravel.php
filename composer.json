@@ -12,6 +12,7 @@
         "tripteki/laravelphp-foundation": "^1.0",
         "tripteki/laravelphp-log": "^1.1",
         "tripteki/laravelphp-setting-locale": "^1.1",
+        "tripteki/laravelphp-setting-menu": "^1.1",
         "tripteki/laravelphp-setting-profile": "^1.1",
         "tripteki/laravelphp-supervisor": "^1.0",
         "tripteki/laravelphp-unique": "^1.0"
