@@ -4,8 +4,70 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0891c4b94423d06330aa2324dcdffbc",
+    "content-hash": "2b940ab4131275162c98504d518a28fa",
     "packages": [
+        {
+            "name": "awobaz/compoships",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/topclaudy/compoships.git",
+                "reference": "25a4ed2aeeb22033cd951e71e661eed235d58698"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/topclaudy/compoships/zipball/25a4ed2aeeb22033cd951e71e661eed235d58698",
+                "reference": "25a4ed2aeeb22033cd951e71e661eed235d58698",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">=5.6 <12.0"
+            },
+            "require-dev": {
+                "ext-sqlite3": "*",
+                "fakerphp/faker": "^1.18",
+                "phpunit/phpunit": "^6.0|^8.0|^9.0|^10.0"
+            },
+            "suggest": {
+                "awobaz/blade-active": "Blade directives for the Laravel 'Active' package",
+                "awobaz/eloquent-auto-append": "Automatically append accessors to model serialization",
+                "awobaz/eloquent-mutators": "Reusable mutators (getters/setters) for Laravel 5's Eloquent",
+                "awobaz/syntactic": "Syntactic sugar for named and indexed parameters call."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Awobaz\\Compoships\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Claudin J. Daniel",
+                    "email": "cdaniel@awobaz.com"
+                }
+            ],
+            "description": "Laravel relationships with support for composite/multiple keys",
+            "keywords": [
+                "laravel",
+                "laravel composite keys",
+                "laravel relationships"
+            ],
+            "support": {
+                "issues": "https://github.com/topclaudy/compoships/issues",
+                "source": "https://github.com/topclaudy/compoships/tree/2.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/awobaz",
+                    "type": "custom"
+                }
+            ],
+            "time": "2024-02-28T22:21:15+00:00"
+        },
         {
             "name": "barryvdh/laravel-dompdf",
             "version": "v2.2.0",
@@ -6096,6 +6158,97 @@
             "time": "2024-02-15T16:41:13+00:00"
         },
         {
+            "name": "spatie/laravel-activitylog",
+            "version": "4.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-activitylog.git",
+                "reference": "eb6f37dd40af950ce10cf5280f0acfa3e08c3bff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/eb6f37dd40af950ce10cf5280f0acfa3e08c3bff",
+                "reference": "eb6f37dd40af950ce10cf5280f0acfa3e08c3bff",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/config": "^8.0 || ^9.0 || ^10.0 || ^11.0",
+                "illuminate/database": "^8.69 || ^9.27 || ^10.0 || ^11.0",
+                "illuminate/support": "^8.0 || ^9.0 || ^10.0 || ^11.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.6.3"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "orchestra/testbench": "^6.23 || ^7.0 || ^8.0 || ^9.0",
+                "pestphp/pest": "^1.20 || ^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\Activitylog\\ActivitylogServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Spatie\\Activitylog\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tom Witkowski",
+                    "email": "dev.gummibeer@gmail.com",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A very simple activity logger to monitor the users of your website or application",
+            "homepage": "https://github.com/spatie/activitylog",
+            "keywords": [
+                "activity",
+                "laravel",
+                "log",
+                "spatie",
+                "user"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-activitylog/issues",
+                "source": "https://github.com/spatie/laravel-activitylog/tree/4.8.0"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-03-08T22:28:17+00:00"
+        },
+        {
             "name": "spatie/laravel-package-tools",
             "version": "1.16.4",
             "source": {
@@ -6154,6 +6307,88 @@
                 }
             ],
             "time": "2024-03-20T07:29:11+00:00"
+        },
+        {
+            "name": "spatie/laravel-permission",
+            "version": "5.11.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-permission.git",
+                "reference": "7090824cca57e693b880ce3aaf7ef78362e28bbd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/7090824cca57e693b880ce3aaf7ef78362e28bbd",
+                "reference": "7090824cca57e693b880ce3aaf7ef78362e28bbd",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/auth": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/container": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/contracts": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/database": "^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
+                "phpunit/phpunit": "^9.4",
+                "predis/predis": "^1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "5.x-dev",
+                    "dev-master": "5.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Spatie\\Permission\\PermissionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Spatie\\Permission\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Permission handling for Laravel 6.0 and up",
+            "homepage": "https://github.com/spatie/laravel-permission",
+            "keywords": [
+                "acl",
+                "laravel",
+                "permission",
+                "permissions",
+                "rbac",
+                "roles",
+                "security",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-permission/issues",
+                "source": "https://github.com/spatie/laravel-permission/tree/5.11.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-10-25T05:12:01+00:00"
         },
         {
             "name": "spatie/laravel-query-builder",
@@ -8738,6 +8973,70 @@
             "time": "2023-12-08T13:03:43+00:00"
         },
         {
+            "name": "tripteki/laravelphp-acl",
+            "version": "1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-acl.git",
+                "reference": "d1a2787273819315e741704b3019ff8b24605c70"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-acl/zipball/d1a2787273819315e741704b3019ff8b24605c70",
+                "reference": "d1a2787273819315e741704b3019ff8b24605c70",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "spatie/laravel-permission": "^5.8.0",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\ACL\\Providers\\ACLServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/IACL.php",
+                    "src/Helpers/Accesses.php"
+                ],
+                "psr-4": {
+                    "Tripteki\\ACL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php ACLs",
+            "homepage": "https://github.com/tripteki/laravelphp-acl",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-acl/issues",
+                "source": "https://github.com/tripteki/laravelphp-acl/tree/1.1.8"
+            },
+            "time": "2024-01-07T04:44:24+00:00"
+        },
+        {
             "name": "tripteki/laravelphp-adminer",
             "version": "1.0.0",
             "source": {
@@ -9014,6 +9313,66 @@
             "time": "2023-11-02T03:12:04+00:00"
         },
         {
+            "name": "tripteki/laravelphp-log",
+            "version": "1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-log.git",
+                "reference": "d2daf4c90d1003a0d7387866eb13d701328d99df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-log/zipball/d2daf4c90d1003a0d7387866eb13d701328d99df",
+                "reference": "d2daf4c90d1003a0d7387866eb13d701328d99df",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "spatie/laravel-activitylog": "^4.7.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\Log\\Providers\\LogServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\Log\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Logs",
+            "homepage": "https://github.com/tripteki/laravelphp-log",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-log/issues",
+                "source": "https://github.com/tripteki/laravelphp-log/tree/1.1.8"
+            },
+            "time": "2024-01-07T04:44:43+00:00"
+        },
+        {
             "name": "tripteki/laravelphp-notification",
             "version": "1.1.8",
             "source": {
@@ -9182,6 +9541,250 @@
             "time": "2024-05-03T08:54:51+00:00"
         },
         {
+            "name": "tripteki/laravelphp-setting",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting.git",
+                "reference": "df600bfd26c915b8354e7bd33862a95b11c8b902"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting/zipball/df600bfd26c915b8354e7bd33862a95b11c8b902",
+                "reference": "df600bfd26c915b8354e7bd33862a95b11c8b902",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\Setting\\Providers\\SettingServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\Setting\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Settings",
+            "homepage": "https://github.com/tripteki/laravelphp-setting",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting/tree/1.0.2"
+            },
+            "time": "2023-11-26T00:52:20+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting-locale",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting-locale.git",
+                "reference": "ba4082127903c4d75e29ea9df633a23fe0832b9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-locale/zipball/ba4082127903c4d75e29ea9df633a23fe0832b9a",
+                "reference": "ba4082127903c4d75e29ea9df633a23fe0832b9a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0",
+                "tripteki/laravelphp-setting": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\SettingLocale\\Providers\\SettingLocaleServiceProvider",
+                        "Tripteki\\SettingLocale\\Providers\\TranslationServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/Locale.php"
+                ],
+                "psr-4": {
+                    "Tripteki\\SettingLocale\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Setting Locale",
+            "homepage": "https://github.com/tripteki/laravelphp-setting-locale",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting-locale/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting-locale/tree/1.1.2"
+            },
+            "time": "2023-11-26T01:13:30+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting-menu",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting-menu.git",
+                "reference": "ed54cce42f09c825355dd34f215db1d0174d842f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-menu/zipball/ed54cce42f09c825355dd34f215db1d0174d842f",
+                "reference": "ed54cce42f09c825355dd34f215db1d0174d842f",
+                "shasum": ""
+            },
+            "require": {
+                "awobaz/compoships": "^2.0",
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0",
+                "tripteki/laravelphp-setting": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\SettingMenu\\Providers\\SettingMenuServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\SettingMenu\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Setting Menu",
+            "homepage": "https://github.com/tripteki/laravelphp-setting-menu",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting-menu/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting-menu/tree/1.1.2"
+            },
+            "time": "2023-11-26T02:22:19+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-setting-profile",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-setting-profile.git",
+                "reference": "46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-profile/zipball/46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8",
+                "reference": "46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0",
+                "tripteki/laravelphp-setting": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\SettingProfile\\Providers\\SettingProfileServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\SettingProfile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Setting Profile",
+            "homepage": "https://github.com/tripteki/laravelphp-setting-profile",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-setting-profile/issues",
+                "source": "https://github.com/tripteki/laravelphp-setting-profile/tree/1.1.2"
+            },
+            "time": "2023-11-26T01:01:41+00:00"
+        },
+        {
             "name": "tripteki/laravelphp-supervisor",
             "version": "1.0.0",
             "source": {
@@ -9295,6 +9898,65 @@
                 "source": "https://github.com/tripteki/laravelphp-unique/tree/1.0.0"
             },
             "time": "2023-11-02T03:11:04+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-user",
+            "version": "1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-user.git",
+                "reference": "4059c94c4a040361584b628a7a1b0332aadc3e50"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-user/zipball/4059c94c4a040361584b628a7a1b0332aadc3e50",
+                "reference": "4059c94c4a040361584b628a7a1b0332aadc3e50",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\User\\Providers\\UserServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\User\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Users",
+            "homepage": "https://github.com/tripteki/laravelphp-user",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-user/issues",
+                "source": "https://github.com/tripteki/laravelphp-user/tree/1.1.8"
+            },
+            "time": "2024-01-07T04:43:34+00:00"
         },
         {
             "name": "tymon/jwt-auth",

@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use Tripteki\ACL\Traits\RolePermissionTrait;
+use Tripteki\SettingMenu\Traits\MenuTrait;
+use Tripteki\SettingProfile\Traits\ProfileTrait;
+use Tripteki\SettingLocale\Traits\LocaleTrait;
+use Tripteki\Setting\Traits\SettingTrait;
+use Tripteki\Log\Traits\LogCauseTrait;
 use Tripteki\Uid\Traits\UniqueIdTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
@@ -19,7 +25,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Model implements IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
 {
-    use UniqueIdTrait, HasFactory, SoftDeletes, Notifiable, Authenticatable, Authorizable, MustVerifyEmail, CanResetPassword;
+    use UniqueIdTrait, HasFactory, SoftDeletes, Notifiable, Authenticatable, Authorizable, MustVerifyEmail, CanResetPassword, LogCauseTrait, SettingTrait, LocaleTrait, ProfileTrait, MenuTrait, RolePermissionTrait;
 
     const CREATED_AT = "created_at";
 
