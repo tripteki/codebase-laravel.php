@@ -1,0 +1,11 @@
+{
+    "name": "V1",
+    "alias": "v1",
+
+    "priority": 0,
+
+    "providers": [
+
+        "Src\\V1\\V1ServiceProvider"
+    ]
+}
