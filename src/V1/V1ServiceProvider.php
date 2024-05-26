@@ -11,7 +11,6 @@ class V1ServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(\Src\V1\Post\Providers\PostBaseServiceProvider::class);
         $this->app->register(\Src\V1\Sample\Providers\SampleBaseServiceProvider::class);
     }
 };
