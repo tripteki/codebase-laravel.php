@@ -1,0 +1,22 @@
+#!/bin/sh
+
+main="src/V1"
+
+for named in "$@"
+do
+    upperNamed=$(echo "$named" | awk '{print toupper($0)}')
+    lowerNamed=$(echo "$named" | awk '{print tolower($0)}')
+
+    cp -R $main/.Sample $main/$named && \
+    find $main/$named -type f -name '*.php' | rename -d "s/Sample/$named/" && \
+    find $main/$named -type f -name '*.php' | rename -d "s/sample/$lowerNamed/" && \
+    find $main/$named -type d | rename -d "s/Sample/$named/" && \
+    find $main/$named -type d | rename -d "s/sample/$lowerNamed/" && \
+    grep -rl 'Sample' $main/$named | xargs sed -i 's/Sample/'$named'/g' && \
+    grep -rl 'sample' $main/$named | xargs sed -i 's/sample/'$lowerNamed'/g' && \
+    echo "Done ($named)..."
+
+    echo "Do not forget to setup on $main/V1ServiceProvider.php !"
+
+    echo "Finally step in #Migration -> #Factory -> #Model -> #Repository -> #Service -> #Import/Export -> #ControllerDocumentation !"
+done
