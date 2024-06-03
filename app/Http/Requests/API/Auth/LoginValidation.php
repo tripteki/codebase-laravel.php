@@ -58,6 +58,8 @@ class LoginValidation extends FormRequest
     public function rules(): array
     {
         return [
+            "captcha_key" => [ "required", "string", ],
+            "captcha_value" => [ "required", "captcha_api:".$this->input("captcha_key").",math", ],
             "email" => [ "required", "string", "email", ],
             "password" => [ "required", "string", ],
         ];

@@ -20,7 +20,8 @@
         "tripteki/laravelphp-supervisor": "^1.0",
         "tripteki/laravelphp-unique": "^1.0",
         "tripteki/laravelphp-helpers": "^1.0",
-        "tymon/jwt-auth": "^2.0"
+        "tymon/jwt-auth": "^2.0",
+        "mews/captcha": "^3.3.3"
     },
 
     "require-dev": {

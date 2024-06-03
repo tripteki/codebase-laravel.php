@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Mews\Captcha\Facades\Captcha;
 
 class AuthenticatedController extends Controller
 {
@@ -32,6 +33,30 @@ class AuthenticatedController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *      path="/auth/captcha",
+     *      tags={"Auth"},
+     *      summary="Captcha",
+     *      security={{ "bearerAuth": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success."
+     *      )
+     * )
+     *
+     * Current Captcha.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    public function captcha(Request $request): Response|JsonResponse
+    {
+        $captcha = Captcha::create("flat", true);
+
+        return iresponse([ "captcha_key" => $captcha["key"], "captcha_value" => $captcha["img"], ], Response::HTTP_OK);
+    }
+
+    /**
      * @OA\Post(
      *      path="/auth/login",
      *      tags={"Auth"},
@@ -40,6 +65,16 @@ class AuthenticatedController extends Controller
      *          @OA\MediaType(
      *              mediaType="application/x-www-form-urlencoded",
      *              @OA\Schema(
+     *                  @OA\Property(
+     *                      property="captcha_key",
+     *                      type="string",
+     *                      description="User's Captcha Key."
+     *                  ),
+     *                  @OA\Property(
+     *                      property="captcha_value",
+     *                      type="string",
+     *                      description="User's Captcha Value."
+     *                  ),
      *                  @OA\Property(
      *                      property="email",
      *                      type="string",

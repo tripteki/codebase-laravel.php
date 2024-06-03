@@ -8,6 +8,10 @@ use App\Http\Controllers\API\Auth\RegisteredUserController;
 use App\Http\Controllers\API\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+Route::get("/auth/captcha", [AuthenticatedController::class, "captcha"])
+                ->middleware("guest:api")
+                ->name("captcha");
+
 Route::post("/auth/register", [RegisteredUserController::class, "store"])
                 ->middleware("guest:api")
                 ->name("register");
