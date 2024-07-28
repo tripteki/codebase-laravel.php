@@ -4,15 +4,15 @@ APP_KEY=base64:6lTrGcYHLaLVgnzv25Rh4xuHeD+t+bEpp0tYxddHS+c=
 APP_HOST=localhost
 SERVER_HOST=localhost # "0.0.0.0" #
 SERVER_PORT="8000"
-SERVER_HTTPS=false
+SERVER_HTTPS=true
 APP_URL=${APP_HOST}:${SERVER_PORT}
-IS_SWAGGER=true
+IS_SWAGGER=false
 
 APP_TIMEZONE="Asia/Jakarta"
 APP_LOCALE=id
 APP_FALLBACKLOCALE=id
 APP_FAKERLOCALE=id_ID
-APP_ENV=development
+APP_ENV=production
 APP_DEBUG=true
 LOG_LEVEL=debug
 
