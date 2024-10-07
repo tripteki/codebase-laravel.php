@@ -87,8 +87,8 @@ class User extends Model implements IAuthJWT, AuthenticatableContract, Authoriza
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function posts()
-    {
-        return $this->hasMany(\Src\V1\Post\Models\PostModel::class);
-    }
+    // public function samples()
+    // {
+        // return $this->hasMany(\Src\V1\Sample\Models\SampleModel::class);
+    // }
 }
