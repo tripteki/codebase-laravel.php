@@ -15,9 +15,9 @@ use Src\V0\SettingProfile\Http\Requests\Admin\Settings\Profiles\ProfileUpdateVal
 use Src\V0\SettingProfile\Http\Requests\Admin\Settings\Profiles\ProfileDestroyValidation;
 use Tripteki\Helpers\Http\Requests\FileImportValidation;
 use Tripteki\Helpers\Http\Requests\FileExportValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class ProfileAdminController extends Controller
+class ProfileAdminController extends BaseController
 {
     /**
      * @var \Tripteki\SettingProfile\Contracts\Repository\Admin\ISettingProfileEnvironmentRepository

@@ -9,9 +9,9 @@ use Tripteki\Helpers\Contracts\AuthModelContract;
 use Tripteki\ACL\Contracts\Repository\Admin\IACLRoleRepository as IACLRuleRoleRepository;
 use Tripteki\ACL\Contracts\Repository\IACLRepository as IACLRuleUserRepository;
 use Src\V0\ACL\Http\Requests\Admin\ACLs\ACLValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class ACLAdminController extends Controller
+class ACLAdminController extends BaseController
 {
     /**
      * @var \Tripteki\ACL\Contracts\Repository\Admin\IACLRoleRepository

@@ -2,7 +2,7 @@
 
 namespace Src\V0\Auth\Http\Controllers\API\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Password;
 
-class PasswordResetLinkController extends Controller
+class PasswordResetLinkController extends BaseController
 {
     /**
      * @OA\Post(

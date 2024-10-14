@@ -15,9 +15,9 @@ use Src\V0\User\Http\Requests\Admin\Users\UserUpdateValidation;
 use Src\V0\User\Http\Requests\Admin\Users\UserDestroyValidation;
 use Tripteki\Helpers\Http\Requests\FileImportValidation;
 use Tripteki\Helpers\Http\Requests\FileExportValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class UserAdminController extends Controller
+class UserAdminController extends BaseController
 {
     /**
      * @var \Tripteki\User\Contracts\Repository\Admin\IUserRepository

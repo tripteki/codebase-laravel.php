@@ -7,9 +7,9 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Tripteki\SettingProfile\Contracts\Repository\ISettingProfileRepository;
 use Src\V0\SettingProfile\Http\Requests\Settings\Profiles\ProfileUpdateValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class ProfileController extends Controller
+class ProfileController extends BaseController
 {
     /**
      * @var \Tripteki\SettingProfile\Contracts\Repository\ISettingProfileRepository

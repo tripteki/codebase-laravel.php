@@ -2,6 +2,8 @@
 
 namespace Src\V0\User\Database\Seeders;
 
+use App\Enums\Role;
+use App\Enums\Permission;
 use Tripteki\ACL\Contracts\Repository\Admin\IACLPermissionRepository as IACLPermissionAdminRepository;
 use Tripteki\ACL\Contracts\Repository\Admin\IACLRoleRepository as IACLRoleAdminRepository;
 use Illuminate\Support\Facades\Artisan;
@@ -39,6 +41,6 @@ class UserSeeder extends Seeder
     {
         Artisan::call("adminer:generate:user", [ "--superuser" => true, ], $this->command->getOutput());
 
-        $this->roleAdminRepository->rule("admin");
+        $this->roleAdminRepository->rule((Role::ADMINISTRATOR)->value);
     }
 }

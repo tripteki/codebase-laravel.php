@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89cea279ea380a9ad56159347176c5e1",
+    "content-hash": "0b70ab7b4e4ba5e592052d77a19b784c",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -8414,16 +8414,16 @@
         },
         {
             "name": "tripteki/laravelphp-acl",
-            "version": "2.0.1",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tripteki/laravelphp-acl.git",
-                "reference": "f20705fb30a276621e2ae9843a2906a4e18499c1"
+                "reference": "6ab00c441d847cb50d7ece131f3fd22b96710fc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tripteki/laravelphp-acl/zipball/f20705fb30a276621e2ae9843a2906a4e18499c1",
-                "reference": "f20705fb30a276621e2ae9843a2906a4e18499c1",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-acl/zipball/6ab00c441d847cb50d7ece131f3fd22b96710fc3",
+                "reference": "6ab00c441d847cb50d7ece131f3fd22b96710fc3",
                 "shasum": ""
             },
             "require": {
@@ -8472,9 +8472,9 @@
             "homepage": "https://github.com/tripteki/laravelphp-acl",
             "support": {
                 "issues": "https://github.com/tripteki/laravelphp-acl/issues",
-                "source": "https://github.com/tripteki/laravelphp-acl/tree/2.0.1"
+                "source": "https://github.com/tripteki/laravelphp-acl/tree/2.0.5"
             },
-            "time": "2024-10-11T11:28:18+00:00"
+            "time": "2024-10-19T10:55:09+00:00"
         },
         {
             "name": "tripteki/laravelphp-adminer",
@@ -8699,21 +8699,21 @@
         },
         {
             "name": "tripteki/laravelphp-log",
-            "version": "1.1.8",
+            "version": "1.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tripteki/laravelphp-log.git",
-                "reference": "d2daf4c90d1003a0d7387866eb13d701328d99df"
+                "reference": "40c9146d2b51f4094784a13aeac748946894df86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tripteki/laravelphp-log/zipball/d2daf4c90d1003a0d7387866eb13d701328d99df",
-                "reference": "d2daf4c90d1003a0d7387866eb13d701328d99df",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-log/zipball/40c9146d2b51f4094784a13aeac748946894df86",
+                "reference": "40c9146d2b51f4094784a13aeac748946894df86",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.0.2",
-                "spatie/laravel-activitylog": "^4.7.2",
+                "spatie/laravel-activitylog": "^4.8.0",
                 "tripteki/laravelphp-adminer": "^1.0.0",
                 "tripteki/laravelphp-helpers": "^1.0.0",
                 "tripteki/laravelphp-import-export": "^1.0.0",
@@ -8753,9 +8753,9 @@
             "homepage": "https://github.com/tripteki/laravelphp-log",
             "support": {
                 "issues": "https://github.com/tripteki/laravelphp-log/issues",
-                "source": "https://github.com/tripteki/laravelphp-log/tree/1.1.8"
+                "source": "https://github.com/tripteki/laravelphp-log/tree/1.1.10"
             },
-            "time": "2024-01-07T04:44:43+00:00"
+            "time": "2024-10-11T09:19:15+00:00"
         },
         {
             "name": "tripteki/laravelphp-repository",
@@ -8868,16 +8868,16 @@
         },
         {
             "name": "tripteki/laravelphp-setting",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tripteki/laravelphp-setting.git",
-                "reference": "df600bfd26c915b8354e7bd33862a95b11c8b902"
+                "reference": "06e40214223ac19a3c5c50c399b478d2f712dad8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tripteki/laravelphp-setting/zipball/df600bfd26c915b8354e7bd33862a95b11c8b902",
-                "reference": "df600bfd26c915b8354e7bd33862a95b11c8b902",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting/zipball/06e40214223ac19a3c5c50c399b478d2f712dad8",
+                "reference": "06e40214223ac19a3c5c50c399b478d2f712dad8",
                 "shasum": ""
             },
             "require": {
@@ -8921,22 +8921,22 @@
             "homepage": "https://github.com/tripteki/laravelphp-setting",
             "support": {
                 "issues": "https://github.com/tripteki/laravelphp-setting/issues",
-                "source": "https://github.com/tripteki/laravelphp-setting/tree/1.0.2"
+                "source": "https://github.com/tripteki/laravelphp-setting/tree/1.0.3"
             },
-            "time": "2023-11-26T00:52:20+00:00"
+            "time": "2024-10-21T02:48:44+00:00"
         },
         {
             "name": "tripteki/laravelphp-setting-profile",
-            "version": "1.1.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tripteki/laravelphp-setting-profile.git",
-                "reference": "46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8"
+                "reference": "8469116c1cca35ea9bc426e4c124014fe48883d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-profile/zipball/46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8",
-                "reference": "46b9bc1aa0c8cc493b6fa4d2b85c689da4bf16e8",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-setting-profile/zipball/8469116c1cca35ea9bc426e4c124014fe48883d0",
+                "reference": "8469116c1cca35ea9bc426e4c124014fe48883d0",
                 "shasum": ""
             },
             "require": {
@@ -8981,9 +8981,9 @@
             "homepage": "https://github.com/tripteki/laravelphp-setting-profile",
             "support": {
                 "issues": "https://github.com/tripteki/laravelphp-setting-profile/issues",
-                "source": "https://github.com/tripteki/laravelphp-setting-profile/tree/1.1.2"
+                "source": "https://github.com/tripteki/laravelphp-setting-profile/tree/1.2.3"
             },
-            "time": "2023-11-26T01:01:41+00:00"
+            "time": "2024-10-21T02:47:12+00:00"
         },
         {
             "name": "tripteki/laravelphp-unique",

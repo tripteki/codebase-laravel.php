@@ -22,6 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
         \App\Http\Middleware\Api::class,
     ]);
+
+    $middleware->alias([
+
+        "role" => \Tripteki\ACL\Http\Middleware\RoleMiddleware::class,
+        "permission" => \Tripteki\ACL\Http\Middleware\PermissionMiddleware::class,
+        "role_or_permission" => \Tripteki\ACL\Http\Middleware\RoleOrPermissionMiddleware::class,
+    ]);
 })
 ->withExceptions(function (Exceptions $exceptions) {
 

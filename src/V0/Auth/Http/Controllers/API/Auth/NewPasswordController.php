@@ -2,7 +2,7 @@
 
 namespace Src\V0\Auth\Http\Controllers\API\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class NewPasswordController extends Controller
+class NewPasswordController extends BaseController
 {
     /**
      * @OA\Post(

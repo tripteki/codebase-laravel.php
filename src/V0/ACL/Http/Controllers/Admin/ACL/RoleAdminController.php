@@ -14,9 +14,9 @@ use Src\V0\ACL\Http\Requests\Admin\ACLs\Roles\RoleStoreValidation;
 use Src\V0\ACL\Http\Requests\Admin\ACLs\Roles\RoleDestroyValidation;
 use Tripteki\Helpers\Http\Requests\FileImportValidation;
 use Tripteki\Helpers\Http\Requests\FileExportValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class RoleAdminController extends Controller
+class RoleAdminController extends BaseController
 {
     /**
      * @var \Tripteki\ACL\Contracts\Repository\Admin\IACLRoleRepository

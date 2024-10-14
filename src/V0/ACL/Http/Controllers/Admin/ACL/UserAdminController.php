@@ -8,9 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Tripteki\Helpers\Contracts\AuthModelContract;
 use Tripteki\ACL\Contracts\Repository\IACLRepository as IACLUserRepository;
 use Src\V0\ACL\Http\Requests\Admin\ACLs\Users\UserShowValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class UserAdminController extends Controller
+class UserAdminController extends BaseController
 {
     /**
      * @var \Tripteki\ACL\Contracts\Repository\IACLRepository

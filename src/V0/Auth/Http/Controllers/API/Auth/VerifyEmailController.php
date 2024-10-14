@@ -3,7 +3,7 @@
 namespace Src\V0\Auth\Http\Controllers\API\Auth;
 
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
-class VerifyEmailController extends Controller
+class VerifyEmailController extends BaseController
 {
     /**
      * Mark the authed user's email address as verified.

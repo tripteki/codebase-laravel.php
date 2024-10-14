@@ -10,9 +10,9 @@ use Tripteki\Log\Contracts\Repository\Admin\ILogRepository;
 use Src\V0\Log\Exports\Logs\LogExport;
 use Src\V0\Log\Http\Requests\Admin\Logs\LogShowValidation;
 use Tripteki\Helpers\Http\Requests\FileExportValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class LogAdminController extends Controller
+class LogAdminController extends BaseController
 {
     /**
      * @var \Tripteki\Log\Contracts\Repository\Admin\ILogRepository

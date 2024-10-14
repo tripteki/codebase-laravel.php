@@ -5,9 +5,9 @@ namespace Src\V0\ACL\Http\Controllers\ACL;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class ACLController extends Controller
+class ACLController extends BaseController
 {
     /**
      * @OA\Get(
@@ -29,7 +29,7 @@ class ACLController extends Controller
         $data = [];
         $statecode = 200;
 
-        $data = accesses($request->user());
+        $data = accesses($request->user(), false);
 
         return iresponse($data, $statecode);
     }

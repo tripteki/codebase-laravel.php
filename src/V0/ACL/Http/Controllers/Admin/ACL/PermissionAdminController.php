@@ -14,9 +14,9 @@ use Src\V0\ACL\Http\Requests\Admin\ACLs\Permissions\PermissionStoreValidation;
 use Src\V0\ACL\Http\Requests\Admin\ACLs\Permissions\PermissionDestroyValidation;
 use Tripteki\Helpers\Http\Requests\FileImportValidation;
 use Tripteki\Helpers\Http\Requests\FileExportValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class PermissionAdminController extends Controller
+class PermissionAdminController extends BaseController
 {
     /**
      * @var \Tripteki\ACL\Contracts\Repository\Admin\IACLPermissionRepository

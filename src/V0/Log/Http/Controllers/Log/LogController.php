@@ -8,9 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Tripteki\Log\Contracts\Repository\ILogRepository;
 use Src\V0\Log\Http\Requests\Logs\LogShowValidation;
 use Src\V0\Log\Http\Requests\Logs\LogUpdateValidation;
-use Tripteki\Helpers\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 
-class LogController extends Controller
+class LogController extends BaseController
 {
     /**
      * @var \Tripteki\Log\Contracts\Repository\ILogRepository
