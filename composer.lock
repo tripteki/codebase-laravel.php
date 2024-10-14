@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89cea279ea380a9ad56159347176c5e1",
+    "content-hash": "0b70ab7b4e4ba5e592052d77a19b784c",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -8414,16 +8414,16 @@
         },
         {
             "name": "tripteki/laravelphp-acl",
-            "version": "2.0.1",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tripteki/laravelphp-acl.git",
-                "reference": "f20705fb30a276621e2ae9843a2906a4e18499c1"
+                "reference": "3af9a5dff9c468a76bd3a1271232242afce9d41d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tripteki/laravelphp-acl/zipball/f20705fb30a276621e2ae9843a2906a4e18499c1",
-                "reference": "f20705fb30a276621e2ae9843a2906a4e18499c1",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-acl/zipball/3af9a5dff9c468a76bd3a1271232242afce9d41d",
+                "reference": "3af9a5dff9c468a76bd3a1271232242afce9d41d",
                 "shasum": ""
             },
             "require": {
@@ -8472,9 +8472,9 @@
             "homepage": "https://github.com/tripteki/laravelphp-acl",
             "support": {
                 "issues": "https://github.com/tripteki/laravelphp-acl/issues",
-                "source": "https://github.com/tripteki/laravelphp-acl/tree/2.0.1"
+                "source": "https://github.com/tripteki/laravelphp-acl/tree/2.0.3"
             },
-            "time": "2024-10-11T11:28:18+00:00"
+            "time": "2024-10-14T08:50:06+00:00"
         },
         {
             "name": "tripteki/laravelphp-adminer",
