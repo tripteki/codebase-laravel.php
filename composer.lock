@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b70ab7b4e4ba5e592052d77a19b784c",
+    "content-hash": "38b28d8e6de249b65497a12e9ef6e5c5",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -8756,6 +8756,65 @@
                 "source": "https://github.com/tripteki/laravelphp-log/tree/1.1.10"
             },
             "time": "2024-10-11T09:19:15+00:00"
+        },
+        {
+            "name": "tripteki/laravelphp-notification",
+            "version": "1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tripteki/laravelphp-notification.git",
+                "reference": "b5c958bd7e3e086a43cab5bcdacdb21ba1fba6d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tripteki/laravelphp-notification/zipball/b5c958bd7e3e086a43cab5bcdacdb21ba1fba6d0",
+                "reference": "b5c958bd7e3e086a43cab5bcdacdb21ba1fba6d0",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0.2",
+                "tripteki/laravelphp-adminer": "^1.0.0",
+                "tripteki/laravelphp-helpers": "^1.0.0",
+                "tripteki/laravelphp-import-export": "^1.0.0",
+                "tripteki/laravelphp-repository": "^1.0.0",
+                "tripteki/laravelphp-request-response-query": "^1.0.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required when using laravel framework (^9.0).",
+                "laravel/lumen-framework": "Required when using lumen framework (^9.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "dont-discover": [],
+                    "providers": [
+                        "Tripteki\\Notification\\Providers\\NotificationServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tripteki\\Notification\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Trip Teknologi",
+                    "email": "tripteki.company@gmail.com"
+                }
+            ],
+            "description": "Trip Teknologi's Laravel.php Notifications",
+            "homepage": "https://github.com/tripteki/laravelphp-notification",
+            "support": {
+                "issues": "https://github.com/tripteki/laravelphp-notification/issues",
+                "source": "https://github.com/tripteki/laravelphp-notification/tree/1.1.8"
+            },
+            "time": "2024-01-07T04:44:55+00:00"
         },
         {
             "name": "tripteki/laravelphp-repository",
