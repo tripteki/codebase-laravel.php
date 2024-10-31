@@ -4,19 +4,13 @@ namespace Src\V1\Sample\Repositories;
 
 use Error;
 use Exception;
+use Src\V1\Sample\Contracts\Repositories\SampleContract;
+use Src\V1\Sample\Models\SampleModel;
+use Src\V1\Sample\Http\Resources\SampleResource;
+use Src\V1\Common\Repositories\Repository as BaseRepository;
+use Tripteki\RequestResponseQuery\QueryBuilder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\App;
-use Src\V1\Sample\Models\SampleModel;
-use Src\V1\Common\Repositories\Repository as BaseRepository;
-use Src\V1\Sample\Http\Resources\SampleResource;
-use Src\V1\Sample\Events\SampleShowed;
-use Src\V1\Sample\Events\SampleUpdated;
-use Src\V1\Sample\Events\SampleCreated;
-use Src\V1\Sample\Events\SampleDeleted;
-use Src\V1\Sample\Contracts\Repositories\SampleContract;
-use Tripteki\RequestResponseQuery\QueryBuilder;
 
 class SampleRepository extends BaseRepository implements SampleContract
 {
@@ -43,7 +37,7 @@ class SampleRepository extends BaseRepository implements SampleContract
             paginate($limit, [ "*", ], "current_page", $current_page)->appends(empty($querystring) ? request()->query() : $querystringed));
         $content = $content->loadCount("samples");
 
-        return new SampleResource($content);
+        return $content = new SampleResource($content);
     }
 
     /**
@@ -53,11 +47,9 @@ class SampleRepository extends BaseRepository implements SampleContract
      */
     public function get($identifier, $querystring = [])
     {
-        if (! App::runningInConsole()) Gate::authorize("view", $content = SampleModel::findOrFail($identifier));
+        $content = SampleModel::findOrFail($identifier);
 
-        broadcast(new SampleShowed($content = new SampleResource($content->load("user"))))->toOthers();
-
-        return $content;
+        return $content = new SampleResource($content->load("user"));
     }
 
     /**
@@ -67,7 +59,7 @@ class SampleRepository extends BaseRepository implements SampleContract
      */
     public function update($identifier, $data)
     {
-        if (! App::runningInConsole()) Gate::authorize("update", $content = SampleModel::findOrFail($identifier));
+        $content = SampleModel::findOrFail($identifier);
 
         DB::beginTransaction();
 
@@ -77,7 +69,7 @@ class SampleRepository extends BaseRepository implements SampleContract
 
             DB::commit();
 
-            broadcast(new SampleUpdated($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 
@@ -95,7 +87,7 @@ class SampleRepository extends BaseRepository implements SampleContract
      */
     public function create($data)
     {
-        $content = null; if (! App::runningInConsole()) Gate::authorize("create", SampleModel::class);
+        $content = null;
 
         DB::beginTransaction();
 
@@ -105,7 +97,7 @@ class SampleRepository extends BaseRepository implements SampleContract
 
             DB::commit();
 
-            broadcast(new SampleCreated($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 
@@ -123,7 +115,7 @@ class SampleRepository extends BaseRepository implements SampleContract
      */
     public function delete($identifier)
     {
-        if (! App::runningInConsole()) Gate::authorize("delete", $content = SampleModel::findOrFail($identifier));
+        $content = SampleModel::findOrFail($identifier);
 
         DB::beginTransaction();
 
@@ -133,7 +125,7 @@ class SampleRepository extends BaseRepository implements SampleContract
 
             DB::commit();
 
-            broadcast(new SampleDeleted($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 

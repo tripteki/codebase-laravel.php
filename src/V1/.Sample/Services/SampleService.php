@@ -2,13 +2,20 @@
 
 namespace Src\V1\Sample\Services;
 
+use Src\V1\Sample\Events\SampleShowed;
+use Src\V1\Sample\Events\SampleUpdated;
+use Src\V1\Sample\Events\SampleCreated;
+use Src\V1\Sample\Events\SampleDeleted;
 use Src\V1\Sample\Contracts\Repositories\SampleContract;
+use Src\V1\Sample\Models\SampleModel;
 use Src\V1\Common\Services\Service as BaseService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\App;
 
 class SampleService extends BaseService
 {
@@ -32,7 +39,7 @@ class SampleService extends BaseService
      */
     public function index($datas)
     {
-        return iresponse($this->sampleRepository->all($datas), 200);
+        return $data = iresponse($this->sampleRepository->all($datas), 200);
     }
 
     /**
@@ -41,7 +48,24 @@ class SampleService extends BaseService
      */
     public function show($datas)
     {
-        return iresponse($this->sampleRepository->get($datas["id"]), 200);
+        Validator::make($datas,
+        [
+            "id" => [ "required", Rule::exists(SampleModel::class)->where(function ($query) {
+                return $query->whereNull("deleted_at");
+            }), ],
+        ])->validate();
+
+        if (! App::runningInConsole()) {
+            Gate::authorize("view", SampleModel::findOrFail($datas["id"]));
+        }
+
+        broadcast(
+            new SampleShowed(
+                $data = iresponse($this->sampleRepository->get($datas["id"]), 200)
+            )
+        )->toOthers();
+
+        return $data;
     }
 
     /**
@@ -50,14 +74,25 @@ class SampleService extends BaseService
      */
     public function update($datas)
     {
-        $validator = Validator::make($datas,
+        Validator::make($datas,
         [
+            "id" => [ "required", Rule::exists(SampleModel::class)->where(function ($query) {
+                return $query->whereNull("deleted_at");
+            }), ],
             "content" => [ "required", "string", "min:1", "max:280", ],
-        ]);
+        ])->validate();
 
-        $validator->validate();
+        if (! App::runningInConsole()) {
+            Gate::authorize("update", SampleModel::findOrFail($datas["id"]));
+        }
 
-        return iresponse($this->sampleRepository->update($datas["id"], $datas), 201);
+        broadcast(
+            new SampleUpdated(
+                $data = iresponse($this->sampleRepository->update($datas["id"], $datas), 201)
+            )
+        )->toOthers();
+
+        return $data;
     }
 
     /**
@@ -66,14 +101,22 @@ class SampleService extends BaseService
      */
     public function store($datas)
     {
-        $validator = Validator::make($datas,
+        Validator::make($datas,
         [
             "content" => [ "required", "string", "min:1", "max:280", ],
-        ]);
+        ])->validate();
 
-        $validator->validate();
+        if (! App::runningInConsole()) {
+            Gate::authorize("create", SampleModel::class);
+        }
 
-        return iresponse($this->sampleRepository->create($datas), 201);
+        broadcast(
+            new SampleCreated(
+                $data = iresponse($this->sampleRepository->create($datas), 201)
+            )
+        )->toOthers();
+
+        return $data;
     }
 
     /**
@@ -82,6 +125,23 @@ class SampleService extends BaseService
      */
     public function destroy($datas)
     {
-        return iresponse($this->sampleRepository->delete($datas["id"]), 200);
+        Validator::make($datas,
+        [
+            "id" => [ "required", Rule::exists(SampleModel::class)->where(function ($query) {
+                return $query->whereNull("deleted_at");
+            }), ],
+        ])->validate();
+
+        if (! App::runningInConsole()) {
+            Gate::authorize("delete", SampleModel::findOrFail($datas["id"]));
+        }
+
+        broadcast(
+            new SampleDeleted(
+                $data = iresponse($this->sampleRepository->delete($datas["id"]), 200)
+            )
+        )->toOthers();
+
+        return $data;
     }
 };

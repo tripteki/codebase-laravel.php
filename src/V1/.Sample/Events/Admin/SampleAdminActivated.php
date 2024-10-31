@@ -2,6 +2,7 @@
 
 namespace Src\V1\Sample\Events\Admin;
 
+use Src\V1\Common\Helpers\ContentHelper;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow as IWebSocket;
 use Illuminate\Broadcasting\InteractsWithSockets as WebSocketTrait;
 use Illuminate\Queue\SerializesModels as SerializationTrait;
@@ -14,12 +15,12 @@ class SampleAdminActivated implements IWebSocket
     use SerializationTrait, WebSocketTrait;
 
     /**
-     * @var \Src\V1\Sample\Http\Resources\SampleResource
+     * @var \Tripteki\Helpers\Contracts\IResponse
      */
     public $data;
 
     /**
-     * @param \Src\V1\Sample\Http\Resources\SampleResource $data
+     * @param \Tripteki\Helpers\Contracts\IResponse $data
      * @return void
      */
     public function __construct($data)
@@ -32,7 +33,7 @@ class SampleAdminActivated implements IWebSocket
      */
     public function broadcastOn()
     {
-        return new PrivateChannel("v1.samples.".$this->data->id);
+        return new PrivateChannel("v1.samples.".(new ContentHelper)($this->data)->id);
     }
 
     /**

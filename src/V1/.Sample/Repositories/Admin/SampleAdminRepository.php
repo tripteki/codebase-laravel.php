@@ -4,17 +4,12 @@ namespace Src\V1\Sample\Repositories\Admin;
 
 use Error;
 use Exception;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Src\V1\Sample\Contracts\Repositories\Admin\SampleAdminContract;
 use Src\V1\Sample\Models\SampleModel;
 use Src\V1\Sample\Http\Resources\SampleResource;
-use Src\V1\Sample\Events\Admin\SampleAdminShowed;
-use Src\V1\Sample\Events\Admin\SampleAdminUpdated;
-use Src\V1\Sample\Events\Admin\SampleAdminCreated;
-use Src\V1\Sample\Events\Admin\SampleAdminActivated;
-use Src\V1\Sample\Events\Admin\SampleAdminDeactivated;
-use Src\V1\Sample\Contracts\Repositories\Admin\SampleAdminContract;
 use Tripteki\RequestResponseQuery\QueryBuilder;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class SampleAdminRepository implements SampleAdminContract
 {
@@ -25,7 +20,7 @@ class SampleAdminRepository implements SampleAdminContract
     {
         $content = SampleModel::with("user")->get();
 
-        return SampleResource::collection($content);
+        return $content = SampleResource::collection($content);
     }
 
     /**
@@ -49,7 +44,7 @@ class SampleAdminRepository implements SampleAdminContract
         allowedFilters([ "id", "content", "created_at", "updated_at", "deleted_at", ])->
         paginate($limit, [ "*", ], "current_page", $current_page)->appends(empty($querystring) ? request()->query() : $querystringed);
 
-        return SampleResource::collection($content)->response()->getData();
+        return $content = SampleResource::collection($content)->response()->getData();
     }
 
     /**
@@ -61,9 +56,7 @@ class SampleAdminRepository implements SampleAdminContract
     {
         $content = SampleModel::withTrashed()->findOrFail($identifier);
 
-        broadcast(new SampleAdminShowed($content = new SampleResource($content->load("user"))))->toOthers();
-
-        return $content;
+        return $content = new SampleResource($content->load("user"));
     }
 
     /**
@@ -83,7 +76,7 @@ class SampleAdminRepository implements SampleAdminContract
 
             DB::commit();
 
-            broadcast(new SampleAdminUpdated($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 
@@ -111,7 +104,7 @@ class SampleAdminRepository implements SampleAdminContract
 
             DB::commit();
 
-            broadcast(new SampleAdminCreated($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 
@@ -148,7 +141,7 @@ class SampleAdminRepository implements SampleAdminContract
 
             DB::commit();
 
-            broadcast(new SampleAdminActivated($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 
@@ -176,7 +169,7 @@ class SampleAdminRepository implements SampleAdminContract
 
             DB::commit();
 
-            broadcast(new SampleAdminDeactivated($content = new SampleResource($content->load("user"))))->toOthers();
+            $content = new SampleResource($content->load("user"));
 
         } catch (Exception $exception) {
 

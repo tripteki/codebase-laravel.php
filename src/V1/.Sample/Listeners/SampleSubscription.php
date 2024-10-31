@@ -3,6 +3,7 @@
 namespace Src\V1\Sample\Listeners;
 
 use App\Models\User as UserModel;
+use Src\V1\Common\Helpers\ContentHelper;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue as IAsync;
 
@@ -15,7 +16,7 @@ class SampleSubscription implements IAsync
     public function handle($event)
     {
         $event = $event->data;
-        $data = $event->response()->getData()->data;
+        $data = (new ContentHelper)($event);
 
         $from = $data->user;
         $to = UserModel::all()->except($from->id);

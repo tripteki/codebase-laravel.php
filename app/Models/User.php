@@ -74,4 +74,12 @@ class User extends Authenticatable implements IAuthJWT, AuthenticatableContract,
     {
         return (array) null;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function samples()
+    {
+        return $this->hasMany(\Src\V1\Sample\Models\SampleModel::class);
+    }
 }
