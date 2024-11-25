@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         xsi:schemaLocation="https://schema.phpunit.de https://schema.phpunit.de/1.0/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          processIsolation="true"
          testdox="true"
-         colors="true">
+         colors="true"
+         cacheDirectory=".phpunit.cache">
 
     <testsuites>
         <testsuite name="Unit">
@@ -35,11 +35,11 @@
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
+    <source>
         <include>
             <directory suffix=".php">./app</directory>
         </include>
-    </coverage>
+    </source>
 
     <php>
         <ini name="default_charset" value="UTF-8"/>

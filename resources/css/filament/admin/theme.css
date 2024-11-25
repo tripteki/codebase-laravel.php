@@ -1,0 +1,53 @@
+@import "/vendor/filament/filament/resources/css/theme.css";
+@config "tailwind.config.js";
+
+/* Sidebar::Start */
+
+    .fi-topbar > nav {
+        @apply !bg-inherit ring-0 shadow-none;
+    }
+
+    .fi-sidebar-header {
+        @apply !ring-0;
+    }
+
+    .fi-sidebar > .overflow-x-clip {
+        @apply mt-2 ml-2 mr-2 shadow-none lg:rounded-tr-3xl;
+    }
+
+    .fi-sidebar > .overflow-x-clip > .fi-sidebar-header {
+        @apply bg-white dark:bg-gray-900 lg:rounded-tr-3xl;
+    }
+
+    .fi-sidebar > .fi-sidebar-nav {
+        @apply bg-white dark:bg-gray-900 ml-2 mr-2 shadow-none;
+    }
+
+    .fi-layout {
+        @apply !bg-gradient-to-b
+            from-slate-200 from-10%
+            to-slate-100 to-40%
+            dark:!bg-none dark:!bg-gray-800;
+    }
+
+    .fi-input-wrp {
+        @apply focus-within:!ring-indigo-500 dark:focus-within:!ring-indigo-500 focus-within:!ring-1 dark:focus-within:!ring-1;
+    }
+
+/* Sidebar::End */
+
+/* TableAction::Start */
+
+    /* .fi-ta-actions {
+        @apply ms-0 sm:ms-0;
+    } */
+
+/* TableAction::End */
+
+/* Plugin::i18n::Start */
+
+    div[wire\:snapshot*='"name":"filament-language-switch"'] .fi-dropdown-panel {
+        @apply !w-auto;
+    }
+
+/* Plugin::i18n::End */

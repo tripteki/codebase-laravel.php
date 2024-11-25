@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
     web: __DIR__."/../routes/web.php",
     health: "/status",
 )
+->withBroadcasting(
+
+    channels: __DIR__."/../routes/channels.php",
+)
 ->withMiddleware(function (Middleware $middleware) {
 
     $middleware->group("api", [
