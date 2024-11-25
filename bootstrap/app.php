@@ -15,11 +15,17 @@ return Application::configure(basePath: dirname(__DIR__))
     web: __DIR__."/../routes/web.php",
     health: "/status",
 )
+->withBroadcasting(
+
+    channels: __DIR__."/../routes/channels.php",
+)
 ->withMiddleware(function (Middleware $middleware) {
 
     $middleware->group("api", [
 
+        "throttle:api",
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        \Src\V1\Api\Common\Http\Middlewares\ApiMiddleware::class,
     ]);
 })
 ->withExceptions(function (Exceptions $exceptions) {

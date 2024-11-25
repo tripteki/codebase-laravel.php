@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Facade;
 return [
 
     "name" => env("APP_NAME", "Basecode"),
+    "version" => env("APP_VERSION", @json_decode(file_get_contents(base_path("composer.json")), JSON_PRETTY_PRINT)["version"]),
     "url" => env("APP_URL", "http://localhost"),
     "frontend_url" => env("FRONTEND_URL", "http://frontend.localhost"),
     "asset_url" => env("ASSET_URL", ""),

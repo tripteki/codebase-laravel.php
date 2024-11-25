@@ -13,11 +13,13 @@
         "laravel/reverb": "^1.0",
         "laravel/pulse": "^1.2",
 
-        "mezatsong/laravel-swagger-docs": "^1.6",
-        "tymon/jwt-auth": "^2.1",
+        "tripteki/laravelphp-import-export": "^1.0",
+        "tripteki/laravelphp-request-response-query": "^1.0",
         "spatie/laravel-data": "^4.11",
-        "yaza/laravel-repository-service": "^5.1",
-        "filament/filament": "^3.2"
+        "darkaonline/l5-swagger": "^8.6",
+        "tymon/jwt-auth": "^2.1",
+        "filament/filament": "^3.2",
+        "bezhansalleh/filament-language-switch": "^3.1"
     },
 
     "require-dev": {

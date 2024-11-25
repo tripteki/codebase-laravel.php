@@ -17,5 +17,13 @@ return [
     'password' => 'Kata sandi yang diberikan salah.',
     'throttle' => 'Terlalu banyak percobaan masuk. Silakan coba lagi dalam :seconds detik.',
     'verification-sent' => 'Kami telah mengirimkan tautan verifikasi akun Anda melalui email.',
+    'verified' => 'Akun Anda telah terverifikasi.',
+
+    'token_invalid' => 'Token tidak valid.',
+    'token_expired' => 'Token telah kedaluwarsa.',
+    'token_blacklisted' => 'Token telah dibatalkan.',
+    'user_not_defined' => 'Pengguna tidak terdefinisi.',
+    'invalid_claim' => 'Klaim token tidak valid.',
+    'payload_invalid' => 'Muatan token tidak valid.',
 
 ];

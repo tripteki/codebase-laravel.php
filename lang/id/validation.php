@@ -163,7 +163,7 @@ return [
     'starts_with' => 'Field :attribute harus diawali dengan salah satu dari yang berikut: :values.',
     'string' => 'Field :attribute harus berupa string.',
     'timezone' => 'Field :attribute harus berupa zona waktu yang valid.',
-    'unique' => ':attribute sudah diambil.',
+    'unique' => 'Field :attribute sudah diambil.',
     'uploaded' => 'Field :attribute gagal diunggah.',
     'uppercase' => 'Field :attribute harus dalam huruf besar.',
     'url' => 'Field :attribute harus berupa URL yang valid.',
