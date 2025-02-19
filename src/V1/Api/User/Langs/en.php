@@ -17,6 +17,7 @@ return [
 
         "navigation_group" => "User Management",
         "navigation" => "User",
+        "label" => "User",
 
         "headers" => [
 
@@ -38,8 +39,8 @@ return [
 
             "labels" => [
 
-                "activates" => "Activates",
-                "deactivates" => "Deactivates",
+                "activates" => "User Activates",
+                "deactivates" => "User Deactivates",
             ],
         ],
 
@@ -72,9 +73,14 @@ return [
             "email" => "E-Mail",
             "password" => "Password",
             "password_confirmation" => "Password Confirmation",
+            "email_verified_at" => "Verification",
             "created_at" => "Creation",
             "updated_at" => "Updation",
             "deleted_at" => "Deletion",
+
+            "new" => "Create user",
+            "import" => "Import users",
+            "export" => "Export users",
         ],
 
         "api" => [

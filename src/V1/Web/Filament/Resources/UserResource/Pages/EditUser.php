@@ -2,6 +2,7 @@
 
 namespace Src\V1\Web\Filament\Resources\UserResource\Pages;
 
+use App\Models\User;
 use Src\V1\Web\Filament\Resources\UserResource;
 use Src\V1\Web\Filament\Resources\UserResource\Forms\UserForm;
 use Filament\Resources\Pages\EditRecord;
@@ -22,6 +23,16 @@ class EditUser extends EditRecord
     {
         return [
 
+            Actions\Action::make("verify")->label(__("module.user.labels.email_verified_at"))->icon("heroicon-o-envelope")->requiresConfirmation()->action(function () {
+
+                $this->record->markEmailAsVerified();
+
+                return redirect(UserResource::getUrl());
+
+            })->visible(function () {
+
+                return ! $this->record->hasVerifiedEmail();
+            }),
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),

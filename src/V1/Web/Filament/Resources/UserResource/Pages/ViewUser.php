@@ -42,9 +42,14 @@ class ViewUser extends ViewRecord
                 Infolists\Components\TextEntry::make("name")->label(__("module.user.labels.name"))->columnSpan(3)->badge()->
                     icon("heroicon-s-at-symbol")->
                     alignment(Alignment::Justify),
-                Infolists\Components\TextEntry::make("email")->label(__("module.user.labels.email"))->columnSpan(3)->badge()->
+                Infolists\Components\TextEntry::make("email")->label(__("module.user.labels.email"))->columnSpan(2)->badge()->
                     copyable()->
                     icon("heroicon-s-envelope")->
+                    alignment(Alignment::Justify),
+                Infolists\Components\TextEntry::make("email_verified_at")->label(__("module.user.labels.email_verified_at"))->columnSpan(1)->badge()->
+                    dateTime()->
+                    dateTimeTooltip()->
+                    icon("heroicon-o-envelope")->
                     alignment(Alignment::Justify),
                 Infolists\Components\TextEntry::make("created_at")->label(__("module.user.labels.created_at"))->columnSpan(1)->badge()->
                     dateTime()->

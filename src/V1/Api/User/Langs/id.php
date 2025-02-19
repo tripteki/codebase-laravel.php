@@ -15,8 +15,9 @@ return [
 
     "user" => [
 
-        "navigation_group" => "User Manajemen",
-        "navigation" => "User",
+        "navigation_group" => "Manajemen Pengguna",
+        "navigation" => "Pengguna",
+        "label" => "Pengguna",
 
         "headers" => [
 
@@ -38,14 +39,14 @@ return [
 
             "labels" => [
 
-                "activates" => "Aktif",
-                "deactivates" => "Tidak Aktif",
+                "activates" => "Pengguna Aktif",
+                "deactivates" => "Pengguna Tidak Aktif",
             ],
         ],
 
         "tables" => [
 
-            "heading" => "Pengelolaan user",
+            "heading" => "Pengelolaan pengguna",
             "description" => "Daftar kontrol untuk mengelola akun pengguna, mengubah pengaturan, dan mengatur akses.",
         ],
 
@@ -72,9 +73,14 @@ return [
             "email" => "E-Mail",
             "password" => "Password",
             "password_confirmation" => "Konfirmasi Password",
+            "email_verified_at" => "Verifikasi",
             "created_at" => "Pembuatan",
             "updated_at" => "Pembaruan",
             "deleted_at" => "Penghapusan",
+
+            "new" => "Buat pengguna",
+            "import" => "Impor pengguna",
+            "export" => "Ekspor pengguna",
         ],
 
         "api" => [

@@ -21,6 +21,11 @@ class UserResource extends Resource
     /**
      * @var string|null
      */
+    protected static ?string $slug = "users";
+
+    /**
+     * @var string|null
+     */
     protected static ?string $model = User::class;
 
     /**
@@ -42,6 +47,14 @@ class UserResource extends Resource
      * @var string|null
      */
     protected static ?string $activeNavigationIcon = "heroicon-s-user-group";
+
+    /**
+     * @return string
+     */
+    public static function getLabel(): string
+    {
+        return __("module.user.label");
+    }
 
     /**
      * @return string

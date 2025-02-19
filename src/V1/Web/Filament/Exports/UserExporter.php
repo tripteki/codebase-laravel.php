@@ -34,6 +34,15 @@ class UserExporter extends Exporter
      * @param \Filament\Actions\Exports\Models\Export $export
      * @return string
      */
+    public function getFileName(Export $export): string
+    {
+        return "users-{$export->getKey()}";
+    }
+
+    /**
+     * @param \Filament\Actions\Exports\Models\Export $export
+     * @return string
+     */
     public static function getCompletedNotificationBody(Export $export): string
     {
         $successfulRows = $export->successful_rows;
