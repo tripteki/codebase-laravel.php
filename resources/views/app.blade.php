@@ -7,8 +7,9 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
     <link rel="apple-touch-icon" href="{{ asset('asset/logo.png') }}" />
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    @viteReactRefresh
     @vite("resources/css/app.css")
-    @vite("resources/js/app.js")
+    @vite("resources/js/app.tsx")
     @inertiaHead
 </head>
 

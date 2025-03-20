@@ -9,7 +9,9 @@ export default {
         "./node_modules/flowbite/**/*.{js,ts}",
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
-        "./resources/**/*.vue",
+        "./resources/**/*.ts",
+        "./resources/**/*.jsx",
+        "./resources/**/*.tsx",
     ],
 
     plugins: [

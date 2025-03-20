@@ -1,10 +1,9 @@
 {
-    "$schema": "https://shadcn-vue.com/schema.json",
+    "$schema": "https://ui.shadcn.com/schema.json",
 
-    "typescript": false,
+    "tsx": true,
+    "rsc": false,
     "style": "new-york",
-    "tsConfigPath": "./jsconfig.json",
-    "framework": "vite",
 
     "tailwind": {
 
@@ -17,8 +16,10 @@
 
     "aliases": {
 
+        "lib": "@/Libraries",
         "utils": "@/Libraries/utils",
-        "composables": "@/Composables",
-        "components": "@/Components"
+        "hooks": "@/Hooks",
+        "components": "@/Components",
+        "ui": "@/Components/ui"
     }
 }
