@@ -10,5 +10,5 @@ Route::get("/login", function () { return redirect("/admin/login"); })->name("lo
 
 Route::middleware([ "i18n", ])->group(function () {
 
-    Route::get("/", function () { return Inertia::render("Index"); });
+    Route::get("/", function () { return Inertia::render("index"); });
 });

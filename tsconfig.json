@@ -24,14 +24,14 @@
 
         "typeRoots": [
 
-            "./resources/js/Types",
+            "./resources/js/types",
             "./node_modules/@types"
         ],
 
         "paths": {
 
             "@/*": ["./resources/js/*"],
-            "ui": ["./resources/js/Components/ui/index.ts"],
+            "ui": ["./resources/js/components/ui/index.ts"],
             "ziggy-js": ["./vendor/tightenco/ziggy"]
         }
     },

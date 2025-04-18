@@ -5,7 +5,7 @@ import "flowbite";
 import { hydrateRoot, } from "react-dom/client";
 import { createInertiaApp, } from "@inertiajs/react";
 import { resolvePageComponent, } from "laravel-vite-plugin/inertia-helpers";
-import I18NLayout from "./Pages/Layouts/I18NLayout";
+import I18NLayout from "./pages/layouts/i18n.layout";
 
 createInertiaApp (
 {
@@ -17,8 +17,8 @@ createInertiaApp (
 
     resolve: (
         name
-    ) => resolvePageComponent (`./Pages/${name}.tsx`,
-        import.meta.glob ("./Pages/**/*.tsx")
+    ) => resolvePageComponent (`./pages/${name}.tsx`,
+        import.meta.glob ("./pages/**/*.tsx")
     ),
 
     setup ({

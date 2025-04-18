@@ -16,10 +16,10 @@
 
     "aliases": {
 
-        "lib": "@/Libraries",
-        "utils": "@/Libraries/utils",
-        "hooks": "@/Hooks",
-        "components": "@/Components",
-        "ui": "@/Components/ui"
+        "lib": "@/libraries",
+        "utils": "@/libraries/utils",
+        "hooks": "@/hooks",
+        "components": "@/components",
+        "ui": "@/components/ui"
     }
 }

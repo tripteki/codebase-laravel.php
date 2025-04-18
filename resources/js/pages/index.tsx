@@ -1,9 +1,9 @@
 import { FC, } from "react";
 import { Head, } from "@inertiajs/react";
 import { useTranslation, } from "react-i18next";
-import { useLang, useChangeLang, } from "@/Hooks/i18n";
-import HeaderLayout from "./Layouts/HeaderLayout";
-import FooterLayout from "./Layouts/FooterLayout";
+import { useLang, useChangeLang, } from "@/hooks/i18n";
+import HeaderLayout from "./layouts/header.layout";
+import FooterLayout from "./layouts/footer.layout";
 
 const Index: FC = () =>
 {

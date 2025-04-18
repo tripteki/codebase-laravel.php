@@ -4,7 +4,7 @@ import { createInertiaApp, } from "@inertiajs/react";
 import { resolvePageComponent, } from "laravel-vite-plugin/inertia-helpers";
 import ReactDOMServer from "react-dom/server";
 import createServer from "@inertiajs/react/server";
-import I18NLayout from "./Pages/Layouts/I18NLayout";
+import I18NLayout from "./pages/layouts/i18n.layout";
 
 createServer ((page) => createInertiaApp (
 {
@@ -14,8 +14,8 @@ createServer ((page) => createInertiaApp (
 
     resolve: (
         name
-    ) => resolvePageComponent (`./Pages/${name}.tsx`,
-        import.meta.glob ("./Pages/**/*.tsx",
+    ) => resolvePageComponent (`./pages/${name}.tsx`,
+        import.meta.glob ("./pages/**/*.tsx",
             { eager: true, }
         )
     ),
