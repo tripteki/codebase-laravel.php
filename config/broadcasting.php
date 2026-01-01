@@ -15,12 +15,12 @@ return [
 
             "options" => [
 
-                "cluster" => env("PUSHER_APP_CLUSTER"),
-                "host" => env("PUSHER_HOST") ?: "api-".env("PUSHER_APP_CLUSTER", "mt1").".pusher.com",
-                "port" => env("PUSHER_PORT", 443),
-                "scheme" => env("PUSHER_SCHEME", "https"),
-                "useTLS" => env("PUSHER_SCHEME", "https") === "https",
-                "encrypted" => true,
+                "cluster" => env("PUSHER_APP_CLUSTER", "mt1"),
+                "host" => env("PUSHER_HOST", env("APP_ENV") === "local" ? "127.0.0.1" : "api-".env("PUSHER_APP_CLUSTER", "mt1").".pusher.com"),
+                "port" => (int) env("PUSHER_PORT", env("APP_ENV") === "local" ? 6001 : 443),
+                "scheme" => env("PUSHER_SCHEME", env("APP_ENV") === "local" ? "http" : "https"),
+                "useTLS" => env("PUSHER_SCHEME", env("APP_ENV") === "local" ? "http" : "https") === "https",
+                "encrypted" => env("PUSHER_SCHEME", env("APP_ENV") === "local" ? "http" : "https") === "https",
             ],
 
             "client_options" => [

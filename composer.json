@@ -22,7 +22,8 @@
         "inertiajs/inertia-laravel": "^2.0",
         "tightenco/ziggy": "^2.4",
 
-        "guzzlehttp/guzzle": "^7.10"
+        "guzzlehttp/guzzle": "^7.10",
+        "pusher/pusher-php-server": "^7.2"
     },
 
     "require-dev": {
@@ -59,7 +60,7 @@
         "dev": [
 
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185\" \"php artisan octane:start --watch\" \"php artisan queue:work\" \"php artisan schedule:work\" \"npm run dev\" --names=server,queue,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#86efac\" \"php artisan octane:start --watch\" \"php artisan queue:work\" \"php artisan schedule:work\" \"npm run soketi:development\" \"npm run dev\" --names=server,queue,soketi,vite"
         ],
 
         "build": [
@@ -80,7 +81,7 @@
 
         "start": [
 
-            "nohup bash -c 'php artisan inertia:start-ssr & php artisan octane:start --watch & php artisan queue:work & php artisan schedule:work' > ./storage/logs/run.log 2>&1 &"
+            "nohup bash -c 'php artisan inertia:start-ssr & php artisan octane:start --watch & php artisan queue:work & php artisan schedule:work & npm run soketi:production' > ./storage/logs/run.log 2>&1 &"
         ],
 
         "stop": [
@@ -88,7 +89,8 @@
             "pkill -f 'php artisan inertia:start-ssr' || true",
             "pkill -f 'php artisan octane:start' || true",
             "pkill -f 'php artisan queue:work' || true",
-            "pkill -f 'php artisan schedule:work' || true"
+            "pkill -f 'php artisan schedule:work' || true",
+            "pkill -f 'soketi' || true"
         ],
 
         "post-autoload-dump": [
