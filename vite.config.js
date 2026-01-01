@@ -2,7 +2,7 @@
 
 import { defineConfig, } from "vite";
 import laravel from "laravel-vite-plugin";
-import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
 import i18n from "vite-plugin-laravel-translations";
 
 export default defineConfig ({
@@ -11,11 +11,11 @@ export default defineConfig ({
 
         laravel ({
 
-            ssr: "resources/js/app.ssr.tsx",
+            ssr: "resources/js/app.ssr.ts",
 
             input: [
 
-                "resources/js/app.tsx",
+                "resources/js/app.ts",
                 "resources/css/app.css",
                 "resources/css/filament/admin/theme.css",
             ],
@@ -23,7 +23,17 @@ export default defineConfig ({
             refresh: true,
         }),
 
-        react (),
+        vue ({
+
+            template: {
+
+                transformAssetUrls: {
+
+                    base: null,
+                    includeAbsolute: false,
+                },
+            },
+        }),
 
         i18n ({
 
@@ -31,4 +41,12 @@ export default defineConfig ({
             includeJson: false,
         }),
     ],
+
+    resolve: {
+
+        alias: {
+
+            "@": "/resources/js",
+        },
+    },
 });

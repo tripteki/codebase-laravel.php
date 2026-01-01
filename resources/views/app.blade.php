@@ -23,9 +23,8 @@
     <!-- PWA Splash Screens for iOS -->
     <link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{{ asset('asset/logo.png') }}" />
 
-    @viteReactRefresh
     @vite("resources/css/app.css")
-    @vite("resources/js/app.tsx")
+    @vite("resources/js/app.ts")
     @inertiaHead
 </head>
 
