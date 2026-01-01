@@ -4,7 +4,7 @@ namespace Src\V1\Web\Providers\Filament;
 
 use Filament\PanelProvider;
 use Filament\Panel;
-use Filament\Pages\Dashboard;
+use Src\V1\Web\Filament\Pages\Dashboard;
 use Filament\View\PanelsRenderHook;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
@@ -86,12 +86,12 @@ class AdminPanelProvider extends PanelProvider
         )
         ->discoverPages(
 
-            in: app_path("src/V1/Web/Filament/Pages"),
+            in: base_path("src/V1/Web/Filament/Pages"),
             for: "Src\\V1\\Web\\Filament\\Pages"
         )
         ->discoverWidgets(
 
-            in: app_path("src/V1/Web/Filament/Widgets"),
+            in: base_path("src/V1/Web/Filament/Widgets"),
             for: "Src\\V1\\Web\\Filament\\Widgets"
         );
     }

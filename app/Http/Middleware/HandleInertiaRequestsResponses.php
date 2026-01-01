@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Inertia\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Src\V1\Api\I18N\Services\I18NService;
 
 class HandleInertiaRequestsResponses extends Middleware
@@ -34,7 +35,7 @@ class HandleInertiaRequestsResponses extends Middleware
             "lang" => $i18nService->getLanguageFromSession($request),
             "fallbackLang" => $i18nService->fallbackLang(),
             "availableLangs" => $i18nService->availableLangs(),
-            "appName" => config("app.name"),
+            "appName" => Str::headline(config("app.name")),
             "authUser" => fn () => $request->user(),
         ]);
     }

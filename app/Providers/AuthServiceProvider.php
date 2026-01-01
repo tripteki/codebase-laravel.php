@@ -10,12 +10,14 @@ class AuthServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
     public function boot(): void
     {
         Gate::define("viewPulse", function (User $user) {
 
-            return false;
+            return ! app()->environment("production");
         });
     }
 }

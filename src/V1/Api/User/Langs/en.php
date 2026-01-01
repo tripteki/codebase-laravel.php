@@ -42,6 +42,18 @@ return [
                 "activates" => "User Activates",
                 "deactivates" => "User Deactivates",
             ],
+
+            "stats" => [
+
+                "total" => "Total Users",
+                "total_description" => "All registered users",
+                "active" => "Active Users",
+                "active_description" => "Verified email",
+                "inactive" => "Inactive Users",
+                "inactive_description" => "Deactivated accounts",
+                "new_today" => "New Users Today",
+                "new_today_description" => "Registered today",
+            ],
         ],
 
         "tables" => [

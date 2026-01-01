@@ -11,6 +11,11 @@ class UserTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * @var \App\Models\User
+     */
+    protected $user;
+
+    /**
      * @return void
      */
     protected function setUp(): void

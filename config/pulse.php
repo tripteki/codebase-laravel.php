@@ -111,16 +111,6 @@ return [
 
     'recorders' => [
 
-        \Laravel\Reverb\Pulse\Recorders\ReverbConnections::class => [
-
-            'sample_rate' => 1,
-        ],
-     
-        \Laravel\Reverb\Pulse\Recorders\ReverbMessages::class => [
-
-            'sample_rate' => 1,
-        ],
-
         Recorders\CacheInteractions::class => [
 
             'enabled' => env('PULSE_CACHE_INTERACTIONS_ENABLED', true),

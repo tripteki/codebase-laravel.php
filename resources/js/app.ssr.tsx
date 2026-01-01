@@ -10,6 +10,13 @@ createServer ((page) => createInertiaApp (
 {
     page,
 
+    title: (
+        title
+    ) => {
+        const appName = page.props.appName as string || "";
+        return title ? `${title} - ${appName}` : appName;
+    },
+
     render: ReactDOMServer.renderToString,
 
     resolve: (

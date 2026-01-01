@@ -42,6 +42,18 @@ return [
                 "activates" => "Pengguna Aktif",
                 "deactivates" => "Pengguna Tidak Aktif",
             ],
+
+            "stats" => [
+
+                "total" => "Total Pengguna",
+                "total_description" => "Semua pengguna terdaftar",
+                "active" => "Pengguna Aktif",
+                "active_description" => "Email terverifikasi",
+                "inactive" => "Pengguna Tidak Aktif",
+                "inactive_description" => "Akun dinonaktifkan",
+                "new_today" => "Pengguna Baru Hari Ini",
+                "new_today_description" => "Terdaftar hari ini",
+            ],
         ],
 
         "tables" => [

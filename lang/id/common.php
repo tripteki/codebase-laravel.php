@@ -13,6 +13,11 @@ return [
     |
     */
 
-    'welcome' => 'Selamat Datang...',
+    'welcome' => 'Selamat Datang',
+    'title' => 'Bangun hal yang menakjubkan',
+    'subtitle' => 'dengan Laravel',
+    'description' => 'WebApp Laravel modern dengan React, TypeScript, dan shadcn/ui.',
+    'get_started' => 'Mulai',
+    'view_docs' => 'Lihat Dokumentasi',
 
 ];

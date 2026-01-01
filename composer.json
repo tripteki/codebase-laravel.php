@@ -7,10 +7,9 @@
 
     "require": {
 
-        "php": "^8.2",
-        "laravel/framework": "^11.44",
+        "php": "^8.1",
+        "laravel/framework": "^10.3",
         "laravel/octane": "^2.5",
-        "laravel/reverb": "^1.0",
         "laravel/pulse": "^1.2",
 
         "tripteki/laravelphp-import-export": "^1.0",
@@ -21,20 +20,19 @@
         "filament/filament": "^3.2",
         "bezhansalleh/filament-language-switch": "^3.1",
         "inertiajs/inertia-laravel": "^2.0",
-        "tightenco/ziggy": "^2.4"
+        "tightenco/ziggy": "^2.4",
+
+        "guzzlehttp/guzzle": "^7.10"
     },
 
     "require-dev": {
 
-        "laravel/pint": "^1.13",
-        "laravel/pail": "^1.2",
-
-        "phpunit/phpunit": "^11.5.3",
+        "phpunit/phpunit": "^10.5.60",
         "mockery/mockery": "^1.6",
         "fakerphp/faker": "^1.23",
 
         "laravel/tinker": "^2.10",
-        "nunomaduro/collision": "^8.6"
+        "nunomaduro/collision": "^7.12"
     },
 
     "autoload": {
@@ -61,7 +59,7 @@
         "dev": [
 
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan octane:start --watch\" \"php artisan reverb:start\" \"php artisan queue:work\" \"php artisan pail\" \"npm run dev\" --names=server,ws,queue,logs,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185\" \"php artisan octane:start --watch\" \"php artisan queue:work\" \"php artisan schedule:work\" \"npm run dev\" --names=server,queue,vite"
         ],
 
         "build": [
@@ -69,10 +67,6 @@
             "npm run production"
         ],
 
-        "lint": [
-
-            "./vendor/bin/pint -v"
-        ],
 
         "test": [
 
@@ -86,15 +80,13 @@
 
         "start": [
 
-            "nohup bash -c 'npm run development & php artisan inertia:start-ssr & php artisan octane:start --watch & php artisan reverb:start --debug & php artisan queue:work & php artisan schedule:work' > ./storage/logs/run.log 2>&1 &"
+            "nohup bash -c 'php artisan inertia:start-ssr & php artisan octane:start --watch & php artisan queue:work & php artisan schedule:work' > ./storage/logs/run.log 2>&1 &"
         ],
 
         "stop": [
 
-            "pkill -f 'npm run development' || true",
             "pkill -f 'php artisan inertia:start-ssr' || true",
-            "pkill -f 'php artisan octane:start --watch' || true",
-            "pkill -f 'php artisan reverb:start --debug' || true",
+            "pkill -f 'php artisan octane:start' || true",
             "pkill -f 'php artisan queue:work' || true",
             "pkill -f 'php artisan schedule:work' || true"
         ],

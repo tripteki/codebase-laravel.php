@@ -25,9 +25,9 @@ use Laravel\Octane\Octane;
 
 return [
 
-    "host" => @parse_url(config("app.url"))["host"],
-    "port" => @parse_url(config("app.url"))["port"] ?? "80",
-    "https" => @parse_url(config("app.url"))["scheme"] === "https",
+    "host" => @parse_url(config("app.url", "http://localhost"))["host"] ?? "localhost",
+    "port" => @parse_url(config("app.url", "http://localhost"))["port"] ?? "80",
+    "https" => (@parse_url(config("app.url", "http://localhost"))["scheme"] ?? "http") === "https",
 
     "state_file" => storage_path("logs/server-state.json"),
 
@@ -42,7 +42,7 @@ return [
             "pid_file" => storage_path("logs/server/server.pid"),
             "log_file" => storage_path("logs/server.log"),
 
-            ...(@parse_url(config("app.url"))["scheme"] === "https" ? [
+            ...((@parse_url(config("app.url", "http://localhost"))["scheme"] ?? "http") === "https" ? [
 
                 "ssl_key_file" => env("SSL_KEY_FILE", ".key"),
                 "ssl_cert_file" => env("SSL_CERT_FILE", ".cert"),
@@ -53,7 +53,7 @@ return [
             // "ssl_cert_file" => ".cert", //
         ],
 
-        "ssl" => @parse_url(config("app.url"))["scheme"] === "https",
+        "ssl" => (@parse_url(config("app.url", "http://localhost"))["scheme"] ?? "http") === "https",
     ],
 
     "cache" => [

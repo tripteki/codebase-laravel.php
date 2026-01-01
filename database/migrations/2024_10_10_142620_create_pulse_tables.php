@@ -8,6 +8,8 @@ return new class extends PulseMigration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up(): void
     {
@@ -81,6 +83,8 @@ return new class extends PulseMigration
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
     public function down(): void
     {

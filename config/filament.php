@@ -21,7 +21,7 @@ return [
             "authEndpoint" => "/broadcasting/auth",
             "disableStats" => false,
 
-            "broadcaster" => env("BROADCAST_CONNECTION", "reverb"),
+            "broadcaster" => env("BROADCAST_CONNECTION", "pusher"),
             "key" => config("broadcasting.connections.".config("broadcasting.default").".key"),
             "cluster" => config("broadcasting.connections.".config("broadcasting.default").".options.cluster"),
             "wsHost" => config("broadcasting.connections.".config("broadcasting.default").".options.host"),

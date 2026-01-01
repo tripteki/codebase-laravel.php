@@ -6,8 +6,6 @@
 
     <livewire:pulse.cache cols="4" />
     <livewire:pulse.queues cols="4" />
-    <livewire:reverb.connections cols="4" />
-    <livewire:reverb.messages cols="4" />
 
     <livewire:pulse.exceptions cols="full" />
 

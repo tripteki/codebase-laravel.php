@@ -10,12 +10,7 @@ class UserOverview extends ChartWidget
     /**
      * @var int|string|array
      */
-    protected int | string | array $columnSpan = "sm";
-
-    /**
-     * @var int|string|array
-     */
-    protected int | string | array $columnStart = "default";
+    protected int | string | array $columnSpan = "full";
 
     /**
      * @var string|null

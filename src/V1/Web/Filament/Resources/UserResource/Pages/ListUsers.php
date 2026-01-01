@@ -3,6 +3,7 @@
 namespace Src\V1\Web\Filament\Resources\UserResource\Pages;
 
 use Src\V1\Web\Filament\Resources\UserResource;
+use Src\V1\Web\Filament\Resources\UserResource\Widgets\UserStatsWidget;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,7 @@ class ListUsers extends ListRecords
     {
         return [
 
-            UserResource\Widgets\UserOverview::class,
+            UserStatsWidget::class,
         ];
     }
 

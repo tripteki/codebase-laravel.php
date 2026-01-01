@@ -5,13 +5,38 @@ import Pusher from "pusher-js";
 
 window.Pusher = Pusher;
 
-window.Echo = new Echo (
-{
-    broadcaster: "reverb",
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? "https") === "https",
-    enabledTransports: [ "ws", "wss", ],
-});
+const pusherKey = import.meta.env.VITE_PUSHER_APP_KEY;
+
+if (pusherKey) {
+    window.Echo = new Echo (
+    {
+        broadcaster: "pusher",
+        key: pusherKey,
+        cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? "mt1",
+        wsHost: import.meta.env.VITE_PUSHER_HOST,
+        wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
+        wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
+        forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? "https") === "https",
+        enabledTransports: [ "ws", "wss", ],
+    });
+} else {
+    window.Echo = {
+        channel: () => ({
+            listen: () => ({ stop: () => {}, }),
+            stopListening: () => {},
+        }),
+        private: () => ({
+            listen: () => ({ stop: () => {}, }),
+            stopListening: () => {},
+        }),
+        join: () => ({
+            listen: () => ({ stop: () => {}, }),
+            leave: () => {},
+            here: () => {},
+            joining: () => {},
+            leaving: () => {},
+        }),
+        leave: () => {},
+        disconnect: () => {},
+    };
+}

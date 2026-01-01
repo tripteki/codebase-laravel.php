@@ -7,7 +7,7 @@ return [
     /*
     | Supported: "file", "cookie", "database", "apc", "memcached", "redis", "array".
     */
-    "driver" => env("SESSION_DRIVER", "redis"),
+    "driver" => env("SESSION_DRIVER", "file"),
 
     "lifetime" => 120,
     "lottery" => [ 2, 100, ],
