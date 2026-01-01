@@ -19,5 +19,8 @@ return [
     'description' => 'WebApp Laravel modern dengan React, TypeScript, dan shadcn/ui.',
     'get_started' => 'Mulai',
     'view_docs' => 'Lihat Dokumentasi',
+    'offline_title' => 'Anda Offline!',
+    'offline_message' => 'Silakan periksa koneksi jaringan Anda dan coba lagi.',
+    'retry' => 'Coba Lagi',
 
 ];

@@ -1,90 +1,106 @@
 "use strict";
 
 /**
+ * Service Worker for Progressive Web App (PWA)
+ * Handles offline caching and network requests
+ */
+
+const CACHE_NAME = "pwa-cache-v1";
+const OFFLINE_URL = "/offline";
+const VITE_DEV_SERVER_PATHS = [
+    "/@vite/",
+    "/@react-refresh/",
+    "/@id/",
+    "/node_modules/",
+    "5173", // Vite dev server port
+];
+
+/**
  * List of files to cache during service worker installation.
  * @type {string[]}
  */
 const filesToCache = [
-
     "/",
-    "/offline.html"
+    OFFLINE_URL,
+    "/asset/favicon.png",
+    "/asset/logo.png",
 ];
 
 /**
- * Preload the cache with the files in `filesToCache`.
- * @returns {Promise} Resolves when the files have been added to cache.
+ * Check if request should be skipped (e.g., Vite dev server).
+ * @param {Request} request The request to check.
+ * @returns {boolean} True if request should be skipped.
  */
-const preLoad = function () {
-    return caches.open ("offline").then (function (cache) {
-        return cache.addAll (filesToCache);
-    });
-};
+function shouldSkipRequest(request) {
+    const url = new URL(request.url);
 
-/**
- * Check if the request can be fulfilled by the network.
- * @param {Request} request The request to be fetched.
- * @returns {Promise<Response>} Resolves with the response if successful, or rejects if not.
- */
-const checkResponse = function (request) {
-    return new Promise (function (fulfill, reject) {
-        fetch (request).then (function (response) {
-            if (response.status !== 404) {
-                fulfill (response);
-            } else {
-                reject ();
-            }
-        }, reject);
-    });
-};
+    // Skip non-HTTP(S) requests
+    if (!url.protocol.startsWith("http")) {
+        return true;
+    }
 
-/**
- * Add the given request to the cache.
- * @param {Request} request The request to be cached.
- * @returns {Promise<void>} Resolves when the request has been added to the cache.
- */
-const addToCache = function (request) {
-    return caches.open ("offline").then (function (cache) {
-        return fetch (request).then (function (response) {
-            return cache.put (request, response);
-        });
-    });
-};
+    // Skip Vite dev server requests
+    if (VITE_DEV_SERVER_PATHS.some((path) => url.pathname.includes(path) || url.hostname.includes(path))) {
+        return true;
+    }
 
-/**
- * Remove the given request from the cache.
- * @param {Request} request The request to be removed from the cache.
- * @returns {Promise<void>} Resolves when the request has been removed from the cache.
- */
-const removeFromCache = function (request) {
-    return caches.open ("offline").then (function (cache) {
-        return cache.delete (request);
-    });
-};
+    // Skip external domains (CDN, API, etc.)
+    if (url.hostname !== self.location.hostname && url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
+        return true;
+    }
 
-/**
- * Try to fetch the response from cache.
- * @param {Request} request The request to be fetched from cache.
- * @returns {Promise<Response>} Resolves with the cached response or fallback to offline.html.
- */
-const returnFromCache = function (request) {
-    return caches.open ("offline").then (function (cache) {
-        return cache.match (request).then (function (matching) {
-            if (! matching || matching.status === 404) {
-                return cache.match ("offline.html");
-            } else {
-                return matching;
-            }
-        });
-    });
-};
+    return false;
+}
 
 /**
  * Install event handler to preload files into cache.
  * @param {ExtendableEvent} event The install event.
  * @returns {void}
  */
-self.addEventListener ("install", function (eventListener) {
-    eventListener.waitUntil (preLoad ());
+self.addEventListener("install", function (event) {
+    console.log("🔧 Service Worker: Installing...");
+
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log("✅ Service Worker: Cache opened");
+                return cache.addAll(filesToCache);
+            })
+            .then(() => {
+                console.log("✅ Service Worker: Files cached");
+                return self.skipWaiting();
+            })
+            .catch((error) => {
+                console.error("❌ Service Worker: Installation failed", error);
+            })
+    );
+});
+
+/**
+ * Activate event handler to clean up old caches.
+ * @param {ExtendableEvent} event The activate event.
+ * @returns {void}
+ */
+self.addEventListener("activate", function (event) {
+    console.log("🔧 Service Worker: Activating...");
+
+    event.waitUntil(
+        caches.keys()
+            .then((cacheNames) => {
+                return Promise.all(
+                    cacheNames
+                        .filter((cacheName) => cacheName !== CACHE_NAME)
+                        .map((cacheName) => {
+                            console.log("🗑️ Service Worker: Deleting old cache", cacheName);
+                            return caches.delete(cacheName);
+                        })
+                );
+            })
+            .then(() => {
+                console.log("✅ Service Worker: Activated");
+                return self.clients.claim();
+            })
+    );
 });
 
 /**
@@ -92,16 +108,55 @@ self.addEventListener ("install", function (eventListener) {
  * @param {FetchEvent} event The fetch event.
  * @returns {void}
  */
-self.addEventListener ("fetch", function (eventListener) {
-    eventListener.respondWith (checkResponse (eventListener.request).catch (function () {
-        return returnFromCache (eventListener.request);
-    }));
-    if (! eventListener.request.url.startsWith ("http")) {
-        eventListener.waitUntil (addToCache (eventListener.request));
-    }
-});
+self.addEventListener("fetch", function (event) {
+    const request = event.request;
 
-/**
- * Apply ProgressWebApp ServiceWorker.
- */
-if (! navigator.serviceWorker.controller) navigator.serviceWorker.register ("/sw.js").then (function (registration) {});
+    // Skip non-GET requests
+    if (request.method !== "GET") {
+        return;
+    }
+
+    // Skip requests that should be bypassed
+    if (shouldSkipRequest(request)) {
+        return;
+    }
+
+    event.respondWith(
+        fetch(request)
+            .then((response) => {
+                // Clone the response for caching
+                const responseToCache = response.clone();
+
+                // Cache successful responses
+                if (response.status === 200) {
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(request, responseToCache);
+                    });
+                }
+
+                return response;
+            })
+            .catch(() => {
+                // Network request failed, try to serve from cache
+                return caches.match(request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+
+                    // If it's a navigation request and not found in cache, show offline page
+                    if (request.mode === "navigate") {
+                        return caches.match(OFFLINE_URL);
+                    }
+
+                    // For non-navigation requests, return a basic response
+                    return new Response("Offline", {
+                        status: 503,
+                        statusText: "Service Unavailable",
+                        headers: new Headers({
+                            "Content-Type": "text/plain",
+                        }),
+                    });
+                });
+            })
+    );
+});

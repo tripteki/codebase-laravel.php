@@ -19,5 +19,8 @@ return [
     'description' => 'A modern Laravel WebApp with React, TypeScript, and shadcn/ui.',
     'get_started' => 'Get Started',
     'view_docs' => 'View Docs',
+    'offline_title' => 'You\'re Offline!',
+    'offline_message' => 'Please check your network connection and try again.',
+    'retry' => 'Retry',
 
 ];
