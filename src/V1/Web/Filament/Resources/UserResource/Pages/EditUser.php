@@ -48,10 +48,23 @@ class EditUser extends EditRecord
         return $form->
             schema([
 
-                UserForm::form("name"),
-                UserForm::form("email"),
-                UserForm::form("password"),
-                UserForm::form("password_confirmation"),
+                Forms\Components\Section::make(__("module.user.sections.information"))->schema([
+                    UserForm::form("name"),
+                    UserForm::form("email"),
+                ])->columns(2),
+
+                Forms\Components\Section::make(__("module.user.sections.roles"))->schema([
+                    UserForm::form("roles"),
+                ])->columns(1),
+
+                Forms\Components\Section::make(__("module.user.sections.log_activities"))->schema([
+                    UserForm::form("log_activities"),
+                ])->columns(1),
+
+                Forms\Components\Section::make(__("module.user.sections.credential"))->schema([
+                    UserForm::form("password"),
+                    UserForm::form("password_confirmation"),
+                ])->columns(2),
 
             ])->columns(1);
     }

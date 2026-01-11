@@ -1,0 +1,69 @@
+<?php
+
+namespace Src\V1\Web\Filament\Resources\RoleResource\Pages;
+
+use Src\V1\Web\Filament\Resources\RoleResource;
+use Filament\Support\Enums\Alignment;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Actions;
+use Filament\Infolists;
+
+class ViewRole extends ViewRecord
+{
+    /**
+     * @var string
+     */
+    protected static string $resource = RoleResource::class;
+
+    /**
+     * @return \Filament\Actions\Action[]
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+
+            Actions\EditAction::make(),
+        ];
+    }
+
+    /**
+     * @param \Filament\Infolists\Infolist $infolist
+     * @return \Filament\Infolists\Infolist
+     */
+    public function infolist(Infolists\Infolist $infolist): Infolists\Infolist
+    {
+        return $infolist->
+            schema([
+
+                Infolists\Components\TextEntry::make("id")->label(__("module.role.labels.id"))->columnSpan(3)->badge()->
+                    copyable()->
+                    icon("heroicon-s-identification")->
+                    alignment(Alignment::Start),
+                Infolists\Components\TextEntry::make("name")->label(__("module.role.labels.name"))->columnSpan(1)->badge()->
+                    icon("heroicon-s-tag")->
+                    color("success")->
+                    alignment(Alignment::Start),
+                Infolists\Components\TextEntry::make("guard_name")->label(__("module.role.labels.guard_name"))->columnSpan(1)->badge()->
+                    icon("heroicon-s-shield-check")->
+                    color("gray")->
+                    alignment(Alignment::Start),
+                Infolists\Components\TextEntry::make("permissions.name")->label(__("module.role.labels.permissions"))->columnSpan(3)->badge()->
+                    separator(",")->
+                    icon("heroicon-s-key")->
+                    color("warning")->
+                    listWithLineBreaks()->
+                    limitList(5)->
+                    expandableLimitedList(),
+                Infolists\Components\TextEntry::make("created_at")->label(__("module.role.labels.created_at"))->columnSpan(1)->badge()->
+                    dateTime()->
+                    dateTimeTooltip()->
+                    icon("heroicon-s-calendar")->
+                    alignment(Alignment::Start),
+                Infolists\Components\TextEntry::make("updated_at")->label(__("module.role.labels.updated_at"))->columnSpan(1)->badge()->
+                    dateTime()->
+                    dateTimeTooltip()->
+                    icon("heroicon-s-arrow-path")->
+                    alignment(Alignment::Start),
+            ]);
+    }
+}

@@ -33,7 +33,7 @@ class ListUsers extends ListRecords
     {
         return [
 
-            Actions\CreateAction::make()->label(__("module.user.labels.new"))->using(function (array $data, string $model): Model {
+            Actions\CreateAction::make()->label(__("module.user.labels.new"))->createAnother(false)->using(function (array $data, string $model): Model {
 
                 $user = $model::create($data);
                 $user->markEmailAsVerified();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Src\V1\Api\User\Enums\UserEnum;
 use Src\V1\Api\User\Database\Factories\UserFactory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,6 +21,9 @@ use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
+use Spatie\Permission\Traits\HasRoles as ACLTrait;
+use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable implements IAuthSession, IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
 {
@@ -27,6 +31,8 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         MustVerifyEmailTrait,
         CanResetPasswordTrait,
         NotifiableTrait,
+        ACLTrait,
+        LogTrait,
         HasUlids,
         SoftDeletes,
         HasFactory;
@@ -48,6 +54,7 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         "name",
         "email",
         "password",
+        "log_activities",
     ];
 
     /**
@@ -71,7 +78,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         return [
 
             "email_verified_at" => "datetime",
-            "password" => "hashed",
         ];
     }
 
@@ -83,7 +89,77 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->name === UserEnum::SUPERUSER->value;
+        return $this->hasVerifiedEmail();
+    }
+
+    /**
+     * Hash the password attribute.
+     *
+     * @param mixed $value
+     * @return void
+     */
+    public function setPasswordAttribute($value): void
+    {
+        if (empty($value)) {
+            return;
+        }
+
+        $isAlreadyHashed = is_string($value) &&
+                          strlen($value) === 60 &&
+                          str_starts_with($value, '$2y$');
+
+        $this->attributes['password'] = $isAlreadyHashed ? $value : Hash::make($value);
+    }
+
+    /**
+     * Set the log_activities attribute.
+     *
+     * @param mixed $value
+     * @return void
+     */
+    public function setLogActivitiesAttribute($value): void
+    {
+        $this->attributes['log_activities'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    /**
+     * Get the log_activities attribute.
+     *
+     * @param mixed $value
+     * @return array|null
+     */
+    public function getLogActivitiesAttribute($value): ?array
+    {
+        if (is_null($value)) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            return json_decode($value, true);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get the options for logging activity.
+     *
+     * @return \Spatie\Activitylog\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        $options = LogOptions::defaults()
+            ->logOnly(["name", "email"])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+
+        if ($this->log_activities && is_array($this->log_activities) && !empty($this->log_activities)) {
+            $options->logEvents($this->log_activities);
+        } else {
+            $options->dontLogIfAttributesChangedOnly([]);
+        }
+
+        return $options;
     }
 
     /**
