@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Observers\ImportCompletedObserver;
+use App\Observers\ExportCompletedObserver;
+use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Exports\Models\Export;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Import::observe(ImportCompletedObserver::class);
+        Export::observe(ExportCompletedObserver::class);
     }
 }

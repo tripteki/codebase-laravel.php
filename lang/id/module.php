@@ -15,4 +15,7 @@
 return [
 
     ...(require __DIR__."/../../src/V1/Api/User/Langs/id.php"),
+    ...(require __DIR__."/../../src/V1/Api/Acl/Langs/id/role.php"),
+    ...(require __DIR__."/../../src/V1/Api/Acl/Langs/id/permission.php"),
+    ...(require __DIR__."/../../src/V1/Api/Log/Langs/id/activity.php"),
 ];

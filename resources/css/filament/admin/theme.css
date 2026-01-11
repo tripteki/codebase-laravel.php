@@ -11,6 +11,10 @@
         @apply !ring-0;
     }
 
+    .fi-sidebar-header > div {
+        @apply w-full flex justify-center items-center;
+    }
+
     .fi-sidebar > .overflow-x-clip {
         @apply mt-2 ml-2 mr-2 shadow-none lg:rounded-tr-3xl;
     }
@@ -35,6 +39,22 @@
     }
 
 /* Sidebar::End */
+
+/* Paginator::Start */
+
+    .fi-ta-pagination {
+        @apply flex justify-end;
+    }
+
+    .fi-ta-pagination .fi-pagination {
+        @apply justify-end !important;
+    }
+
+    .fi-ta-pagination nav {
+        @apply w-auto;
+    }
+
+/* Paginator::End */
 
 /* TableAction::Start */
 

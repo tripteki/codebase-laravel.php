@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Models\User;
 use Src\V1\Api\User\Dtos\UserDto;
 use Src\V1\Api\User\Services\UserService;
+use Src\V1\Api\Acl\Enums\RoleEnum;
 use Src\V1\Api\Common\Http\Controllers\Controller as BaseController;
 
 class RegisteredUserController extends BaseController
@@ -76,7 +77,10 @@ class RegisteredUserController extends BaseController
     {
         $userService = $this->userService->create($request);
 
-        event(new Registered(User::find($userService->id)));
+        $user = User::find($userService->id);
+        $user->assignRole(RoleEnum::USER->value);
+
+        event(new Registered($user));
 
         return response()->json($userService, 201);
     }

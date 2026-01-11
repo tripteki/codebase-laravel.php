@@ -62,6 +62,14 @@ return [
             "description" => "Daftar kontrol untuk mengelola akun pengguna, mengubah pengaturan, dan mengatur akses.",
         ],
 
+        "sections" => [
+
+            "information" => "Informasi",
+            "roles" => "Role",
+            "log_activities" => "Log Aktivitas",
+            "credential" => "Kredensial",
+        ],
+
         "forms" => [
 
             //
@@ -76,6 +84,8 @@ return [
 
             "information" => "Informasi",
             "credential" => "Kredensial",
+            "roles" => "Role",
+            "log_activities" => "Log Aktivitas",
         ],
 
         "labels" => [
@@ -90,9 +100,34 @@ return [
             "updated_at" => "Pembaruan",
             "deleted_at" => "Penghapusan",
 
+            "roles" => "Role",
+            "log_activities" => "Log Aktivitas",
+            "log_activity_created" => "Dibuat",
+            "log_activity_updated" => "Diperbarui",
+            "log_activity_deleted" => "Dihapus",
+            "log_activity_restored" => "Dipulihkan",
+
             "new" => "Buat pengguna",
             "import" => "Impor pengguna",
             "export" => "Ekspor pengguna",
+            "mark_as_read" => "Tandai dibaca",
+            "download_csv" => "Unduh CSV",
+            "download_xlsx" => "Unduh XLSX",
+        ],
+
+        "messages" => [
+
+            "no_permissions" => "Tidak ada permission pengguna",
+            "log_activity_created" => "Log ketika pengguna dibuat",
+            "log_activity_updated" => "Log ketika data pengguna diperbarui",
+            "log_activity_deleted" => "Log ketika pengguna dihapus",
+            "log_activity_restored" => "Log ketika pengguna dipulihkan",
+            "import_completed" => "Impor pengguna berhasil diselesaikan!",
+            "import_body_notification" => "Anda dapat mengunduh hasil dari notifikasi flash yang muncul.",
+            "import_body_with_stats" => "Impor selesai: :successful berhasil, :failed baris gagal.",
+            "export_completed" => "Ekspor pengguna berhasil diselesaikan!",
+            "export_body_notification" => "Unduh file Anda dari notifikasi flash dalam format CSV atau XLSX.",
+            "export_body_with_download" => "Ekspor Anda telah selesai dengan :count baris. Klik di bawah untuk mengunduh.",
         ],
 
         "api" => [

@@ -62,6 +62,14 @@ return [
             "description" => "List of controls to manage user accounts, modify settings, and adjust access.",
         ],
 
+        "sections" => [
+
+            "information" => "Information",
+            "roles" => "Roles",
+            "log_activities" => "Log Activities",
+            "credential" => "Credential",
+        ],
+
         "forms" => [
 
             //
@@ -76,6 +84,8 @@ return [
 
             "information" => "Information",
             "credential" => "Credential",
+            "roles" => "Roles",
+            "log_activities" => "Log Activities",
         ],
 
         "labels" => [
@@ -90,9 +100,34 @@ return [
             "updated_at" => "Updation",
             "deleted_at" => "Deletion",
 
+            "roles" => "Roles",
+            "log_activities" => "Log Activities",
+            "log_activity_created" => "Created",
+            "log_activity_updated" => "Updated",
+            "log_activity_deleted" => "Deleted",
+            "log_activity_restored" => "Restored",
+
             "new" => "Create user",
             "import" => "Import users",
             "export" => "Export users",
+            "mark_as_read" => "Mark as read",
+            "download_csv" => "Download CSV",
+            "download_xlsx" => "Download XLSX",
+        ],
+
+        "messages" => [
+
+            "no_permissions" => "No user permissions",
+            "log_activity_created" => "Log when user is created",
+            "log_activity_updated" => "Log when user data is updated",
+            "log_activity_deleted" => "Log when user is deleted",
+            "log_activity_restored" => "Log when user is restored",
+            "import_completed" => "User import completed successfully!",
+            "import_body_notification" => "You can download the results from the flash notification that appeared.",
+            "import_body_with_stats" => "Import completed: :successful successful, :failed failed rows.",
+            "export_completed" => "User export completed successfully!",
+            "export_body_notification" => "Download your file from the flash notification in CSV or XLSX format.",
+            "export_body_with_download" => "Your export has completed with :count rows. Click below to download.",
         ],
 
         "api" => [

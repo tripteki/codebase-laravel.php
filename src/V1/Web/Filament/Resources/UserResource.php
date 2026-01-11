@@ -3,6 +3,7 @@
 namespace Src\V1\Web\Filament\Resources;
 
 use App\Models\User;
+use Src\V1\Api\User\Enums\PermissionEnum;
 use Src\V1\Web\Filament\Resources\UserResource\Forms\UserForm;
 use Src\V1\Web\Filament\Imports\UserImporter;
 use Src\V1\Web\Filament\Exports\UserExporter;
@@ -15,6 +16,7 @@ use Filament\Tables;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -47,6 +49,11 @@ class UserResource extends Resource
      * @var string|null
      */
     protected static ?string $activeNavigationIcon = "heroicon-s-user-group";
+
+    /**
+     * @var int
+     */
+    protected static ?int $navigationSort = 10;
 
     /**
      * @return string
@@ -85,7 +92,7 @@ class UserResource extends Resource
      */
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::activated()->where("updated_at", ">=", now()->subMinutes(5))->count();
+        return static::getModel()::count();
     }
 
     /**
@@ -122,6 +129,16 @@ class UserResource extends Resource
                         UserForm::form("password"),
                         UserForm::form("password_confirmation"),
                     ]),
+
+                    Forms\Components\Wizard\Step::make(__("module.user.steps.roles"))->icon("heroicon-s-shield-check")->schema([
+
+                        UserForm::form("roles"),
+                    ]),
+
+                    Forms\Components\Wizard\Step::make(__("module.user.steps.log_activities"))->icon("heroicon-s-document-text")->schema([
+
+                        UserForm::form("log_activities"),
+                    ]),
                 ]),
             ])->columns(1);
     }
@@ -148,14 +165,17 @@ class UserResource extends Resource
                     copyable()->
                     icon("heroicon-s-envelope")->
                     alignment(Alignment::Justify),
+                Tables\Columns\TextColumn::make("roles.name")->label(__("module.user.labels.roles"))->
+                    listWithLineBreaks()->
+                    limitList(3)->
+                    expandableLimitedList()->
+                    icon("heroicon-s-shield-check")->
+                    color("success")->
+                    alignment(Alignment::Start),
                 Tables\Columns\TextColumn::make("created_at")->label(__("module.user.labels.created_at"))->since()->
                     sortable()->
                     alignment(Alignment::Justify),
                 Tables\Columns\TextColumn::make("updated_at")->label(__("module.user.labels.updated_at"))->since()->
-                    sortable()->
-                    alignment(Alignment::Justify),
-                Tables\Columns\TextColumn::make("deleted_at")->label(__("module.user.labels.deleted_at"))->since()->
-                    placeholder("Null")->
                     sortable()->
                     alignment(Alignment::Justify),
 
@@ -172,11 +192,13 @@ class UserResource extends Resource
             ])->headerActions([
 
                 Tables\Actions\ImportAction::make()->importer(UserImporter::class)->chunkSize(50)->
-                    icon("heroicon-o-arrow-down-circle"),
+                    icon("heroicon-o-arrow-down-circle")->
+                    visible(fn () => auth()->user()->can(PermissionEnum::USER_IMPORT_CREATE->value)),
                 Tables\Actions\ExportAction::make()->exporter(UserExporter::class)->
-                    icon("heroicon-o-arrow-up-circle"),
+                    icon("heroicon-o-arrow-up-circle")->
+                    visible(fn () => auth()->user()->can(PermissionEnum::USER_EXPORT_CREATE->value)),
 
-            ])->actions([
+            ])->recordUrl(null)->actions([
 
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -204,5 +226,66 @@ class UserResource extends Resource
             "edit" => Pages\EditUser::route("/{record}/edit"),
             "view" => Pages\ViewUser::route("/{record}"),
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_VIEW->value);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $record
+     * @return bool
+     */
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_VIEW->value);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_CREATE->value);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $record
+     * @return bool
+     */
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_UPDATE->value);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $record
+     * @return bool
+     */
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_DELETE->value);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $record
+     * @return bool
+     */
+    public static function canForceDelete(Model $record): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_FORCE_DELETE->value);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $record
+     * @return bool
+     */
+    public static function canRestore(Model $record): bool
+    {
+        return auth()->user()->can(PermissionEnum::USER_RESTORE->value);
     }
 }
