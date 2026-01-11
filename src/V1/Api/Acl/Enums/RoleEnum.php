@@ -8,5 +8,7 @@ namespace Src\V1\Api\Acl\Enums;
 enum RoleEnum: string
 {
     case SUPERADMIN = "superadmin";
-    case ADMINISTRATOR = "admin";
+    case ADMIN = "admin";
+    case USER = "user";
+    case GUEST = "guest";
 }

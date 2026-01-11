@@ -99,6 +99,7 @@ return [
 
         Src\V1\Api\Auth\Providers\AuthServiceProvider::class,
         Src\V1\Api\User\Providers\UserServiceProvider::class,
+        Src\V1\Api\Acl\Providers\AclServiceProvider::class,
 
     ],
 

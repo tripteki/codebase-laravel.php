@@ -2,10 +2,7 @@
 
 namespace Src\V1\Api\User\Database\Seeders;
 
-use App\Models\User;
-use Src\V1\Api\User\Enums\UserEnum;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
 
 class UserSeeder extends Seeder
 {
@@ -14,15 +11,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        Artisan::call("make:filament-user", [
+        $this->call([
 
-            "--name" => ($name = UserEnum::SUPERUSER->value),
-            "--email" => ($email = UserEnum::SUPERUSER->value."@mail.com"),
-            "--password" => ($password = "12345678"),
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            CreateUserSeeder::class,
         ]);
-
-        User::where("email", $email)->first()?->markEmailAsVerified();
-
-        $this->command->getOutput();
     }
 }

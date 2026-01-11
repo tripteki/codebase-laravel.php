@@ -3,8 +3,11 @@
 namespace Src\V1\Web\Filament\Resources\UserResource\Forms;
 
 use App\Models\User;
+use Src\V1\Api\Acl\Models\Role;
+use Src\V1\Api\User\Enums\LogActivityEnum;
 use Filament\Forms;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rule;
 
 abstract class UserForm
@@ -51,6 +54,18 @@ abstract class UserForm
                 "same:password",
             ],
 
+            "roles" => [
+
+                "nullable",
+                "array",
+            ],
+
+            "log_activities" => [
+
+                "nullable",
+                "array",
+            ],
+
         ][$validation];
     }
 
@@ -91,6 +106,50 @@ abstract class UserForm
                 revealable()->
                 required(fn (string $context): bool => $context === "create")->string()->
                 password(),
+
+            "roles" => Forms\Components\CheckboxList::make("roles")->label(__("module.user.labels.roles"))->validationAttribute(__("module.user.labels.roles"))->
+                relationship(titleAttribute: "name")->
+                searchable()->
+                bulkToggleable()->
+                columns(4)->
+                gridDirection("row")->
+                options(function () {
+                    return Role::with("permissions")->get()->mapWithKeys(function ($role) {
+                        return [$role->id => $role->name];
+                    })->toArray();
+                })->
+                descriptions(function () {
+                    return Role::with("permissions")->get()->mapWithKeys(function ($role) {
+                        $permissions = $role->permissions
+                            ->filter(fn($p) => str_starts_with($p->name, "user."))
+                            ->pluck("name");
+
+                        if ($permissions->isEmpty()) {
+                            return [$role->id => __("module.user.messages.no_permissions")];
+                        }
+
+                        $html = $permissions->map(fn($p) => e($p))->join('<br />');
+
+                        return [$role->id => new HtmlString($html)];
+                    })->toArray();
+                }),
+
+            "log_activities" => Forms\Components\CheckboxList::make("log_activities")->label(__("module.user.labels.log_activities"))->validationAttribute(__("module.user.labels.log_activities"))->
+                bulkToggleable()->
+                columns(4)->
+                gridDirection("row")->
+                options([
+                    LogActivityEnum::CREATED->value => __("module.user.labels.log_activity_created"),
+                    LogActivityEnum::UPDATED->value => __("module.user.labels.log_activity_updated"),
+                    LogActivityEnum::DELETED->value => __("module.user.labels.log_activity_deleted"),
+                    LogActivityEnum::RESTORED->value => __("module.user.labels.log_activity_restored"),
+                ])->
+                descriptions([
+                    LogActivityEnum::CREATED->value => __("module.user.messages.log_activity_created"),
+                    LogActivityEnum::UPDATED->value => __("module.user.messages.log_activity_updated"),
+                    LogActivityEnum::DELETED->value => __("module.user.messages.log_activity_deleted"),
+                    LogActivityEnum::RESTORED->value => __("module.user.messages.log_activity_restored"),
+                ]),
 
         ][$form];
     }
