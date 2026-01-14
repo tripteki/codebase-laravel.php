@@ -139,7 +139,7 @@ class UserResource extends Resource
 
                         UserForm::form("log_activities"),
                     ]),
-                ]),
+                ])->persistStepInQueryString(),
             ])->columns(1);
     }
 
