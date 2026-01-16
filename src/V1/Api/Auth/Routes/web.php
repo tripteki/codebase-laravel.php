@@ -10,5 +10,5 @@ use Illuminate\Http\JsonResponse;
  * Auths.
  */
 Route::get("auth/verify-email/{id}/{hash}", VerifyEmailController::class)
-                ->middleware([ "auth:web", "signed", "throttle:6,1", ])
+                ->middleware([ "signed", "throttle:6,1", ])
                 ->name("verification.verify");
