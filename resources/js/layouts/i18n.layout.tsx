@@ -8,8 +8,8 @@ declare global
     interface Window
     {
         LARAVEL_TRANSLATIONS: Record<any, any>;
-    }
-}
+    };
+};
 
 const I18NLayout: FC<
 {
@@ -47,6 +47,6 @@ const I18NLayout: FC<
     return (<>
         {isInitialed && children}
     </>);
-}
+};
 
 export default I18NLayout;

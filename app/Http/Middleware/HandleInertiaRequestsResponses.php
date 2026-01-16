@@ -36,6 +36,7 @@ class HandleInertiaRequestsResponses extends Middleware
             "fallbackLang" => $i18nService->fallbackLang(),
             "availableLangs" => $i18nService->availableLangs(),
             "appName" => Str::headline(config("app.name")),
+            "appVersion" => config("app.version"),
             "authUser" => fn () => $request->user(),
         ]);
     }

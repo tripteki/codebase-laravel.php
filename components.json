@@ -8,7 +8,7 @@
     "tailwind": {
 
         "prefix": "",
-        "baseColor": "zinc",
+        "baseColor": "neutral",
         "cssVariables": true,
         "css": "resources/css/app.css",
         "config": "tailwind.config.js"
@@ -16,10 +16,12 @@
 
     "aliases": {
 
-        "lib": "@/libraries",
-        "utils": "@/libraries/utils",
+        "lib": "@/lib",
+        "utils": "@/lib/utils",
         "hooks": "@/hooks",
         "components": "@/components",
         "ui": "@/components/ui"
-    }
+    },
+
+    "iconLibrary": "lucide"
 }

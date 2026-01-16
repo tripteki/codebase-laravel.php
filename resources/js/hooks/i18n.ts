@@ -13,10 +13,10 @@ export function useLang (): {
         currentLang: (): string => props.lang as string,
         availableLangs: (): string[] => props.availableLangs as string[],
     };
-}
+};
 
 export function useChangeLang (
     eventListener: ChangeEvent<HTMLSelectElement>
 ): void {
     window.location.href = route ("i18n", eventListener.target.value);
-}
+};
