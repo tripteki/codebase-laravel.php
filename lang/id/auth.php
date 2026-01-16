@@ -14,7 +14,7 @@ return [
     */
 
     'failed' => 'Kredensial ini tidak cocok dengan catatan kami.',
-    'password' => 'Kata sandi yang diberikan salah.',
+    'password' => 'Password',
     'throttle' => 'Terlalu banyak percobaan masuk. Silakan coba lagi dalam :seconds detik.',
     'verification-sent' => 'Kami telah mengirimkan tautan verifikasi akun Anda melalui email.',
     'verified' => 'Akun Anda telah terverifikasi.',

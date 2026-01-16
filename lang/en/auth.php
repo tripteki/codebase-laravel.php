@@ -14,7 +14,7 @@ return [
     */
 
     'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
+    'password' => 'Password',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'verification-sent' => 'We have emailed your account verification link.',
     'verified' => 'Your account has verified.',
