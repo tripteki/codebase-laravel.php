@@ -1,9 +1,10 @@
 import "./echo";
+import "flowbite";
 import { createApp, h, } from "vue";
 import { createInertiaApp, } from "@inertiajs/vue3";
 import { resolvePageComponent, } from "laravel-vite-plugin/inertia-helpers";
 import { createI18n, } from "vue-i18n";
-import I18NLayout from "./pages/layouts/i18n.layout.vue";
+import I18NLayout from "./layouts/i18n.layout.vue";
 
 createInertiaApp ({
     /**

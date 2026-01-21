@@ -1,18 +1,16 @@
-<template>
-    <slot />
-</template>
-
 <script setup lang="ts">
+
 import { useI18n as useVueI18n, } from "vue-i18n";
 
 /**
  * Props for I18N Layout component.
  */
-interface Props {
+interface Props
+{
     lang: string;
     fallbackLang: string;
     availableLangs: string[];
-}
+};
 
 withDefaults (defineProps<Props> (), {
     lang: "en",
@@ -21,4 +19,9 @@ withDefaults (defineProps<Props> (), {
 });
 
 useVueI18n ();
+
 </script>
+
+<template>
+    <slot />
+</template>

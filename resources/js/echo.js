@@ -8,6 +8,7 @@ window.Pusher = Pusher;
 const pusherKey = import.meta.env.VITE_PUSHER_APP_KEY;
 
 if (pusherKey) {
+
     const isDevelopment = import.meta.env.MODE === "development" || import.meta.env.DEV;
     const defaultPort = isDevelopment ? 6001 : 443;
     const defaultHost = import.meta.env.VITE_PUSHER_HOST || (isDevelopment ? "127.0.0.1" : undefined);
@@ -25,7 +26,9 @@ if (pusherKey) {
         forceTLS: defaultScheme === "https",
         enabledTransports: [ "ws", "wss", ],
     });
+
 } else {
+
     window.Echo = {
         channel: () => ({
             listen: () => ({ stop: () => {}, }),
@@ -45,4 +48,4 @@ if (pusherKey) {
         leave: () => {},
         disconnect: () => {},
     };
-}
+};

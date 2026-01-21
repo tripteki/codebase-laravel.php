@@ -23,12 +23,16 @@
     <!-- PWA Splash Screens for iOS -->
     <link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{{ asset('asset/logo.png') }}" />
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+
     @vite("resources/css/app.css")
     @vite("resources/js/app.ts")
     @inertiaHead
 </head>
 
-<body>
+<body class="font-sans antialiased">
     @routes
     @inertia
 </body>

@@ -4,7 +4,7 @@ import { renderToString, } from "@vue/server-renderer";
 import { resolvePageComponent, } from "laravel-vite-plugin/inertia-helpers";
 import { createSSRApp, h, } from "vue";
 import { createI18n, } from "vue-i18n";
-import I18NLayout from "./pages/layouts/i18n.layout.vue";
+import I18NLayout from "./layouts/i18n.layout.vue";
 
 createServer ((page) =>
     createInertiaApp ({

@@ -9,7 +9,6 @@ const CACHE_NAME = "pwa-cache-v1";
 const OFFLINE_URL = "/offline";
 const VITE_DEV_SERVER_PATHS = [
     "/@vite/",
-    "/@react-refresh/",
     "/@id/",
     "/node_modules/",
     "5173", // Vite dev server port

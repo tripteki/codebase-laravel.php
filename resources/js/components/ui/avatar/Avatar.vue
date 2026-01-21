@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import type { HTMLAttributes, } from "vue";
 import type { AvatarVariants, } from ".";
 import { AvatarRoot, } from "reka-ui";
@@ -13,6 +14,7 @@ const props = withDefaults (defineProps<{
     size: "sm",
     shape: "circle",
 });
+
 </script>
 
 <template>
