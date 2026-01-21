@@ -41,6 +41,7 @@ class HandleInertiaRequestsResponses extends Middleware
             "availableLangs" => $i18nService->availableLangs(),
             "translations" => $this->getTranslations($currentLang),
             "appName" => Str::headline(config("app.name")),
+            "appVersion" => config("app.version"),
             "authUser" => fn () => $request->user(),
         ]);
     }

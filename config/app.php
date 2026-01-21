@@ -95,12 +95,12 @@ return [
         /*
          * Module Service Providers...
          */
-        Src\V1\Web\Providers\Filament\AdminPanelProvider::class,
-        Src\V1\Web\Providers\Filament\FilamentServiceProvider::class,
+        // Src\V1\Web\Providers\Filament\AdminPanelProvider::class,
+        // Src\V1\Web\Providers\Filament\FilamentServiceProvider::class,
 
-        Src\V1\Api\Auth\Providers\AuthServiceProvider::class,
-        Src\V1\Api\User\Providers\UserServiceProvider::class,
-        Src\V1\Api\Acl\Providers\AclServiceProvider::class,
+        // Src\V1\Api\Auth\Providers\AuthServiceProvider::class,
+        // Src\V1\Api\User\Providers\UserServiceProvider::class,
+        // Src\V1\Api\Acl\Providers\AclServiceProvider::class,
 
     ],
 
