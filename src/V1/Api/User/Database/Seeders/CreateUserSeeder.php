@@ -6,7 +6,7 @@ use App\Models\User;
 use Src\V1\Api\User\Enums\UserEnum;
 use Src\V1\Api\Acl\Enums\RoleEnum;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Hash;
 
 class CreateUserSeeder extends Seeder
 {
@@ -15,17 +15,19 @@ class CreateUserSeeder extends Seeder
      */
     public function run(): void
     {
-        Artisan::call("make:filament-user", [
+        $name = UserEnum::SUPERUSER->value;
+        $email = UserEnum::SUPERUSER->value."@mail.com";
+        $password = "12345678";
 
-            "--name" => ($name = UserEnum::SUPERUSER->value),
-            "--email" => ($email = UserEnum::SUPERUSER->value."@mail.com"),
-            "--password" => ($password = "12345678"),
-        ]);
+        $user = User::firstOrCreate(
+            [ "email" => $email, ],
+            [
+                "name" => $name,
+                "password" => Hash::make($password),
+                "email_verified_at" => now(),
+            ]
+        );
 
-        $user = User::where("email", $email)->first();
-        $user?->markEmailAsVerified();
-        $user?->assignRole(RoleEnum::SUPERADMIN->value);
-
-        $this->command->getOutput();
+        $user->assignRole(RoleEnum::SUPERADMIN->value);
     }
 }
