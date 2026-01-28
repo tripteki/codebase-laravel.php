@@ -5,19 +5,18 @@ namespace App\Http\Controllers\Admin\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class ForgotPasswordController
 {
     /**
      * Show the forgot password form.
      *
-     * @return \Inertia\Response
+     * @return \Illuminate\View\View
      */
-    public function create(): Response
+    public function create(): View
     {
-        return Inertia::render("admin/auth/forgot-password");
+        return view("livewire.admin.auth.forgot-password");
     }
 
     /**

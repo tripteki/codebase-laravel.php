@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 use Src\V1\Api\Acl\Enums\RoleEnum;
 use Src\V1\Api\User\Dtos\UserDto;
 use Src\V1\Api\User\Services\UserService;
@@ -29,11 +28,11 @@ class RegisterController
     /**
      * Show the registration form.
      *
-     * @return \Inertia\Response
+     * @return \Illuminate\View\View
      */
-    public function create(): Response
+    public function create(): View
     {
-        return Inertia::render("admin/auth/register");
+        return view("livewire.admin.auth.register");
     }
 
     /**

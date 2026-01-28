@@ -5,19 +5,18 @@ namespace App\Http\Controllers\Admin\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class LoginController
 {
     /**
      * Show the login form.
      *
-     * @return \Inertia\Response
+     * @return \Illuminate\View\View
      */
-    public function create(): Response
+    public function create(): View
     {
-        return Inertia::render("admin/auth/login");
+        return view("livewire.admin.auth.login");
     }
 
     /**

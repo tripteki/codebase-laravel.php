@@ -28,7 +28,7 @@ return [
     'identifier' => 'Email or Username',
     'identifier_placeholder' => 'Enter your email or username',
     'name' => 'Name',
-    'name_placeholder' => 'Enter your full name',
+    'name_placeholder' => 'Enter your user name',
     'email' => 'Email',
     'email_placeholder' => 'Enter your email address',
     'password_placeholder' => 'Enter your password',

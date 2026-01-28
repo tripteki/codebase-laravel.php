@@ -28,7 +28,7 @@ return [
     'identifier' => 'Email atau Nama Pengguna',
     'identifier_placeholder' => 'Masukkan email atau nama pengguna Anda',
     'name' => 'Nama',
-    'name_placeholder' => 'Masukkan nama lengkap Anda',
+    'name_placeholder' => 'Masukkan nama pengguna Anda',
     'email' => 'Email',
     'email_placeholder' => 'Masukkan alamat email Anda',
     'password_placeholder' => 'Masukkan kata sandi Anda',

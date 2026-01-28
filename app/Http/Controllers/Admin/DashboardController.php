@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class DashboardController
 {
     /**
      * Display the admin dashboard.
      *
-     * @return \Inertia\Response
+     * @return \Illuminate\View\View
      */
-    public function index(): Response
+    public function index(): View
     {
-        return Inertia::render("admin/dashboard/index");
+        return view("livewire.admin.dashboard.index");
     }
 }
