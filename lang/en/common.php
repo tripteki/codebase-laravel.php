@@ -16,7 +16,7 @@ return [
     'welcome' => 'Welcome',
     'title' => 'Build amazing things',
     'subtitle' => 'with Laravel',
-    'description' => 'A modern Laravel WebApp with React, TypeScript, and shadcn/ui.',
+    'description' => 'A modern Laravel WebApp with Livewire.',
     'get_started' => 'Get Started',
     'view_docs' => 'View Docs',
     'offline_title' => 'You\'re Offline!',

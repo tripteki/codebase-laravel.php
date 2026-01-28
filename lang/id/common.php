@@ -16,7 +16,7 @@ return [
     'welcome' => 'Selamat Datang',
     'title' => 'Bangun hal yang menakjubkan',
     'subtitle' => 'dengan Laravel',
-    'description' => 'WebApp Laravel modern dengan React, TypeScript, dan shadcn/ui.',
+    'description' => 'WebApp Laravel modern dengan Livewire.',
     'get_started' => 'Mulai',
     'view_docs' => 'Lihat Dokumentasi',
     'offline_title' => 'Anda Offline!',

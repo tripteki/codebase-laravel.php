@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 require __DIR__."/web.manifest.php";
 require __DIR__."/../src/V1/Api/I18N/Routes/web.php";
@@ -12,7 +11,7 @@ Route::get("/home", function () { return redirect("/admin/dashboard"); })->name(
 
 Route::middleware([ "i18n", ])->group(function () {
 
-    Route::get("/", function () { return Inertia::render("index"); });
+    Route::get("/", function () { return view("livewire.index"); });
 
     require __DIR__."/admin/auth.php";
 });
