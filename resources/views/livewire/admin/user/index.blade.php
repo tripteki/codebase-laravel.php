@@ -31,15 +31,19 @@
                     </nav>
                     <div class="flex items-center justify-between">
                         <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">{{ __("module_user.all_users") }}</h1>
-                        <a
-                            href="{{ route('admin.users.create') }}"
-                            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white rounded-lg bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:bg-green-400 dark:hover:bg-green-500 dark:focus:ring-green-700"
-                        >
-                            <svg class="w-4 h-4 mr-2 -ml-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.75 2.75a.75.75 0 0 0-1.5 0V9H2.75a.75.75 0 0 0 0 1.5H9.25v6.25a.75.75 0 0 0 1.5 0V10.5h6.25a.75.75 0 0 0 0-1.5H10.75V2.75Z" />
-                            </svg>
-                            {{ __("module_user.create") }}
-                        </a>
+                        <div class="flex items-center gap-2">
+                            <livewire:admin.user.user-import-component />
+                            <livewire:admin.user.user-export-component />
+                            <a
+                                href="{{ route('admin.users.create') }}"
+                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white rounded-lg bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:bg-green-400 dark:hover:bg-green-500 dark:focus:ring-green-700"
+                            >
+                                <svg class="w-4 h-4 mr-2 -ml-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 2.75a.75.75 0 0 0-1.5 0V9H2.75a.75.75 0 0 0 0 1.5H9.25v6.25a.75.75 0 0 0 1.5 0V10.5h6.25a.75.75 0 0 0 0-1.5H10.75V2.75Z" />
+                                </svg>
+                                {{ __("module_user.create") }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
