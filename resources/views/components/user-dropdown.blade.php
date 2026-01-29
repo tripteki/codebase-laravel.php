@@ -1,6 +1,7 @@
 @php
     $user = auth()->user();
     $initials = strtoupper(substr($user->name ?? 'U', 0, 1));
+    $avatarUrl = $user->profile?->avatar ? asset('storage/' . $user->profile->avatar) : null;
 @endphp
 
 <button
@@ -8,8 +9,12 @@
     data-dropdown-toggle="user-dropdown"
     class="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600"
 >
-    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $initials }}</span>
+    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
+        @if ($avatarUrl)
+            <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="w-full h-full object-cover" />
+        @else
+            <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $initials }}</span>
+        @endif
     </div>
     <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -26,7 +31,12 @@
     </div>
     <ul class="py-2">
         <li>
-            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
+            <a href="{{ route('admin.settings.tab', ['tab' => 'personal']) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
+                {{ __('common.profiles') }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin.settings.tab', ['tab' => 'system']) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
                 {{ __('common.settings') }}
             </a>
         </li>

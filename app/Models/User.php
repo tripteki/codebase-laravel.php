@@ -216,4 +216,15 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     {
         $query->onlyTrashed();
     }
+
+    /**
+     * Get the profile associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
 }

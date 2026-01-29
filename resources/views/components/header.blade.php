@@ -1,6 +1,11 @@
 <header class="bg-white/80 border-gray-200 px-4 py-4 backdrop-blur dark:border-gray-600 dark:bg-gray-700/80">
     <div class="container mx-auto flex items-center justify-between">
-        @if (auth()->check())
+        @php
+            $isAdminRoute = request()->routeIs('admin.*') || str_starts_with(request()->path(), 'admin/'); if (auth()->check() && $isAdminRoute) session()->put('admin_page', true);
+            $isAdminPage = auth()->check() && ($isAdminRoute || (request()->header('referer') && str_contains(parse_url(request()->header('referer'), PHP_URL_PATH) ?? '', '/admin/')) || (request()->hasHeader('X-Livewire') && session()->has('admin_page')));
+        @endphp
+
+        @if ($isAdminPage)
             <div class="flex items-center gap-3 flex-1">
                 <button
                     type="button"

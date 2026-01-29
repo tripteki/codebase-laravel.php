@@ -55,6 +55,6 @@ class UserExportComponent extends ExportComponent
      */
     protected function getExportStartedMessage(): string
     {
-        return __("module_user.export_started");
+        return __("module_base.export_started");
     }
 }

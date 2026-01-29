@@ -66,7 +66,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
         }
 
         return new DatabaseMessage([
-            "title" => __("module_user.import_completed"),
+            "title" => __("module_base.import_completed"),
             "body" => $body,
             "import_id" => $this->import->id,
             "file_name" => $this->import->file_name,
@@ -104,7 +104,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
         }
 
         return new BroadcastMessage([
-            "title" => __("module_user.import_completed"),
+            "title" => __("module_base.import_completed"),
             "body" => $body,
             "import_id" => $this->import->id,
             "file_name" => $this->import->file_name,

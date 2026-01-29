@@ -7,7 +7,7 @@
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
         </svg>
-        {{ __("module_user.import") }}
+        {{ __("module_base.import") }}
     </button>
 
     @if ($showModal)
@@ -28,7 +28,7 @@
                             {{ __("module_user.import_users") }}
                         </h3>
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            {{ __("module_user.import_notification_info") }}
+                            {{ __("module_base.import_notification_info") }}
                         </p>
                     </div>
                     <button
@@ -46,7 +46,7 @@
                     <form wire:submit.prevent="import">
                         <div class="mb-4">
                             <label for="import-file" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                {{ __("module_user.select_file") }}
+                                {{ __("module_base.select_file") }}
                             </label>
                             <input
                                 type="file"
@@ -59,7 +59,7 @@
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                {{ __("module_user.import_file_hint") }}
+                                {{ __("module_base.import_file_hint") }}
                             </p>
                         </div>
                         <div class="flex items-center justify-end gap-3">
@@ -68,13 +68,13 @@
                                 wire:click="closeModal"
                                 class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                             >
-                                {{ __("module_user.cancel") }}
+                                {{ __("module_base.cancel") }}
                             </button>
                             <button
                                 type="submit"
                                 class="py-2.5 px-5 text-sm font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
                             >
-                                {{ __("module_user.import") }}
+                                {{ __("module_base.import") }}
                             </button>
                         </div>
                     </form>

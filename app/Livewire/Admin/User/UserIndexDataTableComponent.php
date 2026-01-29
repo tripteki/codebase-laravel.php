@@ -59,7 +59,7 @@ class UserIndexDataTableComponent extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__("module_user.column_name"), "name")
+            Column::make(__("module_base.column_name"), "name")
                 ->sortable()
                 ->searchable()
                 ->label(function (User $row) {
@@ -73,7 +73,7 @@ class UserIndexDataTableComponent extends DataTableComponent
                 ->searchable()
                 ->hideIf(true),
 
-            Column::make(__("module_user.column_created_at"), "created_at")
+            Column::make(__("module_base.column_created_at"), "created_at")
                 ->sortable()
                 ->format(function ($value) {
                     $formatted = $value ? $value->format("Y-m-d H:i") : "";
@@ -82,7 +82,7 @@ class UserIndexDataTableComponent extends DataTableComponent
                 })
                 ->html(),
 
-            Column::make(__("module_user.column_status"))
+            Column::make(__("module_base.column_status"))
                 ->label(function (User $row) {
                     $verified = (bool) $row->email_verified_at;
 
@@ -91,7 +91,7 @@ class UserIndexDataTableComponent extends DataTableComponent
                     ]);
                 }),
 
-            Column::make(__("module_user.column_actions"))
+            Column::make(__("module_base.column_actions"))
                 ->label(function (User $row) {
                     return view("livewire.admin.user.partials.actions", [
                         "user" => $row,

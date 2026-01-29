@@ -8,12 +8,17 @@
     <title>
         @php
             $appName = \Illuminate\Support\Str::headline(config('app.name'));
+            $pageTitle = $title ?? null;
         @endphp
 
-        @hasSection("title")
-            @yield("title") - {{ $appName }}
+        @if($pageTitle)
+            {{ $pageTitle }} - {{ $appName }}
         @else
-            {{ $appName }}
+            @hasSection("title")
+                @yield("title") - {{ $appName }}
+            @else
+                {{ $appName }}
+            @endif
         @endif
     </title>
 

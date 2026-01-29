@@ -44,6 +44,6 @@ class UserImportComponent extends ImportComponent
      */
     protected function getImportStartedMessage(): string
     {
-        return __("module_user.import_started");
+        return __("module_base.import_started");
     }
 }

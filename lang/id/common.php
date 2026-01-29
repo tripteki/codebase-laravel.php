@@ -28,6 +28,7 @@ return [
     'toggle_theme' => 'Ubah tema',
     'close_sidebar' => 'Tutup sidebar',
     'open_sidebar' => 'Buka/tutup sidebar',
+    'profiles' => 'Profil',
     'settings' => 'Pengaturan',
     'search_not_found' => 'Pencarian tidak ditemukan',
     'search_placeholder' => 'Cari...',

@@ -28,6 +28,7 @@ return [
     'toggle_theme' => 'Toggle theme',
     'close_sidebar' => 'Close sidebar',
     'open_sidebar' => 'Toggle sidebar',
+    'profiles' => 'Profiles',
     'settings' => 'Settings',
     'search_not_found' => 'Search not found',
     'search_placeholder' => 'Search...',

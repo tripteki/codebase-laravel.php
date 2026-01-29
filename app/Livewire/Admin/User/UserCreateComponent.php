@@ -81,6 +81,8 @@ class UserCreateComponent extends Component
     public function render(): View
     {
         return view("livewire.admin.user.create")
-            ->layout("layouts.app", ["title" => __("module_user.create_title")]);
+            ->layout("layouts.app", [
+                "title" => __("module_user.create_title"),
+            ]);
     }
 }

@@ -31,7 +31,7 @@
                                         <path fill-rule="evenodd" d="M7.293 14.707a 1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a 1 1 0 0 1 1.414-1.414l4 4a 1 1 0 0 1 0 1.414l-4 4a 1 1 0 0 1-1.414 0Z" clip-rule="evenodd" />
                                     </svg>
                                     <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">
-                                        {{ __("module_user.view") }}
+                                        {{ __("module_base.view") }}
                                     </span>
                                 </div>
                             </li>
@@ -91,7 +91,7 @@
 
                         <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
-                                {{ __("module_user.back_to_list") }}
+                                {{ __("module_base.back_to_list") }}
                             </a>
                             <a
                                 href="{{ route('admin.users.edit', $user) }}"

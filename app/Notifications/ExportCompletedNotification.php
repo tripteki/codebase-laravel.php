@@ -62,7 +62,7 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
         $filePath = "exports/" . $this->export->file_name;
 
         return new DatabaseMessage([
-            "title" => __("module_user.export_completed"),
+            "title" => __("module_base.export_completed"),
             "body" => $body,
             "export_id" => $this->export->id,
             "file_name" => $this->export->file_name,
@@ -96,7 +96,7 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
         $filePath = "exports/" . $this->export->file_name;
 
         return new BroadcastMessage([
-            "title" => __("module_user.export_completed"),
+            "title" => __("module_base.export_completed"),
             "body" => $body,
             "export_id" => $this->export->id,
             "file_name" => $this->export->file_name,
