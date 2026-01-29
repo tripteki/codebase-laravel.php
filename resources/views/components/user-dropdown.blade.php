@@ -18,7 +18,7 @@
 
 <div
     id="user-dropdown"
-    class="absolute right-0 top-12 z-50 hidden w-56 divide-y divide-gray-100 rounded-lg bg-white text-sm shadow dark:divide-gray-600 dark:bg-gray-700"
+    class="absolute border right-0 top-12 z-50 hidden w-56 divide-y divide-gray-100 rounded-lg bg-white text-sm shadow dark:divide-gray-600 dark:bg-gray-700 dark:border-gray-600"
 >
     <div class="px-4 py-3">
         <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $user->name }}</p>

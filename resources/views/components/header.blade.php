@@ -1,6 +1,6 @@
-<header class="bg-white/80 border-b border-gray-200 px-4 py-4 backdrop-blur dark:border-gray-600 dark:bg-gray-700/80">
+<header class="bg-white/80 border-gray-200 px-4 py-4 backdrop-blur dark:border-gray-600 dark:bg-gray-700/80">
     <div class="container mx-auto flex items-center justify-between">
-        @if (auth()->check() && request()->is('admin*'))
+        @if (auth()->check())
             <div class="flex items-center gap-3 flex-1">
                 <button
                     type="button"

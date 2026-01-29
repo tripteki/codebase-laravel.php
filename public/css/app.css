@@ -66,3 +66,186 @@ html, body { font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 }
+
+
+
+#main-content table td,
+#main-content table tbody td {
+
+    color: rgb(17 24 39) !important;
+}
+
+.dark #main-content table td,
+.dark #main-content table tbody td {
+
+    color: rgb(229 231 235) !important;
+}
+
+#main-content table tbody td span:not([class*="bg-"]):not([class*="rounded"]) {
+
+    color: rgb(17 24 39) !important;
+}
+
+.dark #main-content table tbody td span:not([class*="bg-"]):not([class*="rounded"]) {
+
+    color: rgb(229 231 235) !important;
+}
+
+#main-content table thead {
+
+    background-color: rgb(249 250 251) !important;
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+    overflow: hidden !important;
+}
+
+.dark #main-content table thead {
+
+    background-color: rgb(31 41 55) !important;
+}
+
+#main-content table thead th {
+
+    background-color: rgb(249 250 251) !important;
+    color: rgb(55 65 81) !important;
+    font-weight: 500 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.75rem 1.5rem !important;
+}
+
+.dark #main-content table thead th {
+
+    background-color: rgb(31 41 55) !important;
+    color: rgb(209 213 219) !important;
+}
+
+#main-content table thead th button {
+
+    color: rgb(55 65 81) !important;
+}
+
+.dark #main-content table thead th button {
+
+    color: rgb(209 213 219) !important;
+}
+
+#main-content table thead th button:hover {
+
+    color: rgb(17 24 39) !important;
+}
+
+.dark #main-content table thead th button:hover {
+
+    color: rgb(255 255 255) !important;
+}
+
+#main-content table tbody td[colspan] div {
+    background-color: transparent !important;
+}
+
+.dark #main-content table tbody td[colspan] div {
+    background-color: transparent !important;
+}
+
+#main-content table tbody td[colspan] div span {
+    color: rgb(156 163 175) !important;
+}
+
+.dark #main-content table tbody td[colspan] div span {
+    color: rgb(156 163 175) !important;
+}
+
+
+
+#main-content div:has(> [wire\:model\.live="search"]) {
+
+    box-shadow: none !important;
+}
+
+#main-content div[wire\:click="clearSearch"] {
+
+    margin: 0 10px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgb(209 213 219) !important;
+}
+
+.dark #main-content div[wire\:click="clearSearch"] {
+
+    border-color: rgb(75 85 99) !important;
+}
+
+#main-content input[wire\:model\.live="search"] {
+
+    min-width: 256px !important;
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    border-radius: 0.5rem !important;
+    border: 1px solid rgb(209 213 219) !important;
+    background-color: rgb(249 250 251) !important;
+    color: rgb(17 24 39) !important;
+    box-shadow: none !important;
+}
+
+.dark #main-content input[wire\:model\.live="search"] {
+
+    border-color: rgb(75 85 99) !important;
+    background-color: rgb(31 41 55) !important;
+    color: rgb(229 231 235) !important;
+}
+
+#main-content input[wire\:model\.live="search"]:focus {
+
+    border-color: rgb(59 130 246) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+#main-content select[id*="perPage"],
+#main-content select[id*="per-page"],
+#main-content .rounded-md.shadow-sm select {
+
+    min-width: 80px !important;
+    padding: 0.5rem 2rem 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    border-radius: 0.5rem !important;
+    border: 1px solid rgb(209 213 219) !important;
+    background-color: rgb(255 255 255) !important;
+    color: rgb(17 24 39) !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+    box-shadow: none !important;
+}
+
+.dark #main-content select[id*="perPage"],
+.dark #main-content select[id*="per-page"],
+.dark #main-content .rounded-md.shadow-sm select {
+
+    border-color: rgb(75 85 99) !important;
+    background-color: rgb(31 41 55) !important;
+    color: rgb(229 231 235) !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+}
+
+#main-content select[id*="perPage"]:focus,
+#main-content select[id*="per-page"]:focus,
+#main-content .rounded-md.shadow-sm select:focus {
+
+    border-color: rgb(59 130 246) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+
+
+#user-dropdown {
+
+    left: -1rem !important;
+}

@@ -43,5 +43,6 @@ return [
     'activity' => 'Activity',
     'activity_description' => 'Recent activity',
     'activity_content' => 'Recent activities will appear here.',
+    'home' => 'Home',
 
 ];

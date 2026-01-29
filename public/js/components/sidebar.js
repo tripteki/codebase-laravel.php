@@ -52,6 +52,16 @@
 
                 syncIcon();
 
+                var observer = new MutationObserver(function ()
+                {
+                    syncIcon();
+                });
+
+                observer.observe(target, {
+                    attributes: true,
+                    attributeFilter: ["class"],
+                });
+
                 trigger.addEventListener("click", function ()
                 {
                     window.setTimeout(syncIcon, 0);

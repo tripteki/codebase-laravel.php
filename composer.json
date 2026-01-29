@@ -12,6 +12,7 @@
         "laravel/octane": "^2.5",
         "laravel/pulse": "^1.2",
 
+        "rappasoft/laravel-livewire-tables": "^3.7",
         "tripteki/laravelphp-import-export": "^1.0",
         "tripteki/laravelphp-request-response-query": "^1.0",
         "spatie/laravel-data": "^4.11",

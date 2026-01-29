@@ -1,5 +1,10 @@
 @php
     $currentRoute = request()->route()->getName();
+    $isUsersRoute = str_starts_with($currentRoute, 'admin.users.');
+    $latestVerifiedUsersCount = \App\Models\User::query()
+        ->whereNotNull('email_verified_at')
+        ->where('email_verified_at', '>=', now()->subMinutes(5))
+        ->count();
 @endphp
 
 @push('styles')
@@ -18,7 +23,7 @@
 
 <aside
     id="admin-sidebar"
-    class="fixed inset-y-0 left-0 z-40 w-64 border-r border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 transform transition-transform duration-200 -translate-x-full lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-40 w-64 border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 transform transition-transform duration-200 -translate-x-full lg:translate-x-0"
 >
     <div class="flex h-full flex-col">
         <div class="flex h-20 flex-col items-center justify-center border-gray-200 px-4 dark:border-gray-600 relative">
@@ -50,6 +55,9 @@
         </div>
 
         <div class="flex-1 overflow-y-auto px-4 py-4">
+            <div class="mb-4 block lg:hidden">
+                @include("components.admin.search", ["mobileOnly" => true])
+            </div>
             <ul class="space-y-1 text-sm font-medium text-gray-700 dark:text-gray-200">
                 <li>
                     <a
@@ -76,7 +84,7 @@
                             {{ __('sidebar.account_management') }}
                         </span>
                         <svg
-                            class="h-4 w-4 text-gray-500 transition-transform rotate-90"
+                            class="h-4 w-4 text-gray-500 transition-transform {{ $isUsersRoute ? '' : 'rotate-90' }}"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 10 6"
@@ -85,13 +93,20 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                         </svg>
                     </button>
-                    <ul id="sidebar-layouts" class="mt-1 space-y-1 pl-10 text-gray-600 dark:text-gray-300 hidden">
+                    <ul id="sidebar-layouts" class="mt-1 space-y-1 pl-10 text-gray-600 dark:text-gray-300 {{ $isUsersRoute ? '' : 'hidden' }}">
                         <li>
-                            <a href="#" class="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 10a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm-7 7a7 7 0 0 1 14 0Z" />
-                                </svg>
-                                <span>{{ __('sidebar.users') }}</span>
+                            <a href="{{ route('admin.users.index') }}" class="flex items-center justify-between gap-2 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 {{ $isUsersRoute ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : '' }}">
+                                <div class="flex items-center gap-2">
+                                    <svg class="h-4 w-4 {{ $isUsersRoute ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500' }}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 10a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm-7 7a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                    <span>{{ __('sidebar.users') }}</span>
+                                </div>
+                                @if ($latestVerifiedUsersCount > 0)
+                                    <span class="inline-flex items-center justify-center rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white dark:bg-blue-500">
+                                        {{ $latestVerifiedUsersCount }}
+                                    </span>
+                                @endif
                             </a>
                         </li>
                     </ul>

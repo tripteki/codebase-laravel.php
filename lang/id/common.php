@@ -43,5 +43,6 @@ return [
     'activity' => 'Aktivitas',
     'activity_description' => 'Aktivitas terkini',
     'activity_content' => 'Aktivitas terkini akan muncul di sini.',
+    'home' => 'Beranda',
 
 ];
