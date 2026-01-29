@@ -16,6 +16,29 @@
 
     var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
+    var themeToggleBtn = document.getElementById("theme-toggle");
+    var darkIcon = document.getElementById("theme-toggle-dark-icon");
+    var lightIcon = document.getElementById("theme-toggle-light-icon");
+
+    function setIcon(isDark) {
+
+        if (! darkIcon || ! lightIcon) {
+
+            return;
+        }
+
+        if (isDark) {
+
+            darkIcon.classList.remove("hidden");
+            lightIcon.classList.add("hidden");
+
+        } else {
+
+            darkIcon.classList.add("hidden");
+            lightIcon.classList.remove("hidden");
+        }
+    }
+
     function applyTheme(isDark) {
 
         if (isDark) {
@@ -27,19 +50,16 @@
             root.classList.remove("dark");
         }
 
-        document.querySelectorAll("[data-theme-icon]").forEach(function (icon) {
-
-            icon.textContent = isDark ? "🌙" : "☀️";
-        });
+        setIcon(isDark);
     }
 
     var initialDark = storedTheme === "dark" || (! storedTheme && prefersDark);
 
     applyTheme(initialDark);
 
-    document.querySelectorAll("[data-theme-toggle]").forEach(function (button) {
+    if (themeToggleBtn) {
 
-        button.addEventListener("click", function () {
+        themeToggleBtn.addEventListener("click", function () {
 
             var isDark = ! root.classList.contains("dark");
 
@@ -54,6 +74,5 @@
                 //
             }
         });
-    });
-
-}) ();
+    }
+})();

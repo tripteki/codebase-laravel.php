@@ -1,0 +1,29 @@
+@media (max-width: 1023px) {
+
+    #admin-sidebar {
+        z-index: 40;
+    }
+
+    #sidebar-backdrop {
+        z-index: 30;
+    }
+
+    #admin-sidebar.sidebar-open {
+        transform: translateX(0) !important;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    #admin-sidebar {
+        transform: translateX(0) !important;
+    }
+
+    #admin-sidebar.sidebar-collapsed {
+        transform: translateX(-100%) !important;
+    }
+
+    #sidebar-backdrop {
+        display: none !important;
+    }
+}

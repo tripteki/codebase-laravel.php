@@ -4,7 +4,7 @@
 
 @section("content")
     <div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
-        @include("components.header", [ "showLogout" => false, ])
+        @include("components.header")
 
         <main class="flex flex-1 items-center justify-center px-4 py-16">
             <div class="max-w-2xl space-y-8 text-center text-gray-900 dark:text-gray-100">

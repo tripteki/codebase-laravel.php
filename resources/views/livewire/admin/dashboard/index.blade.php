@@ -3,10 +3,12 @@
 @section("title", __('common.dashboard'))
 
 @section("content")
-    <div class="min-h-screen flex flex-col bg-background">
-        @include("components.header", [ "showLogout" => true, ])
+    @include("components.admin.sidebar")
 
-        <main class="container mx-auto flex-1 px-4 py-8">
+    <div class="min-h-screen flex flex-col bg-gray-100 lg:pl-64 dark:bg-gray-900" data-sidebar-content>
+        @include("components.header")
+
+        <main id="main-content" class="container mx-auto flex-1 px-4 py-8">
             <div class="space-y-8">
                 <div class="space-y-2">
                     <h1 class="text-3xl font-bold tracking-tight">

@@ -1,32 +1,39 @@
-@php
-    $showLogout = $showLogout ?? false;
-@endphp
-
-<header class="bg-white/80 px-4 py-4 backdrop-blur dark:bg-gray-900/80">
+<header class="bg-white/80 border-b border-gray-200 px-4 py-4 backdrop-blur dark:border-gray-600 dark:bg-gray-700/80">
     <div class="container mx-auto flex items-center justify-between">
-        <h1 class="text-xl font-bold">
-            {{ __('common.welcome') }}
-        </h1>
+        @if (auth()->check() && request()->is('admin*'))
+            <div class="flex items-center gap-3 flex-1">
+                <button
+                    type="button"
+                    data-sidebar-toggle
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:focus:ring-gray-700"
+                >
+                    <span class="sr-only">{{ __('common.open_sidebar') }}</span>
+                    <svg id="sidebar-toggle-open-icon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h14M3 10h14M3 15h10" />
+                    </svg>
+                    <svg id="sidebar-toggle-close-icon" class="h-5 w-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l-5-5m0 10l5-5" />
+                    </svg>
+                </button>
+                @include("components.admin.search")
+            </div>
+        @else
+            <h1 class="text-xl font-bold">
+                {{ __('common.welcome') }}
+            </h1>
+        @endif
 
         <div class="flex items-center gap-3">
             @include("components.theme-toggle")
-            @include("components.i18n-switcher")
 
-            @if ($showLogout && auth()->check())
-                <form method="POST" action="{{ route('admin.logout') }}">
-                    @csrf
+            @if (! auth()->check())
+                @include("components.i18n-switcher")
+            @endif
 
-                    <button
-                        type="submit"
-                        class="inline-flex h-9 items-center gap-1 rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
-                    >
-                        <span>{{ __('auth.logout') }}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-                            <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" />
-                            <path fill-rule="evenodd" d="M6 10a.75.75 0 0 1 .75-.75h9.546l-1.048-.943a.75.75 0 1 1 1.004-1.114l2.5 2.25a.75.75 0 0 1 0 1.114l-2.5 2.25a.75.75 0 1 1-1.004-1.114l1.048-.943H6.75A.75.75 0 0 1 6 10Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </form>
+            @if (auth()->check())
+                <div class="relative">
+                    @include("components.user-dropdown")
+                </div>
             @endif
         </div>
     </div>
