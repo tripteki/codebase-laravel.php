@@ -130,7 +130,7 @@
                                 type="submit"
                                 class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white rounded-lg bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:bg-green-400 dark:hover:bg-green-500 dark:focus:ring-green-700"
                             >
-                                {{ __("module_user.save") }}
+                                {{ __("common.save") }}
                             </button>
                         </div>
                     </form>
