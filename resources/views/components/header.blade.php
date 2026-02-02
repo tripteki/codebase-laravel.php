@@ -36,6 +36,7 @@
             @endif
 
             @if (auth()->check())
+                @include("components.notification")
                 <div class="relative">
                     @include("components.user-dropdown")
                 </div>

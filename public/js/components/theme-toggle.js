@@ -61,7 +61,7 @@
 
         themeToggleBtn.addEventListener("click", function () {
 
-            var isDark = ! root.classList.contains("dark");
+            var isDark = !root.classList.contains("dark");
 
             applyTheme(isDark);
 

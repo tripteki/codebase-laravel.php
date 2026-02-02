@@ -71,8 +71,6 @@ abstract class ExportComponent extends Component
         $this->getProcessExportJobClass()::dispatch($export, $this->exportFormat);
 
         $this->closeModal();
-
-        session()->flash("message", $this->getExportStartedMessage());
     }
 
     /**

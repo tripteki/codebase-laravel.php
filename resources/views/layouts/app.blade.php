@@ -11,7 +11,7 @@
             $pageTitle = $title ?? null;
         @endphp
 
-        @if($pageTitle)
+        @if ($pageTitle)
             {{ $pageTitle }} - {{ $appName }}
         @else
             @hasSection("title")
@@ -60,6 +60,12 @@
 </head>
 
 <body class="font-sans antialiased bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors">
+    @include('components.toast')
+
+    @auth
+        <livewire:admin.notification.realtime-notification-component />
+    @endauth
+
     @hasSection("content")
         @yield("content")
     @else

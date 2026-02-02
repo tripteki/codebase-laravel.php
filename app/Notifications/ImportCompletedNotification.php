@@ -70,7 +70,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             "body" => $body,
             "import_id" => $this->import->id,
             "file_name" => $this->import->file_name,
-            "file_url" => $this->import->file_path,
+            "url" => $this->import->file_path,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
         ]);
@@ -108,7 +108,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             "body" => $body,
             "import_id" => $this->import->id,
             "file_name" => $this->import->file_name,
-            "file_url" => $this->import->file_path,
+            "url" => $this->import->file_path,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
         ]);

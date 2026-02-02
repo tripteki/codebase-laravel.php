@@ -66,7 +66,7 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
             "body" => $body,
             "export_id" => $this->export->id,
             "file_name" => $this->export->file_name,
-            "file_url" => $filePath,
+            "url" => $filePath,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
         ]);
@@ -100,7 +100,7 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
             "body" => $body,
             "export_id" => $this->export->id,
             "file_name" => $this->export->file_name,
-            "file_url" => $filePath,
+            "url" => $filePath,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
         ]);

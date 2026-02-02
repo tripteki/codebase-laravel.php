@@ -81,8 +81,6 @@ abstract class ImportComponent extends Component
         $this->getProcessImportJobClass()::dispatch($import);
 
         $this->closeModal();
-
-        session()->flash("message", $this->getImportStartedMessage());
     }
 
     /**
