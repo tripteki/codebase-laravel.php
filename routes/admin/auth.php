@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
+use App\Livewire\Admin\Dashboard\DashboardIndexComponent;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware("guest:web")->group(function () {
@@ -23,8 +24,8 @@ Route::middleware("guest:web")->group(function () {
 
 Route::middleware("auth:web")->group(function () {
 
-    Route::get("/admin", [ \App\Http\Controllers\Admin\DashboardController::class, "index", ])->name("admin.dashboard");
-    Route::get("/admin/dashboard", [ \App\Http\Controllers\Admin\DashboardController::class, "index", ])->name("admin.dashboard.index");
+    Route::get("/admin", DashboardIndexComponent::class)->name("admin.dashboard");
+    Route::get("/admin/dashboard", DashboardIndexComponent::class)->name("admin.dashboard.index");
 
     Route::post("/admin/logout", [ LoginController::class, "destroy", ])->name("admin.logout");
 });
