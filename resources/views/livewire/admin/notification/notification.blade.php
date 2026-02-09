@@ -12,9 +12,9 @@
         </svg>
         <span class="sr-only">{{ __('common.notifications') }}</span>
         @if ($unreadCount > 0)
-            <div data-notification-badge class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-800 pt-[1px] pb-[1px]" style="display: block;">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</div>
+            <div data-notification-badge class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-800 pt-[2px] pb-[1px]" style="display: block;">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</div>
         @else
-            <div data-notification-badge class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-800 pt-[1px] pb-[1px]" style="display: none;">0</div>
+            <div data-notification-badge class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-800 pt-[2px] pb-[1px]" style="display: none;">0</div>
         @endif
     </button>
 

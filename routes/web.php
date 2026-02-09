@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\WebPushSubscriptionController;
 
 require __DIR__."/web.manifest.php";
 require __DIR__."/../src/V1/Api/I18N/Routes/web.php";
@@ -18,4 +19,10 @@ Route::middleware([ "i18n", ])->group(function () {
     require __DIR__."/admin/user.php";
     require __DIR__."/admin/setting.php";
     require __DIR__."/admin/notification.php";
+
+    Route::middleware(["auth:web"])->group(function () {
+
+        Route::post("/webpush/subscribe", [ WebPushSubscriptionController::class, "store", ])->name("webpush.subscribe");
+        Route::post("/webpush/unsubscribe", [ WebPushSubscriptionController::class, "destroy", ])->name("webpush.unsubscribe");
+    });
 });

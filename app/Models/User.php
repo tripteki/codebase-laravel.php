@@ -21,6 +21,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
+use NotificationChannels\WebPush\HasPushSubscriptions as NotifiablePushTrait;
 use Spatie\Permission\Traits\HasRoles as ACLTrait;
 use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
 use Spatie\Activitylog\LogOptions;
@@ -31,6 +32,7 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         MustVerifyEmailTrait,
         CanResetPasswordTrait,
         NotifiableTrait,
+        NotifiablePushTrait,
         ACLTrait,
         LogTrait,
         HasUlids,

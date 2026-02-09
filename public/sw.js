@@ -160,3 +160,101 @@ self.addEventListener("fetch", function (event) {
             })
     );
 });
+
+/**
+ * Integrates with Notification WebPush, which sends a JSON payload
+ * containing at least a title and body, and optional icon, badge, image, data, and actions.
+ * @param {PushEvent} event
+ * @returns {void}
+ */
+self.addEventListener("push", function (event) {
+
+    console.log("📬 Service Worker: Push received", event);
+
+    if (!event.data) {
+
+        console.warn("Service Worker: Push event has no data.");
+        return;
+    }
+
+    let data;
+
+    try {
+
+        data = event.data.json();
+
+    } catch (error) {
+
+        console.error("Service Worker: Failed to parse push data as JSON", error);
+    }
+
+    const title = data.title || "Notification";
+    const body = data.body || "";
+
+    const options = {
+        body: body,
+        icon: data.icon || "/asset/logo.png",
+        badge: data.badge || "/asset/favicon.png",
+        image: data.image,
+        data: data.data || data,
+        actions: data.actions || [],
+        renotify: data.renotify || false,
+        requireInteraction: data.requireInteraction || false,
+        tag: data.tag,
+        vibrate: data.vibrate || [200, 100, 200],
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+/**
+ * The Notification WebPush payload may contain a `data.url` field or nested URL,
+ * which we will try to open when the user clicks the notification.
+ *
+ * @param {NotificationEvent} event
+ * @returns {void}
+ */
+self.addEventListener("notificationclick", function (event) {
+
+    console.log("🖱️ Service Worker: Notification click", event.notification.data);
+
+    event.notification.close();
+
+    const data = event.notification.data || {};
+
+    let url =
+        data.url ||
+        data.action ||
+        (data.data && data.data.url) ||
+        "/";
+
+    let targetHref = "/";
+
+    try {
+        targetHref = new URL(url, self.location.origin).href;
+    } catch (error) {
+        targetHref = self.location.origin + "/";
+    }
+
+    event.waitUntil(
+        clients.matchAll({ type: "window", includeUncontrolled: true, }).then(function (clientList) {
+
+            for (var i = 0; i < clientList.length; i++) {
+
+                var client = clientList[i];
+                if ("focus" in client) {
+
+                    if (client.url === targetHref) {
+
+                        return client.focus();
+                    }
+                }
+            }
+
+            if (clients.openWindow) {
+
+                return clients.openWindow(targetHref);
+            }
+        })
+    );
+});

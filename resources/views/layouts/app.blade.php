@@ -30,6 +30,8 @@
     <meta name="apple-mobile-web-app-title" content="{{ \Illuminate\Support\Str::headline(config('app.name')) }}" />
     <meta name="application-name" content="{{ \Illuminate\Support\Str::headline(config('app.name')) }}" />
     <meta name="description" content="{{ \Illuminate\Support\Str::headline(config('app.name')) }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="vapid-key" content="{{ config('webpush.vapid.public_key') }}">
 
     <!-- Icons -->
     <link rel="manifest" href="{{ route('manifest') }}" />
@@ -77,6 +79,7 @@
     <script src="{{ asset('vendor/tailwind/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/tailwind/datatables.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/pwa.js') }}" defer></script>
     @stack("scripts-end")
 </body>
 

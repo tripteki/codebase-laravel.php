@@ -9,6 +9,8 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\DatabaseMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
+use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class ImportCompletedNotification extends Notification implements ShouldQueue
 {
@@ -25,6 +27,16 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
+     * Get the type of the notification being broadcast.
+     *
+     * @return string
+     */
+    public function broadcastType(): string
+    {
+        return "import.completed";
+    }
+
+    /**
      * Get the notification's delivery channels.
      *
      * @param mixed $notifiable
@@ -35,6 +47,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
         return [
             "database",
             "broadcast",
+            WebPushChannel::class,
         ];
     }
 
@@ -115,12 +128,64 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the type of the notification being broadcast.
+     * Get the web push representation of the notification.
      *
-     * @return string
+     * @param mixed $notifiable
+     * @param \Illuminate\Notifications\Notification $notification
+     * @return \NotificationChannels\WebPush\WebPushMessage
      */
-    public function broadcastType(): string
+    public function toWebPush($notifiable, $notification): WebPushMessage
     {
-        return "import.completed";
+        $this->import->refresh();
+
+        $successfulRows = $this->import->successful_rows;
+        $failedRows = $this->import->getFailedRowsCount();
+
+        if ($failedRows === 0 && $this->import->total_rows > $successfulRows) {
+            $failedRows = $this->import->total_rows - $successfulRows;
+        }
+
+        $body = __("notifications.import.completed", [
+            "successfulRows" => number_format($successfulRows),
+        ]);
+
+        if ($failedRows > 0) {
+            $body .= " " . __("notifications.import.failed", [
+                "failedRows" => number_format($failedRows),
+            ]);
+        }
+
+        $filePath = $this->import->file_path;
+        $downloadUrl = null;
+
+        if ($filePath) {
+            if (! str_starts_with($filePath, 'http://') && ! str_starts_with($filePath, 'https://')) {
+                $storagePath = storage_path('app/public/' . $filePath);
+                if (file_exists($storagePath)) {
+                    $downloadUrl = asset('storage/' . $filePath);
+                }
+            } else {
+                $downloadUrl = $filePath;
+            }
+        }
+
+        $webPushMessage = (new WebPushMessage)
+            ->title(__("module_base.import_completed"))
+            ->body($body)
+            ->icon('/favicon.ico')
+            ->data([
+                'import_id' => $this->import->id,
+                'file_name' => $this->import->file_name,
+                'file_path' => $filePath,
+                'url' => $downloadUrl ?: null,
+                'successful_rows' => $successfulRows,
+                'failed_rows' => $failedRows,
+            ]);
+
+        if ($downloadUrl) {
+            $webPushMessage->action(__("common.download"), $downloadUrl);
+        }
+
+        return $webPushMessage;
     }
 }

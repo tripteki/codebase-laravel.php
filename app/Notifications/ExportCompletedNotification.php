@@ -9,6 +9,8 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\DatabaseMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
+use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class ExportCompletedNotification extends Notification implements ShouldQueue
 {
@@ -25,6 +27,16 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
+     * Get the type of the notification being broadcast.
+     *
+     * @return string
+     */
+    public function broadcastType(): string
+    {
+        return "export.completed";
+    }
+
+    /**
      * Get the notification's delivery channels.
      *
      * @param mixed $notifiable
@@ -35,6 +47,7 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
         return [
             "database",
             "broadcast",
+            WebPushChannel::class,
         ];
     }
 
@@ -107,12 +120,54 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the type of the notification being broadcast.
+     * Get the web push representation of the notification.
      *
-     * @return string
+     * @param mixed $notifiable
+     * @param \Illuminate\Notifications\Notification $notification
+     * @return \NotificationChannels\WebPush\WebPushMessage
      */
-    public function broadcastType(): string
+    public function toWebPush($notifiable, $notification): WebPushMessage
     {
-        return "export.completed";
+        $successfulRows = $this->export->successful_rows;
+        $failedRows = $this->export->getFailedRowsCount();
+
+        $body = __("notifications.export.completed", [
+            "successfulRows" => number_format($successfulRows),
+        ]);
+
+        if ($failedRows > 0) {
+            $body .= " " . __("notifications.export.failed", [
+                "failedRows" => number_format($failedRows),
+            ]);
+        }
+
+        $filePath = "exports/" . $this->export->file_name;
+        $downloadUrl = null;
+
+        if ($filePath) {
+            $storagePath = storage_path('app/public/' . $filePath);
+            if (file_exists($storagePath)) {
+                $downloadUrl = asset('storage/' . $filePath);
+            }
+        }
+
+        $webPushMessage = (new WebPushMessage)
+            ->title(__("module_base.export_completed"))
+            ->body($body)
+            ->icon('/favicon.ico')
+            ->data([
+                'export_id' => $this->export->id,
+                'file_name' => $this->export->file_name,
+                'file_path' => $filePath,
+                'url' => $downloadUrl ?: null,
+                'successful_rows' => $successfulRows,
+                'failed_rows' => $failedRows,
+            ]);
+
+        if ($downloadUrl) {
+            $webPushMessage->action(__("common.download"), $downloadUrl);
+        }
+
+        return $webPushMessage;
     }
 }
