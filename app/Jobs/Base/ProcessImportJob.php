@@ -92,7 +92,6 @@ abstract class ProcessImportJob implements ShouldQueue
 
             $validatedData = $validator->validated();
 
-            // Additional validation before processing (e.g., password for new records)
             try {
                 $this->validateBeforeProcess($validatedData, $normalizedData);
             } catch (\Exception $e) {
@@ -181,7 +180,7 @@ abstract class ProcessImportJob implements ShouldQueue
      */
     protected function validateBeforeProcess(array $validatedData, array $normalizedData): void
     {
-        // Override in child class if needed
+        //
     }
 
     /**

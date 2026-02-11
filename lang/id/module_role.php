@@ -1,0 +1,37 @@
+<?php
+
+return [
+
+    "add_new_role" => "Tambah peran baru",
+    "all_roles" => "Semua peran",
+    "column_guard_name" => "Nama Guard",
+    "create_title" => "Buat peran",
+    "created_at" => "Dibuat Pada",
+    "created_at_description" => "Tanggal dan waktu pembuatan peran",
+    "edit_role" => "Edit peran",
+    "edit_title" => "Edit peran",
+    "export_roles" => "Ekspor Peran",
+    "guard_name" => "Nama Guard",
+    "guard_name_description" => "Pilih nama guard dari dropdown",
+    "guard_name_label" => "Nama guard dari peran",
+    "import_roles" => "Impor Peran",
+    "name" => "Nama",
+    "name_description" => "Masukkan nama peran",
+    "name_label" => "Nama peran",
+    "role_created_failed" => "Gagal membuat peran. Silakan coba lagi.",
+    "role_created_successfully" => "Peran berhasil dibuat.",
+    "role_deleted_failed" => "Gagal menghapus peran. Silakan coba lagi.",
+    "role_deleted_successfully" => "Peran berhasil dihapus.",
+    "role_updated" => "Peran diperbarui.",
+    "role_updated_failed" => "Gagal memperbarui peran. Silakan coba lagi.",
+    "show_title" => "Lihat peran",
+    "title" => "Peran",
+    "view_role" => "Lihat peran",
+    "permissions" => "Izin",
+    "permissions_description" => "Pilih izin yang akan dilampirkan ke peran ini",
+    "permissions_label" => "Izin yang dilampirkan ke peran ini",
+    "no_permissions_available" => "Tidak ada izin yang tersedia untuk guard ini",
+    "no_permissions_assigned" => "Tidak ada izin yang ditetapkan ke peran ini",
+    "permissions_not_found" => "Izin berikut tidak ditemukan: :permissions",
+
+];

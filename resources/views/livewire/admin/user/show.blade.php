@@ -88,6 +88,26 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="grid grid-cols-6 gap-6">
+                            <div class="col-span-6">
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("module_user.roles") }}</label>
+                                <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">{{ __("module_user.roles_label") }}</p>
+                                <div class="bg-gray-50 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700">
+                                    @if ($user->roles->isEmpty())
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ __("module_user.no_roles_assigned") }}</span>
+                                    @else
+                                        <div class="flex flex-wrap gap-2">
+                                            @foreach ($user->roles as $role)
+                                                <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                    {{ $role->name }}
+                                                    <span class="ml-1 text-gray-500 dark:text-gray-400">({{ $role->guard_name }})</span>
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">

@@ -5,9 +5,19 @@ namespace App\Livewire\Admin\User;
 use App\Jobs\Admin\User\ProcessUserExport;
 use App\Livewire\Base\ExportComponent;
 use App\Models\User;
+use Src\V1\Api\User\Enums\PermissionEnum;
 
 class UserExportComponent extends ExportComponent
 {
+    /**
+     * Mount the component.
+     *
+     * @return void
+     */
+    public function mount(): void
+    {
+        $this->authorize(PermissionEnum::USER_EXPORT_VIEW->value);
+    }
     /**
      * Get the exporter class name.
      *
@@ -56,5 +66,15 @@ class UserExportComponent extends ExportComponent
     protected function getExportStartedMessage(): string
     {
         return __("module_base.export_started");
+    }
+
+    /**
+     * Get export download permission.
+     *
+     * @return string
+     */
+    protected function getExportDownloadPermission(): string
+    {
+        return PermissionEnum::USER_EXPORT_DOWNLOAD->value;
     }
 }

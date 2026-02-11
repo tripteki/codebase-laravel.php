@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\User;
 
 use App\Models\User;
+use Src\V1\Api\Acl\Models\Role;
+use Src\V1\Api\User\Enums\PermissionEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -36,6 +38,11 @@ class UserEditComponent extends Component
     public $password_confirmation = "";
 
     /**
+     * @var array<int|string>
+     */
+    public $roles = [];
+
+    /**
      * @param \App\Models\User $user
      * @return void
      */
@@ -44,6 +51,7 @@ class UserEditComponent extends Component
         $this->user = $user;
         $this->name = (string) $user->name;
         $this->email = (string) $user->email;
+        $this->roles = $user->roles->pluck("id")->toArray();
     }
 
     /**
@@ -55,6 +63,8 @@ class UserEditComponent extends Component
             "name" => "required|string|max:255",
             "email" => "required|email|unique:users,email," . $this->user->id,
             "password" => "nullable|string|min:8|confirmed",
+            "roles" => "nullable|array",
+            "roles.*" => "exists:roles,id",
         ];
     }
 
@@ -65,6 +75,8 @@ class UserEditComponent extends Component
      */
     public function save()
     {
+        $this->authorize(PermissionEnum::USER_UPDATE->value);
+
         $data = $this->validate();
 
         $payload = [
@@ -79,7 +91,11 @@ class UserEditComponent extends Component
         DB::beginTransaction();
 
         try {
+            $roles = $data["roles"] ?? [];
+
             $this->user->update($payload);
+
+            $this->user->syncRoles($roles);
 
             DB::commit();
 
@@ -102,8 +118,13 @@ class UserEditComponent extends Component
      */
     public function render(): View
     {
+        $availableRoles = Role::query()
+            ->orderBy("name")
+            ->get();
+
         return view("livewire.admin.user.edit", [
             "user" => $this->user,
+            "availableRoles" => $availableRoles,
         ])->layout("layouts.app", [
             "title" => __("module_user.edit_title"),
         ]);

@@ -26,13 +26,17 @@ class ProcessUserExport extends ProcessExportJob
     protected function getExportData(): array
     {
         return User::query()
+            ->with("roles")
             ->select("id", "name", "email", "email_verified_at", "created_at", "updated_at")
             ->get()
             ->map(function ($user) {
+                $roleNames = $user->roles->pluck("name")->toArray();
+
                 return [
                     "id" => $user->id,
                     "name" => $user->name,
                     "email" => $user->email,
+                    "roles" => implode(", ", $roleNames),
                     "email_verified_at" => \Carbon\Carbon::parse($user->email_verified_at)->format("Y-m-d H:i:s"),
                     "created_at" => \Carbon\Carbon::parse($user->created_at)->format("Y-m-d H:i:s"),
                     "updated_at" => \Carbon\Carbon::parse($user->updated_at)->format("Y-m-d H:i:s"),

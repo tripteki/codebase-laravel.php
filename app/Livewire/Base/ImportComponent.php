@@ -62,6 +62,8 @@ abstract class ImportComponent extends Component
      */
     public function import(): void
     {
+        $this->authorize($this->getImportUploadPermission());
+
         $this->validate([
             "importFile" => "required|file|mimes:csv,xls,xlsx|max:10240",
         ]);
@@ -120,4 +122,11 @@ abstract class ImportComponent extends Component
      * @return string
      */
     abstract protected function getImportStartedMessage(): string;
+
+    /**
+     * Get import upload permission.
+     *
+     * @return string
+     */
+    abstract protected function getImportUploadPermission(): string;
 }

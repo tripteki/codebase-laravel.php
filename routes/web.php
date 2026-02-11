@@ -17,6 +17,8 @@ Route::middleware([ "i18n", ])->group(function () {
     require __DIR__."/admin/auth.php";
     require __DIR__."/admin/search.php";
     require __DIR__."/admin/user.php";
+    require __DIR__."/admin/permission.php";
+    require __DIR__."/admin/role.php";
     require __DIR__."/admin/setting.php";
     require __DIR__."/admin/notification.php";
 

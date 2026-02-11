@@ -1,0 +1,37 @@
+<?php
+
+return [
+
+    "add_new_role" => "Add new role",
+    "all_roles" => "All roles",
+    "column_guard_name" => "Guard Name",
+    "create_title" => "Create role",
+    "created_at" => "Created At",
+    "created_at_description" => "Role creation date and time",
+    "edit_role" => "Edit role",
+    "edit_title" => "Edit role",
+    "export_roles" => "Export Roles",
+    "guard_name" => "Guard Name",
+    "guard_name_description" => "Select the guard name from the dropdown",
+    "guard_name_label" => "Guard name of the role",
+    "import_roles" => "Import Roles",
+    "name" => "Name",
+    "name_description" => "Enter the name of the role",
+    "name_label" => "Name of the role",
+    "role_created_failed" => "Failed to create role. Please try again.",
+    "role_created_successfully" => "Role created successfully.",
+    "role_deleted_failed" => "Failed to delete role. Please try again.",
+    "role_deleted_successfully" => "Role deleted successfully.",
+    "role_updated" => "Role updated.",
+    "role_updated_failed" => "Failed to update role. Please try again.",
+    "show_title" => "View role",
+    "title" => "Roles",
+    "view_role" => "View role",
+    "permissions" => "Permissions",
+    "permissions_description" => "Select the permissions to attach to this role",
+    "permissions_label" => "Permissions attached to this role",
+    "no_permissions_available" => "No permissions available for this guard",
+    "no_permissions_assigned" => "No permissions assigned to this role",
+    "permissions_not_found" => "The following permissions were not found: :permissions",
+
+];

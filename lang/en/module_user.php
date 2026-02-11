@@ -40,5 +40,11 @@ return [
     "user_updated_failed" => "Failed to update user. Please try again.",
     "verified" => "Verified",
     "view_user" => "View user",
+    "roles" => "Roles",
+    "roles_description" => "Select the roles to attach to this user",
+    "roles_label" => "Roles attached to this user",
+    "no_roles_available" => "No roles available",
+    "no_roles_assigned" => "No roles assigned to this user",
+    "roles_not_found" => "The following roles were not found: :roles",
 
 ];

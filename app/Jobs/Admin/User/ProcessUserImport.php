@@ -5,6 +5,7 @@ namespace App\Jobs\Admin\User;
 use App\Jobs\Base\ProcessImportJob;
 use App\Imports\Admin\User\UserImport;
 use App\Models\User;
+use Src\V1\Api\Acl\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +33,13 @@ class ProcessUserImport extends ProcessImportJob
     {
         $existingUser = User::query()->where("email", $normalizedData["email"] ?? "")->first();
 
+        $roleNames = [];
+        if (isset($normalizedData["roles"]) && ! empty($normalizedData["roles"])) {
+            $roleNames = is_array($normalizedData["roles"])
+                ? $normalizedData["roles"]
+                : array_map("trim", explode(",", $normalizedData["roles"]));
+        }
+
         return Validator::make($normalizedData, [
             "name" => ["required", "string", "min:2", "max:255"],
             "email" => [
@@ -42,6 +50,7 @@ class ProcessUserImport extends ProcessImportJob
                 $existingUser ? Rule::unique(User::class)->ignore($existingUser->id) : Rule::unique(User::class),
             ],
             "password" => ["nullable", "string", "min:8", "max:255"],
+            "roles" => ["nullable", "string"],
         ], [
             "name.required" => __("validation.required", ["attribute" => __("module_user.name")]),
             "name.min" => __("validation.min.string", ["attribute" => __("module_user.name"), "min" => 2]),
@@ -100,6 +109,34 @@ class ProcessUserImport extends ProcessImportJob
 
         if (! $user->hasVerifiedEmail()) {
             $user->markEmailAsVerified();
+        }
+
+        $roleNames = [];
+        if (isset($normalizedData["roles"]) && ! empty($normalizedData["roles"])) {
+            $roleNames = is_array($normalizedData["roles"])
+                ? $normalizedData["roles"]
+                : array_map("trim", explode(",", $normalizedData["roles"]));
+        }
+
+        if (! empty($roleNames)) {
+            $roleIds = Role::query()
+                ->whereIn("name", $roleNames)
+                ->pluck("id")
+                ->toArray();
+
+            if (count($roleIds) !== count($roleNames)) {
+                $foundRoles = Role::query()
+                    ->whereIn("name", $roleNames)
+                    ->pluck("name")
+                    ->toArray();
+                $missingRoles = array_diff($roleNames, $foundRoles);
+
+                throw new \Exception(__("module_user.roles_not_found", ["roles" => implode(", ", $missingRoles)]));
+            }
+
+            $user->syncRoles($roleIds);
+        } else {
+            $user->syncRoles([]);
         }
     }
 }

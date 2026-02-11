@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\User;
 
 use App\Models\User;
+use Src\V1\Api\User\Enums\PermissionEnum;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -19,7 +20,9 @@ class UserShowComponent extends Component
      */
     public function mount(User $user): void
     {
-        $this->user = $user;
+        $this->authorize(PermissionEnum::USER_VIEW->value);
+
+        $this->user = $user->load("roles");
     }
 
     /**

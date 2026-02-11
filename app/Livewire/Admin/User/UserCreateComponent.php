@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\User;
 
 use App\Models\User;
+use Src\V1\Api\Acl\Models\Role;
+use Src\V1\Api\User\Enums\PermissionEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -31,6 +33,11 @@ class UserCreateComponent extends Component
     public $password_confirmation = "";
 
     /**
+     * @var array<int|string>
+     */
+    public $roles = [];
+
+    /**
      * @return array<string, string>
      */
     protected function rules(): array
@@ -39,6 +46,8 @@ class UserCreateComponent extends Component
             "name" => "required|string|max:255",
             "email" => "required|email|unique:users,email",
             "password" => "required|string|min:8|confirmed",
+            "roles" => "nullable|array",
+            "roles.*" => "exists:roles,id",
         ];
     }
 
@@ -49,15 +58,24 @@ class UserCreateComponent extends Component
      */
     public function save()
     {
+        $this->authorize(PermissionEnum::USER_CREATE->value);
+
         $data = $this->validate();
 
         DB::beginTransaction();
 
         try {
-            $data["password"] = Hash::make($data["password"]);
-            unset($data["password_confirmation"]);
+            $roles = $data["roles"] ?? [];
+            unset($data["roles"], $data["password_confirmation"]);
 
-            User::query()->create($data)?->markEmailAsVerified();
+            $data["password"] = Hash::make($data["password"]);
+
+            $user = User::query()->create($data);
+            $user->markEmailAsVerified();
+
+            if (! empty($roles)) {
+                $user->syncRoles($roles);
+            }
 
             DB::commit();
 
@@ -80,9 +98,14 @@ class UserCreateComponent extends Component
      */
     public function render(): View
     {
-        return view("livewire.admin.user.create")
-            ->layout("layouts.app", [
-                "title" => __("module_user.create_title"),
-            ]);
+        $availableRoles = Role::query()
+            ->orderBy("name")
+            ->get();
+
+        return view("livewire.admin.user.create", [
+            "availableRoles" => $availableRoles,
+        ])->layout("layouts.app", [
+            "title" => __("module_user.create_title"),
+        ]);
     }
 }

@@ -39,6 +39,7 @@ class UserExport implements FromArray, WithHeadings
             "ID",
             "Name",
             "Email",
+            "Roles",
             "Email Verified At",
             "Created At",
             "Updated At",

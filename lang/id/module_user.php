@@ -40,5 +40,11 @@ return [
     "user_updated_failed" => "Gagal memperbarui pengguna. Silakan coba lagi.",
     "verified" => "Terverifikasi",
     "view_user" => "Lihat pengguna",
+    "roles" => "Peran",
+    "roles_description" => "Pilih peran yang akan dilampirkan ke pengguna ini",
+    "roles_label" => "Peran yang dilampirkan ke pengguna ini",
+    "no_roles_available" => "Tidak ada peran tersedia",
+    "no_roles_assigned" => "Tidak ada peran yang ditetapkan untuk pengguna ini",
+    "roles_not_found" => "Peran berikut tidak ditemukan: :roles",
 
 ];

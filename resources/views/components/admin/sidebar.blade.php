@@ -1,6 +1,7 @@
 @php
     $currentRoute = request()->route()->getName();
     $isUsersRoute = str_starts_with($currentRoute, 'admin.users.');
+    $isAccessManagementRoute = str_starts_with($currentRoute, 'admin.permissions.') || str_starts_with($currentRoute, 'admin.roles.');
     $latestVerifiedUsersCount = \App\Models\User::query()
         ->whereNotNull('email_verified_at')
         ->where('email_verified_at', '>=', now()->subMinutes(5))
@@ -107,6 +108,49 @@
                                         {{ $latestVerifiedUsersCount }}
                                     </span>
                                 @endif
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <button
+                        type="button"
+                        class="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600"
+                        data-collapse-toggle="sidebar-access-management"
+                        aria-controls="sidebar-access-management"
+                    >
+                        <span class="inline-flex items-center">
+                            <svg class="mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M2.5 4A1.5 1.5 0 001 5.5V6a1 1 0 001 1h16a1 1 0 001-1v-.5A1.5 1.5 0 0017.5 3h-15zM19 8.5a1.5 1.5 0 01-1.5 1.5H18a1 1 0 00-1 1v4.5a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 003 15.5V11a1 1 0 00-1-1h-.5A1.5 1.5 0 000 8.5v-3A1.5 1.5 0 001.5 4h15A1.5 1.5 0 0018 5.5v3z" clip-rule="evenodd" />
+                            </svg>
+                            {{ __('sidebar.access_management') }}
+                        </span>
+                        <svg
+                            class="h-4 w-4 text-gray-500 transition-transform {{ $isAccessManagementRoute ? '' : 'rotate-90' }}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 10 6"
+                            data-collapse-icon
+                        >
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+                    <ul id="sidebar-access-management" class="mt-1 space-y-1 pl-10 text-gray-600 dark:text-gray-300 {{ $isAccessManagementRoute ? '' : 'hidden' }}">
+                        <li>
+                            <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 {{ str_starts_with($currentRoute, 'admin.roles.') ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : '' }}">
+                                <svg class="h-4 w-4 {{ str_starts_with($currentRoute, 'admin.roles.') ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500' }}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                                </svg>
+                                <span>{{ __('sidebar.roles') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.permissions.index') }}" class="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 {{ str_starts_with($currentRoute, 'admin.permissions.') ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : '' }}">
+                                <svg class="h-4 w-4 {{ str_starts_with($currentRoute, 'admin.permissions.') ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500' }}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <span>{{ __('sidebar.permissions') }}</span>
                             </a>
                         </li>
                     </ul>

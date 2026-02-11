@@ -57,6 +57,8 @@ abstract class ExportComponent extends Component
      */
     public function export(): void
     {
+        $this->authorize($this->getExportDownloadPermission());
+
         $this->validate([
             "exportFormat" => "required|in:csv,xls,xlsx",
         ]);
@@ -117,4 +119,11 @@ abstract class ExportComponent extends Component
      * @return string
      */
     abstract protected function getExportStartedMessage(): string;
+
+    /**
+     * Get export download permission.
+     *
+     * @return string
+     */
+    abstract protected function getExportDownloadPermission(): string;
 }

@@ -126,6 +126,33 @@
                             </div>
                         </div>
 
+                        <div class="col-span-6">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("module_user.roles") }}</label>
+                            <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">{{ __("module_user.roles_description") }}</p>
+                            <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4 bg-white dark:bg-gray-700 dark:border-gray-600">
+                                @if ($availableRoles->isEmpty())
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ __("module_user.no_roles_available") }}</p>
+                                @else
+                                    <div class="space-y-2">
+                                        @foreach ($availableRoles as $role)
+                                            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                                                <input
+                                                    type="checkbox"
+                                                    wire:model="roles"
+                                                    value="{{ $role->id }}"
+                                                    class="h-4 w-4 rounded border-gray-300 bg-gray-300 text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-gray-600 dark:bg-gray-900"
+                                                >
+                                                <span class="text-sm text-gray-900 dark:text-white">{{ $role->name }}</span>
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">({{ $role->guard_name }})</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                            @error('roles') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                            @error('roles.*') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                        </div>
+
                         <div class="flex items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
                                 {{ __("module_base.cancel") }}

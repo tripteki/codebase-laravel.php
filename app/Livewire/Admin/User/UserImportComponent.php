@@ -4,9 +4,19 @@ namespace App\Livewire\Admin\User;
 
 use App\Jobs\Admin\User\ProcessUserImport;
 use App\Livewire\Base\ImportComponent;
+use Src\V1\Api\User\Enums\PermissionEnum;
 
 class UserImportComponent extends ImportComponent
 {
+    /**
+     * Mount the component.
+     *
+     * @return void
+     */
+    public function mount(): void
+    {
+        $this->authorize(PermissionEnum::USER_IMPORT_VIEW->value);
+    }
     /**
      * Get the importer class name.
      *
@@ -45,5 +55,15 @@ class UserImportComponent extends ImportComponent
     protected function getImportStartedMessage(): string
     {
         return __("module_base.import_started");
+    }
+
+    /**
+     * Get import upload permission.
+     *
+     * @return string
+     */
+    protected function getImportUploadPermission(): string
+    {
+        return PermissionEnum::USER_IMPORT_UPLOAD->value;
     }
 }

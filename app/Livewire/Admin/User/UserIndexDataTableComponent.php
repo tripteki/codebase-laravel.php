@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\User;
 
 use App\Models\User;
+use Src\V1\Api\User\Enums\PermissionEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
@@ -40,6 +41,7 @@ class UserIndexDataTableComponent extends DataTableComponent
     public function builder(): Builder
     {
         return User::query()
+            ->with("roles")
             ->select("id", "name", "email", "email_verified_at", "created_at");
     }
 
@@ -72,6 +74,30 @@ class UserIndexDataTableComponent extends DataTableComponent
             Column::make(__("module_user.column_email"), "email")
                 ->searchable()
                 ->hideIf(true),
+
+            Column::make(__("module_user.roles"), "roles")
+                ->label(function (User $row) {
+                    $roles = $row->roles;
+                    $totalRoles = $roles->count();
+
+                    if ($totalRoles === 0) {
+                        return '<span class="text-gray-500 dark:text-gray-400">—</span>';
+                    }
+
+                    $displayRoles = $roles->take(2);
+                    $badges = $displayRoles->map(function ($role) {
+                        $name = e($role->name);
+                        return '<span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">' . $name . '</span>';
+                    })->join(' ');
+
+                    if ($totalRoles > 2) {
+                        $remaining = $totalRoles - 2;
+                        $badges .= ' <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">+' . e((string) $remaining) . '...</span>';
+                    }
+
+                    return '<div class="flex flex-wrap gap-1">' . $badges . '</div>';
+                })
+                ->html(),
 
             Column::make(__("module_base.column_created_at"), "created_at")
                 ->sortable()
@@ -125,6 +151,8 @@ class UserIndexDataTableComponent extends DataTableComponent
      */
     public function deleteUser($data): void
     {
+        $this->authorize(PermissionEnum::USER_DELETE->value);
+
         $userId = is_array($data) ? ($data["userId"] ?? null) : $data;
 
         if (! $userId) {

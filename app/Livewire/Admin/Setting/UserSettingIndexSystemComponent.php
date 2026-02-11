@@ -64,7 +64,6 @@ class UserSettingIndexSystemComponent extends Component
         $setting = $this->settings[$index] ?? null;
 
         if ($setting && isset($setting["id"])) {
-            // Delete from database if it exists
             Setting::query()->where("id", $setting["id"])->delete();
         }
 
@@ -96,7 +95,6 @@ class UserSettingIndexSystemComponent extends Component
 
         foreach ($this->settings as $settingData) {
             if (isset($settingData["id"])) {
-                // Update existing setting
                 $setting = Setting::query()->find($settingData["id"]);
                 if ($setting) {
                     $setting->update([
@@ -105,7 +103,6 @@ class UserSettingIndexSystemComponent extends Component
                     ]);
                 }
             } else {
-                // Create new setting
                 Setting::query()->create([
                     "key" => $settingData["key"],
                     "value" => $settingData["value"] ?? null,

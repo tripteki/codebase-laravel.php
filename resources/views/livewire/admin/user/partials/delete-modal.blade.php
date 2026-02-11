@@ -6,7 +6,7 @@
     tabindex="-1"
     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm"
     @click.away="show = false"
-    @open-delete-modal.window="show = true; userId = '{{ $row->id }}'; userName = '{{ $row->name }}'"
+    @open-delete-modal.window="show = true; userId = '{{ $row->id ?? null }}'; userName = '{{ $row->name ?? null }}'"
     @close-delete-modal.window="show = false"
 >
     <div
@@ -49,4 +49,3 @@
         </div>
     </div>
 </div>
-
