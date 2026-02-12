@@ -2,6 +2,7 @@
     $currentRoute = request()->route()->getName();
     $isUsersRoute = str_starts_with($currentRoute, 'admin.users.');
     $isAccessManagementRoute = str_starts_with($currentRoute, 'admin.permissions.') || str_starts_with($currentRoute, 'admin.roles.');
+    $isLogRoute = str_starts_with($currentRoute, 'admin.activities.');
     $latestVerifiedUsersCount = \App\Models\User::query()
         ->whereNotNull('email_verified_at')
         ->where('email_verified_at', '>=', now()->subMinutes(5))
@@ -151,6 +152,40 @@
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                                 </svg>
                                 <span>{{ __('sidebar.permissions') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <button
+                        type="button"
+                        class="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600"
+                        data-collapse-toggle="sidebar-log"
+                        aria-controls="sidebar-log"
+                    >
+                        <span class="inline-flex items-center">
+                            <svg class="mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            {{ __('sidebar.log') }}
+                        </span>
+                        <svg
+                            class="h-4 w-4 text-gray-500 transition-transform {{ $isLogRoute ? '' : 'rotate-90' }}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 10 6"
+                            data-collapse-icon
+                        >
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+                    <ul id="sidebar-log" class="mt-1 space-y-1 pl-10 text-gray-600 dark:text-gray-300 {{ $isLogRoute ? '' : 'hidden' }}">
+                        <li>
+                            <a href="{{ route('admin.activities.index') }}" class="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 {{ str_starts_with($currentRoute, 'admin.activities.') ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : '' }}">
+                                <svg class="h-4 w-4 {{ str_starts_with($currentRoute, 'admin.activities.') ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500' }}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>{{ __('sidebar.activities') }}</span>
                             </a>
                         </li>
                     </ul>

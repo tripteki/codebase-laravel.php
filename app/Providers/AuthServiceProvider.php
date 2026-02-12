@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Src\V1\Api\User\Enums\PermissionEnum as UserPermissionEnum;
 use Src\V1\Api\Acl\Enums\PermissionEnum as AclPermissionEnum;
+use Src\V1\Api\Log\Enums\PermissionEnum as LogPermissionEnum;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->registerUserPermissions();
         $this->registerAclPermissions();
+        $this->registerLogPermissions();
     }
 
     /**
@@ -48,6 +50,20 @@ class AuthServiceProvider extends ServiceProvider
     protected function registerAclPermissions(): void
     {
         foreach (AclPermissionEnum::cases() as $permission) {
+            Gate::define($permission->value, function (User $user) use ($permission) {
+                return $user->can($permission->value);
+            });
+        }
+    }
+
+    /**
+     * Register log permissions.
+     *
+     * @return void
+     */
+    protected function registerLogPermissions(): void
+    {
+        foreach (LogPermissionEnum::cases() as $permission) {
             Gate::define($permission->value, function (User $user) use ($permission) {
                 return $user->can($permission->value);
             });

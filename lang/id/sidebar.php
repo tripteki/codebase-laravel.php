@@ -8,5 +8,7 @@ return [
     'permissions' => 'Izin',
     'roles' => 'Peran',
     'users' => 'Pengguna',
+    'log' => 'Log',
+    'activities' => 'Aktivitas',
 
 ];

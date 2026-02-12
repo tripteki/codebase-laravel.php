@@ -8,5 +8,7 @@ return [
     'permissions' => 'Permissions',
     'roles' => 'Roles',
     'users' => 'Users',
+    'log' => 'Log',
+    'activities' => 'Activities',
 
 ];
