@@ -155,7 +155,8 @@ abstract class ProcessImportJob implements ShouldQueue
     {
         $normalizedData = [];
         foreach ($rowData as $key => $value) {
-            $normalizedKey = strtolower(trim($key));
+            $normalizedKey = strtolower(trim((string) $key));
+            $normalizedKey = str_replace(' ', '_', $normalizedKey);
             $normalizedData[$normalizedKey] = $value !== null ? (string) $value : null;
         }
 
@@ -202,13 +203,13 @@ abstract class ProcessImportJob implements ShouldQueue
     protected function saveFailedRow(array $normalizedData, string $errorMessage): void
     {
         try {
-            $dataToStore = array_filter($normalizedData, function($value) {
+            $dataToStore = array_filter($normalizedData, function ($value) {
                 return $value !== null && $value !== "";
             });
 
             FailedImportRow::query()->create([
                 "import_id" => $this->import->id,
-                "data" => $dataToStore,
+                "data" => json_encode($dataToStore),
                 "validation_error" => $errorMessage,
             ]);
         } catch (\Exception $e) {

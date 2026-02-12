@@ -5,6 +5,9 @@
     $currentLang = $i18n->getLanguageFromSession(request());
     $availableLangs = $i18n->availableLangs();
     $langLabels = LanguageEnum::labels();
+
+    $position = $position ?? 'bottom';
+    $positionClass = $position === 'top' ? '-top-24' : '-bottom-24';
 @endphp
 
 @push('styles')
@@ -54,7 +57,7 @@
         x-transition:leave-start="transform opacity-100 scale-100"
         x-transition:leave-end="transform opacity-0 scale-95"
         x-cloak
-        class="absolute -top-24 right-0 z-50 mt-2 w-38 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700"
+        class="absolute {{ $positionClass }} right-0 z-50 {{ $position === 'top' ? 'mb-2' : 'mt-2' }} w-38 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700"
     >
         <div class="py-1" role="menu">
             @foreach ($availableLangs as $lang)

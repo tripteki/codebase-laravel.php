@@ -193,10 +193,10 @@ class UserResource extends Resource
 
                 Tables\Actions\ImportAction::make()->importer(UserImporter::class)->chunkSize(50)->
                     icon("heroicon-o-arrow-down-circle")->
-                    visible(fn () => auth()->user()->can(PermissionEnum::USER_IMPORT_CREATE->value)),
+                    visible(fn () => auth()->user()->can(PermissionEnum::USER_IMPORT->value)),
                 Tables\Actions\ExportAction::make()->exporter(UserExporter::class)->
                     icon("heroicon-o-arrow-up-circle")->
-                    visible(fn () => auth()->user()->can(PermissionEnum::USER_EXPORT_CREATE->value)),
+                    visible(fn () => auth()->user()->can(PermissionEnum::USER_EXPORT->value)),
 
             ])->recordUrl(null)->actions([
 

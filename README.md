@@ -120,6 +120,7 @@ Copy the environment configuration file and update with your credentials:
 cp .env.example .env
 php artisan key:generate
 php artisan jwt:secret
+php artisan webpush:vapid
 ```
 
 Update your `.env` file:

@@ -23,6 +23,7 @@ return [
     "export_started" => "Export started. You will be notified when it's completed.",
     "import" => "Import",
     "import_completed" => "Import Completed",
+    "import_failed" => "Import Failed",
     "import_file_hint" => "Supported formats: CSV, XLS, XLSX (Max: 10MB)",
     "import_notification_info" => "The import result will be sent via notification when completed.",
     "import_started" => "Import started. You will be notified when it's completed.",

@@ -30,7 +30,7 @@ class RegisterController
      *
      * @return \Illuminate\View\View
      */
-    public function create(): View
+    public function create()
     {
         return view("livewire.admin.auth.register");
     }

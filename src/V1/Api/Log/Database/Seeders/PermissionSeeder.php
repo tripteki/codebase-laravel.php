@@ -14,24 +14,14 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = [
+        $guard = GuardEnum::WEB->value;
 
-            PermissionEnum::ACTIVITY_VIEW->value,
-            PermissionEnum::ACTIVITY_DELETE->value,
-        ];
-
-        foreach ($permissions as $permission) {
+        foreach (PermissionEnum::cases() as $permission) {
 
             Permission::firstOrCreate([
 
-                "name" => $permission,
-                "guard_name" => GuardEnum::WEB->value,
-            ]);
-
-            Permission::firstOrCreate([
-
-                "name" => $permission,
-                "guard_name" => GuardEnum::API->value,
+                "name" => $permission->value,
+                "guard_name" => $guard,
             ]);
         }
     }

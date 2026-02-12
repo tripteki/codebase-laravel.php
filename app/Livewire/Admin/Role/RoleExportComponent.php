@@ -16,7 +16,7 @@ class RoleExportComponent extends ExportComponent
      */
     public function mount(): void
     {
-        $this->authorize(PermissionEnum::ROLE_EXPORT_VIEW->value);
+        $this->authorize(PermissionEnum::ROLE_EXPORT->value);
     }
     /**
      * Get the exporter class name.
@@ -75,6 +75,6 @@ class RoleExportComponent extends ExportComponent
      */
     protected function getExportDownloadPermission(): string
     {
-        return PermissionEnum::ROLE_EXPORT_DOWNLOAD->value;
+        return PermissionEnum::ROLE_EXPORT->value;
     }
 }

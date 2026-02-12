@@ -23,6 +23,7 @@ return [
     "export_started" => "Ekspor dimulai. Anda akan diberitahu ketika selesai.",
     "import" => "Impor",
     "import_completed" => "Impor Selesai",
+    "import_failed" => "Impor Gagal",
     "import_file_hint" => "Format yang didukung: CSV, XLS, XLSX (Maks: 10MB)",
     "import_notification_info" => "Hasil impor akan dikirim melalui notifikasi ketika selesai.",
     "import_started" => "Impor dimulai. Anda akan diberitahu ketika selesai.",

@@ -14,8 +14,6 @@
         storedTheme = null;
     }
 
-    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-
     var themeToggleBtn = document.getElementById("theme-toggle");
     var darkIcon = document.getElementById("theme-toggle-dark-icon");
     var lightIcon = document.getElementById("theme-toggle-light-icon");
@@ -53,7 +51,7 @@
         setIcon(isDark);
     }
 
-    var initialDark = storedTheme === "dark" || (! storedTheme && prefersDark);
+    var initialDark = storedTheme === "dark";
 
     applyTheme(initialDark);
 

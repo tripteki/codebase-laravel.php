@@ -19,7 +19,7 @@ class ResetPasswordController
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function create(Request $request): View
+    public function create(Request $request)
     {
         return view("livewire.admin.auth.reset-password", [
             "email" => $request->email,

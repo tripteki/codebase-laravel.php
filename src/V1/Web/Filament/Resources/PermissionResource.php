@@ -164,10 +164,10 @@ class PermissionResource extends Resource
 
                 Tables\Actions\ImportAction::make()->importer(PermissionImporter::class)->chunkSize(50)->
                     icon("heroicon-o-arrow-down-circle")->
-                    visible(fn () => auth()->user()->can(PermissionEnum::PERMISSION_IMPORT_CREATE->value)),
+                    visible(fn () => auth()->user()->can(PermissionEnum::PERMISSION_IMPORT->value)),
                 Tables\Actions\ExportAction::make()->exporter(PermissionExporter::class)->
                     icon("heroicon-o-arrow-up-circle")->
-                    visible(fn () => auth()->user()->can(PermissionEnum::PERMISSION_EXPORT_CREATE->value)),
+                    visible(fn () => auth()->user()->can(PermissionEnum::PERMISSION_EXPORT->value)),
 
             ])->recordUrl(null)->actions([
 

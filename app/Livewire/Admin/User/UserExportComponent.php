@@ -16,7 +16,7 @@ class UserExportComponent extends ExportComponent
      */
     public function mount(): void
     {
-        $this->authorize(PermissionEnum::USER_EXPORT_VIEW->value);
+        $this->authorize(PermissionEnum::USER_EXPORT->value);
     }
     /**
      * Get the exporter class name.
@@ -75,6 +75,6 @@ class UserExportComponent extends ExportComponent
      */
     protected function getExportDownloadPermission(): string
     {
-        return PermissionEnum::USER_EXPORT_DOWNLOAD->value;
+        return PermissionEnum::USER_EXPORT->value;
     }
 }

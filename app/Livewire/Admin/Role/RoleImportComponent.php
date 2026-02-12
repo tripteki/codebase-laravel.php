@@ -15,7 +15,7 @@ class RoleImportComponent extends ImportComponent
      */
     public function mount(): void
     {
-        $this->authorize(PermissionEnum::ROLE_IMPORT_VIEW->value);
+        $this->authorize(PermissionEnum::ROLE_IMPORT->value);
     }
     /**
      * Get the importer class name.
@@ -64,6 +64,6 @@ class RoleImportComponent extends ImportComponent
      */
     protected function getImportUploadPermission(): string
     {
-        return PermissionEnum::ROLE_IMPORT_UPLOAD->value;
+        return PermissionEnum::ROLE_IMPORT->value;
     }
 }

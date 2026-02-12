@@ -2,9 +2,10 @@
 
 namespace Src\V1\Api\User\Database\Seeders;
 
-use Src\V1\Api\Acl\Models\Role;
-use Src\V1\Api\Acl\Enums\RoleEnum;
 use Src\V1\Api\User\Enums\PermissionEnum;
+use Src\V1\Api\Acl\Enums\RoleEnum;
+use Src\V1\Api\Acl\Enums\GuardEnum;
+use Src\V1\Api\Acl\Models\Role;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -14,10 +15,12 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $superAdmin = Role::where("name", RoleEnum::SUPERADMIN->value)->first();
+        $guard = GuardEnum::WEB->value;
+
+        $superAdmin = Role::where("name", RoleEnum::SUPERADMIN->value)->where("guard_name", $guard)->first();
         $superAdmin?->givePermissionTo(array_column(PermissionEnum::cases(), "value"));
 
-        $admin = Role::where("name", RoleEnum::ADMIN->value)->first();
+        $admin = Role::where("name", RoleEnum::ADMIN->value)->where("guard_name", $guard)->first();
         $admin?->givePermissionTo([
 
             PermissionEnum::USER_VIEW->value,
@@ -25,26 +28,20 @@ class RoleSeeder extends Seeder
             PermissionEnum::USER_UPDATE->value,
             PermissionEnum::USER_DELETE->value,
             PermissionEnum::USER_RESTORE->value,
-            PermissionEnum::USER_IMPORT_VIEW->value,
-            PermissionEnum::USER_IMPORT_CREATE->value,
-            PermissionEnum::USER_IMPORT_UPLOAD->value,
-            PermissionEnum::USER_EXPORT_VIEW->value,
-            PermissionEnum::USER_EXPORT_CREATE->value,
-            PermissionEnum::USER_EXPORT_DOWNLOAD->value,
+            PermissionEnum::USER_IMPORT->value,
+            PermissionEnum::USER_EXPORT->value,
         ]);
 
-        $user = Role::where("name", RoleEnum::USER->value)->first();
+        $user = Role::where("name", RoleEnum::USER->value)->where("guard_name", $guard)->first();
         $user?->givePermissionTo([
 
             PermissionEnum::USER_VIEW->value,
             PermissionEnum::USER_CREATE->value,
             PermissionEnum::USER_UPDATE->value,
-            PermissionEnum::USER_EXPORT_VIEW->value,
-            PermissionEnum::USER_EXPORT_CREATE->value,
-            PermissionEnum::USER_EXPORT_DOWNLOAD->value,
+            PermissionEnum::USER_EXPORT->value,
         ]);
 
-        $guest = Role::where("name", RoleEnum::GUEST->value)->first();
+        $guest = Role::where("name", RoleEnum::GUEST->value)->where("guard_name", $guard)->first();
         $guest?->givePermissionTo([
 
             PermissionEnum::USER_VIEW->value,

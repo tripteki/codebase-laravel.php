@@ -15,7 +15,7 @@ class UserImportComponent extends ImportComponent
      */
     public function mount(): void
     {
-        $this->authorize(PermissionEnum::USER_IMPORT_VIEW->value);
+        $this->authorize(PermissionEnum::USER_IMPORT->value);
     }
     /**
      * Get the importer class name.
@@ -64,6 +64,6 @@ class UserImportComponent extends ImportComponent
      */
     protected function getImportUploadPermission(): string
     {
-        return PermissionEnum::USER_IMPORT_UPLOAD->value;
+        return PermissionEnum::USER_IMPORT->value;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Src\V1\Api\User\Database\Seeders;
 
-use Src\V1\Api\Acl\Models\Permission;
 use Src\V1\Api\User\Enums\PermissionEnum;
 use Src\V1\Api\Acl\Enums\GuardEnum;
+use Src\V1\Api\Acl\Models\Permission;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -14,14 +14,14 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = array_column(PermissionEnum::cases(), "value");
+        $guard = GuardEnum::WEB->value;
 
-        foreach ($permissions as $permission) {
+        foreach (PermissionEnum::cases() as $permission) {
 
             Permission::firstOrCreate([
 
-                "name" => $permission,
-                "guard_name" => GuardEnum::WEB->value,
+                "name" => $permission->value,
+                "guard_name" => $guard,
             ]);
         }
     }

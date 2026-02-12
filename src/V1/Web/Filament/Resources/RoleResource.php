@@ -183,10 +183,10 @@ class RoleResource extends Resource
 
                 Tables\Actions\ImportAction::make()->importer(RoleImporter::class)->chunkSize(50)->
                     icon("heroicon-o-arrow-down-circle")->
-                    visible(fn () => auth()->user()->can(PermissionEnum::ROLE_IMPORT_CREATE->value)),
+                    visible(fn () => auth()->user()->can(PermissionEnum::ROLE_IMPORT->value)),
                 Tables\Actions\ExportAction::make()->exporter(RoleExporter::class)->
                     icon("heroicon-o-arrow-up-circle")->
-                    visible(fn () => auth()->user()->can(PermissionEnum::ROLE_EXPORT_CREATE->value)),
+                    visible(fn () => auth()->user()->can(PermissionEnum::ROLE_EXPORT->value)),
 
             ])->recordUrl(null)->actions([
 

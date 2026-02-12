@@ -78,8 +78,10 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             ]);
         }
 
+        $title = $failedRows > 0 ? __("module_base.import_failed") : __("module_base.import_completed");
+
         return new DatabaseMessage([
-            "title" => __("module_base.import_completed"),
+            "title" => $title,
             "body" => $body,
             "import_id" => $this->import->id,
             "file_name" => $this->import->file_name,
@@ -116,8 +118,10 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             ]);
         }
 
+        $title = $failedRows > 0 ? __("module_base.import_failed") : __("module_base.import_completed");
+
         return new BroadcastMessage([
-            "title" => __("module_base.import_completed"),
+            "title" => $title,
             "body" => $body,
             "import_id" => $this->import->id,
             "file_name" => $this->import->file_name,
@@ -155,6 +159,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             ]);
         }
 
+        $title = $failedRows > 0 ? __("module_base.import_failed") : __("module_base.import_completed");
         $filePath = $this->import->file_path;
         $downloadUrl = null;
 
@@ -170,7 +175,7 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
         }
 
         $webPushMessage = (new WebPushMessage)
-            ->title(__("module_base.import_completed"))
+            ->title($title)
             ->body($body)
             ->icon('/favicon.ico')
             ->data([
