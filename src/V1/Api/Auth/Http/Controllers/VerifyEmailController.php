@@ -25,7 +25,7 @@ class VerifyEmailController extends BaseController
 
         if ($user->hasVerifiedEmail()) {
             return redirect()->intended(
-                config("app.frontend_url") ?: url("/")
+                tenant_routes("home")
             )->with("status", __("auth.verified"));
         }
 
@@ -40,7 +40,7 @@ class VerifyEmailController extends BaseController
         }
 
         return redirect()->intended(
-            config("app.frontend_url") ?: url("/")
+            tenant_routes("home")
         )->with("status", __("auth.verified"));
     }
 }

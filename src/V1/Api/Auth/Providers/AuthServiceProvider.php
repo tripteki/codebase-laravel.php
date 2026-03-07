@@ -98,7 +98,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         ResetPassword::createUrlUsing(function ($notifiable, $token): string {
 
-            return url(route("admin.password.reset", [
+            return url(tenant_routes("admin.password.reset", [
                 "token" => $token,
                 "email" => $notifiable->getEmailForPasswordReset(),
             ], false));

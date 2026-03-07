@@ -10,8 +10,41 @@ use Illuminate\Http\JsonResponse;
 class NotificationController extends Controller
 {
     /**
-     * Mark a notification as read.
-     *
+     * @param string $id
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function readAndRedirect(string $id, Request $request): RedirectResponse
+    {
+        $notification = auth()->user()->notifications()->find($id);
+
+        if ($notification && is_null($notification->read_at)) {
+            $notification->markAsRead();
+        }
+
+        $url = $request->query('url');
+        $fallback = tenant_routes('admin.notifications.index');
+
+        if (empty($url)) {
+            return redirect()->to($fallback);
+        }
+
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            $allowedHost = $request->getHost();
+            $targetHost = parse_url($url, PHP_URL_HOST);
+            if ($targetHost !== $allowedHost) {
+                return redirect()->to($fallback);
+            }
+        } else {
+            if (! str_starts_with($url, '/')) {
+                return redirect()->to($fallback);
+            }
+        }
+
+        return redirect()->to($url);
+    }
+
+    /**
      * @param string $id
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -23,24 +56,20 @@ class NotificationController extends Controller
             $notification->markAsRead();
         }
 
-        return redirect()->back();
+        return redirect()->to(tenant_routes('admin.notifications.index'));
     }
 
     /**
-     * Mark all notifications as read.
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function markAllAsRead(): RedirectResponse
     {
         auth()->user()->unreadNotifications->markAsRead();
 
-        return redirect()->back();
+        return redirect()->to(tenant_routes('admin.notifications.index'));
     }
 
     /**
-     * Get notification data for real-time updates.
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getData(): JsonResponse
@@ -59,7 +88,7 @@ class NotificationController extends Controller
                     'body' => $body,
                     'is_read' => $isRead,
                     'created_at' => $notification->created_at->diffForHumans(),
-                    'mark_read_url' => route('admin.notifications.mark-read', $notification->id),
+                    'mark_read_url' => tenant_routes('admin.notifications.mark-read', $notification->id),
                 ];
             });
 

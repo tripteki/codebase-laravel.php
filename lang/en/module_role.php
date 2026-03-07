@@ -17,6 +17,7 @@ return [
     "import_roles" => "Import Roles",
     "name" => "Name",
     "name_description" => "Enter the name of the role",
+    "name_placeholder" => "e.g. editor or content-manager",
     "name_label" => "Name of the role",
     "role_created_failed" => "Failed to create role. Please try again.",
     "role_created_successfully" => "Role created successfully.",
@@ -30,8 +31,8 @@ return [
     "permissions" => "Permissions",
     "permissions_description" => "Select the permissions to attach to this role",
     "permissions_label" => "Permissions attached to this role",
-    "no_permissions_available" => "No permissions available for this guard",
-    "no_permissions_assigned" => "No permissions assigned to this role",
+    "no_permissions_available" => "No permissions available for this guard.",
+    "no_permissions_assigned" => "No permissions assigned to this role.",
     "permissions_not_found" => "The following permissions were not found: :permissions",
 
 ];

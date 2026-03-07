@@ -27,3 +27,13 @@
         display: none !important;
     }
 }
+
+.sidebar-gradient-bg {
+
+    background: radial-gradient(1200px 600px at 100% 0%, rgba(255,255,255,.18), transparent 40%), linear-gradient(180deg, var(--tenant-primary, hsl(213.5, 96.4%, 44.1%)) 0%, var(--tenant-primary, hsl(213.5, 96.4%, 44.1%)) 50%, var(--tenant-tertiary, hsl(219.5, 95.2%, 24.7%)) 100%);
+}
+
+.dark .sidebar-gradient-bg {
+
+    background: radial-gradient(1200px 600px at 100% 0%, rgba(255,255,255,.08), transparent 40%), linear-gradient(180deg, hsl(211.8, 18.7%, 17.8%) 0%, var(--tenant-tertiary, hsl(213.2, 53.5%, 31.2%)) 50%, var(--tenant-primary, hsl(220, 51.1%, 18.4%)) 100%);
+}

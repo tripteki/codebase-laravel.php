@@ -10,25 +10,27 @@ use Illuminate\View\View;
 class ForgotPasswordController
 {
     /**
-     * Show the forgot password form.
-     *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create()
     {
-        return view("livewire.admin.auth.forgot-password");
+        if (is_central()) {
+            return redirect()->to(tenant_routes("admin.login"));
+        }
+
+        return view("livewire.admin.auth.tenant.forgot-password");
     }
 
     /**
-     * Handle an incoming password reset link request.
-     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
+        if (is_central()) {
+            return redirect()->to(tenant_routes("admin.login"));
+        }
         $request->validate([
             "email" => ["required", "email"],
         ]);

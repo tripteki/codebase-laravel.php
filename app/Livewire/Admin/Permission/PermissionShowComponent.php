@@ -34,6 +34,7 @@ class PermissionShowComponent extends Component
             "permission" => $this->permission,
         ])->layout("layouts.app", [
             "title" => __("module_permission.show_title"),
+            "showSidebar" => true,
         ]);
     }
 }

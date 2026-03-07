@@ -8,8 +8,6 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
-     *
      * @var array<int, string>
      */
     protected $dontFlash = [
@@ -19,8 +17,6 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
-     *
      * @return void
      */
     public function register(): void

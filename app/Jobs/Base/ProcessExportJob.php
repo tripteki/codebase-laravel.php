@@ -16,10 +16,9 @@ abstract class ProcessExportJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * Create a new job instance.
-     *
      * @param \App\Models\Export $export
      * @param string $format
+     * @return void
      */
     public function __construct(
         public Export $export,
@@ -28,8 +27,6 @@ abstract class ProcessExportJob implements ShouldQueue
     }
 
     /**
-     * Execute the job.
-     *
      * @return void
      */
     public function handle(): void
@@ -58,29 +55,21 @@ abstract class ProcessExportJob implements ShouldQueue
     }
 
     /**
-     * Get the export class name.
-     *
      * @return string
      */
     abstract protected function getExportClass(): string;
 
     /**
-     * Get export data.
-     *
      * @return array
      */
     abstract protected function getExportData(): array;
 
     /**
-     * Get file name for export.
-     *
      * @return string
      */
     abstract protected function getFileName(): string;
 
     /**
-     * Get the writer type based on format.
-     *
      * @return string
      */
     protected function getWriterType(): string

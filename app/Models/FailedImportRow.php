@@ -8,15 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FailedImportRow extends Model
 {
     /**
-     * The table associated with the model.
-     *
      * @var string
      */
     protected $table = "failed_import_rows";
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -26,9 +22,7 @@ class FailedImportRow extends Model
     ];
 
     /**
-     * Cast attributes to specific data types.
-     *
-     * @return array
+     * @return array<string, string>
      */
     protected function casts(): array
     {
@@ -38,8 +32,6 @@ class FailedImportRow extends Model
     }
 
     /**
-     * Get the import that owns the failed row.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function import(): BelongsTo

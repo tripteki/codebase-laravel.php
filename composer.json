@@ -24,6 +24,8 @@
         "tightenco/ziggy": "^2.4",
         "spatie/laravel-permission": "^6.24",
         "spatie/laravel-activitylog": "^4.10",
+        "spatie/laravel-translatable": "^6.11",
+        "stancl/tenancy": "^3.9",
 
         "guzzlehttp/guzzle": "^7.10",
         "pusher/pusher-php-server": "^7.2",
@@ -48,7 +50,12 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+
+        "files": [
+
+            "app/Helpers/TenancyHelper.php"
+        ]
     },
 
     "autoload-dev": {

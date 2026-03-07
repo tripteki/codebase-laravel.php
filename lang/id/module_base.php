@@ -4,6 +4,7 @@ return [
 
     "back_to_list" => "Kembali ke daftar",
     "cancel" => "Batal",
+    "add" => "Tambah",
     "column_actions" => "Tindakan",
     "column_created_at" => "Dibuat Pada",
     "column_name" => "Nama",
@@ -28,6 +29,9 @@ return [
     "import_notification_info" => "Hasil impor akan dikirim melalui notifikasi ketika selesai.",
     "import_started" => "Impor dimulai. Anda akan diberitahu ketika selesai.",
     "list" => "Daftar",
+    "next" => "Lanjut",
+    "previous" => "Kembali",
+    "remove" => "Hapus",
     "save" => "Simpan",
     "save_changes" => "Simpan perubahan",
     "select_file" => "Pilih File",

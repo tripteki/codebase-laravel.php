@@ -19,7 +19,7 @@ return [
 
             "driver" => "local",
             "root" => storage_path("app/public"),
-            "url" => env("APP_URL", "http://localhost")."/storage",
+            "url" => (($u = rtrim((string) env("APP_URL", ""), "/")) !== "" ? $u."/storage" : ""),
             "visibility" => "public",
             "throw" => false,
         ],

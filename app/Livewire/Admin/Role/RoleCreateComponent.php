@@ -2,11 +2,14 @@
 
 namespace App\Livewire\Admin\Role;
 
+use App\Models\Tenant;
 use Src\V1\Api\Acl\Enums\GuardEnum;
 use Src\V1\Api\Acl\Enums\PermissionEnum;
 use Src\V1\Api\Acl\Models\Permission;
 use Src\V1\Api\Acl\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -28,18 +31,20 @@ class RoleCreateComponent extends Component
     public $permissions = [];
 
     /**
-     * Mount the component.
-     *
+     * @var string|null
+     */
+    public $currentTenantId = null;
+
+    /**
      * @return void
      */
     public function mount(): void
     {
         $this->guard_name = GuardEnum::WEB->value;
+        $this->currentTenantId = config("tenancy.is_tenancy") && tenant() ? tenant()->id : null;
     }
 
     /**
-     * Updated guard name handler.
-     *
      * @return void
      */
     public function updatedGuardName(): void
@@ -52,17 +57,24 @@ class RoleCreateComponent extends Component
      */
     protected function rules(): array
     {
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+
         return [
-            "name" => "required|string|max:255|unique:roles,name",
+            "name" => [
+                "required",
+                "string",
+                "max:255",
+                $tenant ? $tenant->unique("roles", "name") : Rule::unique("roles", "name"),
+            ],
             "guard_name" => "required|string|max:255",
             "permissions" => "nullable|array",
-            "permissions.*" => "exists:permissions,id",
+            "permissions.*" => [
+                $tenant ? $tenant->exists("permissions", "id") : "exists:permissions,id",
+            ],
         ];
     }
 
     /**
-     * Persist a new role.
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function save()
@@ -77,29 +89,42 @@ class RoleCreateComponent extends Component
         DB::beginTransaction();
 
         try {
+            if (config("tenancy.is_tenancy") && filled($this->currentTenantId)) {
+                $tenant = Tenant::find($this->currentTenantId);
+                if ($tenant) {
+                    tenancy()->initialize($tenant);
+                }
+            }
+
             $role = Role::query()->create($data);
 
             if (! empty($permissions)) {
                 $role->syncPermissions($permissions);
             }
 
+            if (config("tenancy.is_tenancy") && filled($this->currentTenantId)) {
+                tenancy()->end();
+            }
+
             DB::commit();
 
             session()->flash("message", __("module_role.role_created_successfully"));
 
-            return redirect()->route("admin.roles.index");
+            return redirect()->to(tenant_routes("admin.roles.index"));
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
 
             session()->flash("error", __("module_role.role_created_failed"));
 
-            return redirect()->back();
+            return redirect()->to(tenant_routes("admin.roles.create"));
         }
     }
 
     /**
-     * Render the create view.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -113,6 +138,7 @@ class RoleCreateComponent extends Component
             "availablePermissions" => $availablePermissions,
         ])->layout("layouts.app", [
             "title" => __("module_role.create_title"),
+            "showSidebar" => true,
         ]);
     }
 }

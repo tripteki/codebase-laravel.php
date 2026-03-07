@@ -13,9 +13,8 @@ class PermissionExport implements FromArray, WithHeadings
     protected array $permissions;
 
     /**
-     * Create a new export instance.
-     *
      * @param array $permissions
+     * @return void
      */
     public function __construct(array $permissions)
     {

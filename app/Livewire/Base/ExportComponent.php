@@ -19,8 +19,6 @@ abstract class ExportComponent extends Component
     public $showModal = false;
 
     /**
-     * Validation rules for export format.
-     *
      * @return array<string, string>
      */
     protected function rules(): array
@@ -31,8 +29,6 @@ abstract class ExportComponent extends Component
     }
 
     /**
-     * Open export modal.
-     *
      * @return void
      */
     public function openModal(): void
@@ -41,8 +37,6 @@ abstract class ExportComponent extends Component
     }
 
     /**
-     * Close export modal.
-     *
      * @return void
      */
     public function closeModal(): void
@@ -51,8 +45,6 @@ abstract class ExportComponent extends Component
     }
 
     /**
-     * Handle export request.
-     *
      * @return void
      */
     public function export(): void
@@ -76,8 +68,6 @@ abstract class ExportComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -86,43 +76,31 @@ abstract class ExportComponent extends Component
     }
 
     /**
-     * Get the exporter class name.
-     *
      * @return string
      */
     abstract protected function getExporterClass(): string;
 
     /**
-     * Get the process export job class name.
-     *
      * @return string
      */
     abstract protected function getProcessExportJobClass(): string;
 
     /**
-     * Get the view name.
-     *
      * @return string
      */
     abstract protected function getViewName(): string;
 
     /**
-     * Get total rows count for export.
-     *
      * @return int
      */
     abstract protected function getTotalRowsCount(): int;
 
     /**
-     * Get export started message.
-     *
      * @return string
      */
     abstract protected function getExportStartedMessage(): string;
 
     /**
-     * Get export download permission.
-     *
      * @return string
      */
     abstract protected function getExportDownloadPermission(): string;

@@ -22,5 +22,7 @@ return [
     "subject_id_label" => "Subject ID of the activity",
     "causer_label" => "User who caused the activity",
     "properties_label" => "Additional properties of the activity",
+    "tenant" => "Tenant",
+    "tenant_label" => "Tenant associated with this activity",
 
 ];

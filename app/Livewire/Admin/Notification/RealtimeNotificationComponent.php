@@ -9,38 +9,26 @@ use Illuminate\Support\Facades\Auth;
 class RealtimeNotificationComponent extends Component
 {
     /**
-     * Last checked notification ID.
-     *
      * @var string|null
      */
     public ?string $lastNotificationId = null;
 
     /**
-     * Last checked notification created_at timestamp.
-     *
      * @var string|null
      */
     public ?string $lastNotificationCreatedAt = null;
 
     /**
-     * Notification types to check (empty array means all types).
-     * Example: ['App\\Notifications\\ImportCompletedNotification']
-     *
      * @var array<string>
      */
     public array $notificationTypes = [];
 
     /**
-     * Polling interval in seconds.
-     * Default: 5 seconds
-     *
      * @var int
      */
     public int $pollInterval = 5;
 
     /**
-     * Mount the component.
-     *
      * @param array<string> $notificationTypes
      * @param int $pollInterval
      * @return void
@@ -65,8 +53,6 @@ class RealtimeNotificationComponent extends Component
     }
 
     /**
-     * Check for new notifications.
-     *
      * @return void
      */
     public function checkNotifications(): void
@@ -94,46 +80,94 @@ class RealtimeNotificationComponent extends Component
             $title = $data['title'] ?? '';
             $body = $data['body'] ?? '';
 
-            $toastType = $this->getToastType($notification->type);
+            $variant = null;
+            $readAndOpenUrl = null;
+            $linkText = null;
+            $iconKey = $data['presentation_icon'] ?? $data['icon'] ?? 'default';
+            $theme = self::resolveToastTheme($data);
+            $icon = $iconKey;
 
-            $message = '';
-            if ($title && $body) {
-                $message = "{$title}: {$body}";
-            } elseif ($title) {
-                $message = $title;
-            } elseif ($body) {
-                $message = $body;
+            if (isset($data['url'])) {
+                $url = $data['url'];
+                $isAbsoluteUrl = str_starts_with($url, 'http://') || str_starts_with($url, 'https://');
+                $redirectTo = $isAbsoluteUrl ? $url : asset('storage/' . $url);
+
+                $pathForExt = parse_url($redirectTo, PHP_URL_PATH) ?? $url;
+                $ext = strtolower(pathinfo($pathForExt, PATHINFO_EXTENSION));
+                $linkText = ($ext !== '' && preg_match('/^[a-z0-9]{2,6}$/', $ext)) ? __('common.download') : __('common.visit');
+                $readAndOpenUrl = tenant_routes('admin.notifications.read-and-redirect', ['id' => $notification->id]) . '?url=' . rawurlencode($redirectTo);
+                $variant = self::linkToastVariantFromNotificationData($data);
             }
 
-            if ($message) {
-                $this->dispatch('toast', message: $message, type: $toastType, id: $notification->id);
+            if ($variant !== null && $readAndOpenUrl !== null) {
+                $this->dispatch('toast',
+                    variant: $variant,
+                    title: $title ?: __('common.notification'),
+                    message: $body,
+                    readAndOpenUrl: $readAndOpenUrl,
+                    linkText: $linkText,
+                    id: $notification->id,
+                    theme: $theme,
+                    icon: $icon,
+                );
+            } elseif ($title || $body) {
+                $message = $title && $body ? "{$title}: {$body}" : ($title ?: $body);
+                $this->dispatch('toast', message: $message, type: 'success', id: $notification->id);
+            }
+
+            if (! empty($data['refresh_datatables'])) {
+                $this->dispatch('refreshDatatable');
             }
         }
     }
 
     /**
-     * Get toast type based on notification type.
-     *
-     * @param string $notificationType
-     * @return string
-     */
-    protected function getToastType(string $notificationType): string
-    {
-        $typeMap = [
-            'App\\Notifications\\ImportCompletedNotification' => 'success',
-            'App\\Notifications\\ExportCompletedNotification' => 'success',
-        ];
-
-        return $typeMap[$notificationType] ?? 'success';
-    }
-
-    /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
     {
         return view('livewire.admin.notification.realtime-notification');
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private static function linkToastVariantFromNotificationData(array $data): string
+    {
+        $icon = $data['presentation_icon'] ?? $data['icon'] ?? null;
+
+        if (! is_string($icon)) {
+            return 'default';
+        }
+
+        $normalized = strtolower(str_replace('_', '-', trim($icon)));
+
+        if ($normalized !== '' && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $normalized)) {
+            return $normalized;
+        }
+
+        return 'default';
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private static function resolveToastTheme(array $data): string
+    {
+        if (isset($data['toast_theme']) && in_array($data['toast_theme'], ['success', 'danger'], true)) {
+            return $data['toast_theme'];
+        }
+
+        if ((int) ($data['failed_rows'] ?? 0) > 0) {
+            return 'danger';
+        }
+
+        $status = $data['status'] ?? null;
+
+        if (in_array($status, ['danger', 'warning'], true)) {
+            return 'danger';
+        }
+
+        return 'success';
     }
 }

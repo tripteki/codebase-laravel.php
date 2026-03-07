@@ -51,10 +51,37 @@ class AdminPanelProvider extends PanelProvider
         ->id("admin")
         ->path("admin")
         ->viteTheme("resources/css/filament/admin/theme.css")
-        ->favicon(asset("asset/favicon.png"))
+        ->favicon(
+            (function () {
+                $default = asset("asset/favicon.png");
+                if (! hasTenant() || ! tenant("favicon_png")) {
+                    return $default;
+                }
+
+                return asset("storage/" . tenant("favicon_png"));
+            })()
+        )
         ->brandName(Str::title(config("app.name")))
-        ->brandLogo(asset("asset/brand-light.png"))
-        ->darkModeBrandLogo(asset("asset/brand-dark.png"))
+        ->brandLogo(
+            (function () {
+                $default = asset("asset/brand-light.png");
+                if (! hasTenant() || ! tenant("brand_light")) {
+                    return $default;
+                }
+
+                return asset("storage/" . tenant("brand_light"));
+            })()
+        )
+        ->darkModeBrandLogo(
+            (function () {
+                $default = asset("asset/brand-dark.png");
+                if (! hasTenant() || ! tenant("brand_dark")) {
+                    return $default;
+                }
+
+                return asset("storage/" . tenant("brand_dark"));
+            })()
+        )
         ->colors([
 
             "primary" => Color::Blue,

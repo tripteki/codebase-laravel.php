@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Admin\User;
 
+use App\Enum\Event\AddOnEnum;
+use App\Imports\Admin\User\UserImport;
+use App\Helpers\AddOnsHelper;
 use App\Jobs\Admin\User\ProcessUserImport;
 use App\Livewire\Base\ImportComponent;
 use Src\V1\Api\User\Enums\PermissionEnum;
@@ -9,27 +12,24 @@ use Src\V1\Api\User\Enums\PermissionEnum;
 class UserImportComponent extends ImportComponent
 {
     /**
-     * Mount the component.
-     *
      * @return void
      */
     public function mount(): void
     {
         $this->authorize(PermissionEnum::USER_IMPORT->value);
+        if (! AddOnsHelper::has(AddOnEnum::FEATURES_IMPORT)) {
+            abort(403);
+        }
     }
     /**
-     * Get the importer class name.
-     *
      * @return string
      */
     protected function getImporterClass(): string
     {
-        return \App\Imports\Admin\User\UserImport::class;
+        return UserImport::class;
     }
 
     /**
-     * Get the process import job class name.
-     *
      * @return string
      */
     protected function getProcessImportJobClass(): string
@@ -38,8 +38,6 @@ class UserImportComponent extends ImportComponent
     }
 
     /**
-     * Get the view name.
-     *
      * @return string
      */
     protected function getViewName(): string
@@ -48,8 +46,6 @@ class UserImportComponent extends ImportComponent
     }
 
     /**
-     * Get import started message.
-     *
      * @return string
      */
     protected function getImportStartedMessage(): string
@@ -58,8 +54,6 @@ class UserImportComponent extends ImportComponent
     }
 
     /**
-     * Get import upload permission.
-     *
      * @return string
      */
     protected function getImportUploadPermission(): string

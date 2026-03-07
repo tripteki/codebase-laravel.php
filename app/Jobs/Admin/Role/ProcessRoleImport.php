@@ -14,8 +14,6 @@ use Illuminate\Validation\Rule;
 class ProcessRoleImport extends ProcessImportJob
 {
     /**
-     * Get the import class name.
-     *
      * @return string
      */
     protected function getImportClass(): string
@@ -24,8 +22,6 @@ class ProcessRoleImport extends ProcessImportJob
     }
 
     /**
-     * Get validator for row data.
-     *
      * @param array $normalizedData
      * @return \Illuminate\Contracts\Validation\Validator
      */
@@ -44,12 +40,16 @@ class ProcessRoleImport extends ProcessImportJob
                 : array_map("trim", explode(",", $normalizedData["permissions"]));
         }
 
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+
         return Validator::make($normalizedData, [
             "name" => [
                 "required",
                 "string",
                 "max:255",
-                $existingRole ? Rule::unique("roles", "name")->where("guard_name", $defaultGuard)->ignore($existingRole->id) : Rule::unique("roles", "name")->where("guard_name", $defaultGuard),
+                $existingRole
+                    ? ($tenant ? $tenant->unique("roles", "name")->ignore($existingRole->id) : Rule::unique("roles", "name")->where("guard_name", $defaultGuard)->ignore($existingRole->id))
+                    : ($tenant ? $tenant->unique("roles", "name") : Rule::unique("roles", "name")->where("guard_name", $defaultGuard)),
             ],
             "guard_name" => ["required", "string", "max:255"],
             "permissions" => ["nullable", "string"],
@@ -63,8 +63,6 @@ class ProcessRoleImport extends ProcessImportJob
     }
 
     /**
-     * Validate before processing.
-     *
      * @param array $validatedData
      * @param array $normalizedData
      * @return void
@@ -93,8 +91,6 @@ class ProcessRoleImport extends ProcessImportJob
     }
 
     /**
-     * Process a single row.
-     *
      * @param array $validatedData
      * @param array $normalizedData
      * @return void

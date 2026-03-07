@@ -1,0 +1,46 @@
+.notification-bell-icon {
+
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #d97706 !important;
+}
+
+.dark .notification-bell-icon {
+
+    color: #f59e0b !important;
+}
+
+.notification-bell-outline {
+
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.dark .notification-bell-outline {
+
+    color: #fff;
+}
+
+.notification-dot {
+
+    background-color: #dc2626;
+    animation: notification-dot-pulse 1.5s ease-in-out infinite;
+}
+
+.dark .notification-dot {
+
+    background-color: #ef4444;
+}
+
+@keyframes notification-dot-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+    }
+    50% {
+        opacity: 0.9;
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0);
+    }
+}

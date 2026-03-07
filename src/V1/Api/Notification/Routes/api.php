@@ -8,9 +8,6 @@ use Illuminate\Http\JsonResponse;
 
 Route::middleware([ "auth:api", "verified", ])->group(function (): void {
 
-    /**
-     * Notifications.
-     */
     Route::get("v1/notifications", [ NotificationController::class, "index", ]);
     Route::match([ "put", "patch", ], "v1/notifications/read-all", [ NotificationController::class, "readall", ]);
     Route::match([ "put", "patch", ], "v1/notifications/read/{id}", [ NotificationController::class, "read", ]);

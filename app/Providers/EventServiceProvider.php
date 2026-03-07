@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\SendEmailVerificationNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Authenticated;
@@ -14,7 +15,6 @@ use Illuminate\Auth\Events\CurrentDeviceLogout;
 use Illuminate\Auth\Events\OtherDeviceLogout;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -23,8 +23,6 @@ use Illuminate\Support\Facades\URL;
 class EventServiceProvider extends ServiceProvider
 {
     /**
-     * The event listener mappings for the application.
-     *
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
@@ -79,8 +77,6 @@ class EventServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Register any events for your application.
-     *
      * @return void
      */
     public function boot(): void
@@ -100,7 +96,7 @@ class EventServiceProvider extends ServiceProvider
         });
 
         ResetPassword::createUrlUsing(function ($notifiable, $token): string {
-            return url(route("admin.password.reset", [
+            return url(tenant_routes("admin.password.reset", [
                 "token" => $token,
                 "email" => $notifiable->getEmailForPasswordReset(),
             ], false));
@@ -108,8 +104,6 @@ class EventServiceProvider extends ServiceProvider
     }
 
     /**
-     * Determine if events and listeners should be automatically discovered.
-     *
      * @return bool
      */
     public function shouldDiscoverEvents(): bool

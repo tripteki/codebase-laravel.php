@@ -36,6 +36,7 @@ class RoleShowComponent extends Component
             "role" => $this->role,
         ])->layout("layouts.app", [
             "title" => __("module_role.show_title"),
+            "showSidebar" => true,
         ]);
     }
 }

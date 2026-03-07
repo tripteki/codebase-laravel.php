@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyNotification;
 use Src\V1\Api\User\Enums\UserEnum;
 use Src\V1\Api\User\Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
@@ -21,10 +22,14 @@ use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
+use Carbon\Carbon;
 use NotificationChannels\WebPush\HasPushSubscriptions as NotifiablePushTrait;
 use Spatie\Permission\Traits\HasRoles as ACLTrait;
 use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Contracts\Activity;
+use App\Models\Tenant;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class User extends Authenticatable implements IAuthSession, IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
 {
@@ -37,18 +42,15 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         LogTrait,
         HasUlids,
         SoftDeletes,
-        HasFactory;
+        HasFactory,
+        BelongsToTenant;
 
     /**
-     * The table associated with the model.
-     *
      * @var string
      */
     protected $table = "users";
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -57,11 +59,10 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         "email",
         "password",
         "log_activities",
+        "tenant_id",
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var array<int, string>
      */
     protected $hidden = [
@@ -71,9 +72,7 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     ];
 
     /**
-     * Cast attributes to specific data types.
-     *
-     * @return array
+     * @return array<string, string>
      */
     protected function casts()
     {
@@ -84,8 +83,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Check if the user has access to a given Filament panel.
-     *
      * @param \Filament\Panel $panel
      * @return bool
      */
@@ -95,8 +92,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Hash the password attribute.
-     *
      * @param mixed $value
      * @return void
      */
@@ -114,8 +109,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Set the log_activities attribute.
-     *
      * @param mixed $value
      * @return void
      */
@@ -125,8 +118,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Get the log_activities attribute.
-     *
      * @param mixed $value
      * @return array|null
      */
@@ -144,8 +135,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Get the options for logging activity.
-     *
      * @return \Spatie\Activitylog\LogOptions
      */
     public function getActivitylogOptions(): LogOptions
@@ -165,8 +154,15 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * The identifier that will be used to identify the JWT.
-     *
+     * @param \Spatie\Activitylog\Contracts\Activity $activity
+     * @return void
+     */
+    public function tapActivity(Activity $activity): void
+    {
+        $activity->tenant_id = $this->tenant_id;
+    }
+
+    /**
      * @return mixed
      */
     public function getJWTIdentifier()
@@ -175,8 +171,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * The custom claims for the JWT token.
-     *
      * @return array
      */
     public function getJWTCustomClaims()
@@ -188,8 +182,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Create a new factory instance for the model.
-     *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory()
@@ -198,8 +190,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Scope a query to only include activated users.
-     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return void
      */
@@ -209,8 +199,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Scope a query to only include deactivated users.
-     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return void
      */
@@ -220,8 +208,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Get the profile associated with the user.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function profile()
@@ -229,4 +215,33 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         return $this->hasOne(Profile::class);
     }
 
+    /**
+     * @param string|null $date
+     * @param string|null $time
+     * @return string|null
+     */
+    public function formatEventDateTime(?string $date, ?string $time): ?string
+    {
+        if (! filled($date)) {
+            return null;
+        }
+        try {
+            $dt = Carbon::parse($date);
+            if (filled($time)) {
+                $dt->setTimeFromTimeString($time);
+                return $dt->format("j M Y, H:i");
+            }
+            return $dt->format("j M Y");
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyNotification());
+    }
 }

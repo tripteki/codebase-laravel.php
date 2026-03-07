@@ -4,6 +4,7 @@ return [
 
     "back_to_list" => "Back to list",
     "cancel" => "Cancel",
+    "add" => "Add",
     "column_actions" => "Actions",
     "column_created_at" => "Created At",
     "column_name" => "Name",
@@ -28,6 +29,9 @@ return [
     "import_notification_info" => "The import result will be sent via notification when completed.",
     "import_started" => "Import started. You will be notified when it's completed.",
     "list" => "List",
+    "next" => "Next",
+    "previous" => "Previous",
+    "remove" => "Remove",
     "save" => "Save",
     "save_changes" => "Save changes",
     "select_file" => "Select File",

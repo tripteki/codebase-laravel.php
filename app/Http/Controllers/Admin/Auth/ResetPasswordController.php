@@ -14,29 +14,31 @@ use Illuminate\View\View;
 class ResetPasswordController
 {
     /**
-     * Display the password reset view.
-     *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create(Request $request)
     {
-        return view("livewire.admin.auth.reset-password", [
+        if (is_central()) {
+            return redirect()->to(tenant_routes("admin.login"));
+        }
+
+        return view("livewire.admin.auth.tenant.reset-password", [
             "email" => $request->email,
             "token" => $request->route("token"),
         ]);
     }
 
     /**
-     * Handle an incoming new password request.
-     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
+        if (is_central()) {
+            return redirect()->to(tenant_routes("admin.login"));
+        }
         $request->validate([
             "token" => ["required", "string"],
             "email" => ["required", "string", "email"],
@@ -64,6 +66,6 @@ class ResetPasswordController
             ]);
         }
 
-        return redirect()->route("admin.login")->with("status", __($status));
+        return redirect()->to(tenant_routes("admin.login"))->with("status", __($status));
     }
 }

@@ -18,6 +18,8 @@ abstract class RoleForm
      */
     public static function validation(string $validation, $exception = null): array
     {
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+
         return [
 
             "name" => [
@@ -26,7 +28,9 @@ abstract class RoleForm
                 "string",
                 "min:2",
                 "max:64",
-                ! $exception ? Rule::unique(Role::class) : Rule::unique(Role::class)->ignore($exception),
+                ! $exception
+                    ? ($tenant ? $tenant->unique("roles", "name") : Rule::unique(Role::class, "name"))
+                    : ($tenant ? $tenant->unique("roles", "name")->ignore($exception) : Rule::unique(Role::class, "name")->ignore($exception)),
             ],
 
             "guard_name" => [

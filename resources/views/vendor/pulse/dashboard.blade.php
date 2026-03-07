@@ -4,8 +4,9 @@
 
     <livewire:pulse.usage cols="4" rows="2" />
 
-    <livewire:pulse.cache cols="4" />
-    <livewire:pulse.queues cols="4" />
+    <livewire:pulse.cache cols="4" rows="2" />
+
+    <livewire:pulse.queues cols="4" rows="2" />
 
     <livewire:pulse.exceptions cols="full" />
 

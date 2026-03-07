@@ -19,25 +19,44 @@ abstract class UserForm
      */
     public static function validation(string $validation, $exception = null): array
     {
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+        $tenantId = $exception instanceof User ? $exception->tenant_id : null;
+
+        $nameRule = $tenant
+            ? (! $exception ? $tenant->unique("users", "name") : $tenant->unique("users", "name")->ignore($exception))
+            : (config("tenancy.is_tenancy")
+                ? (filled($tenantId) ? Rule::unique("users", "name")->where("tenant_id", $tenantId) : Rule::unique("users", "name")->whereNull("tenant_id"))
+                : Rule::unique("users", "name"));
+        if (! $tenant && $exception) {
+            $nameRule = $nameRule->ignore($exception);
+        }
+
+        $emailRule = $tenant
+            ? (! $exception ? $tenant->unique("users", "email") : $tenant->unique("users", "email")->ignore($exception))
+            : (config("tenancy.is_tenancy")
+                ? (filled($tenantId) ? Rule::unique("users", "email")->where("tenant_id", $tenantId) : Rule::unique("users", "email")->whereNull("tenant_id"))
+                : Rule::unique("users", "email"));
+        if (! $tenant && $exception) {
+            $emailRule = $emailRule->ignore($exception);
+        }
+
         return [
 
             "name" => [
-
                 "required",
                 "string",
                 "min:2",
                 "max:16",
-                ! $exception ? Rule::unique(User::class) : Rule::unique(User::class)->ignore($exception),
+                $nameRule,
             ],
 
             "email" => [
-
                 "required",
                 "string",
                 "min:8",
                 "max:48",
                 "email",
-                ! $exception ? Rule::unique(User::class) : Rule::unique(User::class)->ignore($exception),
+                $emailRule,
             ],
 
             "password" => [

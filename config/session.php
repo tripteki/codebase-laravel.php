@@ -9,7 +9,7 @@ return [
     */
     "driver" => env("SESSION_DRIVER", "file"),
 
-    "lifetime" => 120,
+    "lifetime" => 4320,
     "lottery" => [ 2, 100, ],
     "expire_on_close" => false,
     "encrypt" => false,

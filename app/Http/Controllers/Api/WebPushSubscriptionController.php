@@ -9,8 +9,6 @@ use Illuminate\Http\Request;
 class WebPushSubscriptionController extends Controller
 {
     /**
-     * Store or update a push subscription for the authenticated user.
-     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -40,8 +38,6 @@ class WebPushSubscriptionController extends Controller
     }
 
     /**
-     * Delete a push subscription for the authenticated user.
-     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */

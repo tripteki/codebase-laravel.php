@@ -9,8 +9,6 @@ use Src\V1\Api\Acl\Models\Role;
 class ProcessRoleExport extends ProcessExportJob
 {
     /**
-     * Get the export class name.
-     *
      * @return string
      */
     protected function getExportClass(): string
@@ -19,8 +17,6 @@ class ProcessRoleExport extends ProcessExportJob
     }
 
     /**
-     * Get export data.
-     *
      * @return array
      */
     protected function getExportData(): array
@@ -45,8 +41,6 @@ class ProcessRoleExport extends ProcessExportJob
     }
 
     /**
-     * Get file name for export.
-     *
      * @return string
      */
     protected function getFileName(): string

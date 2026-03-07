@@ -5,8 +5,10 @@ namespace App\Livewire\Admin\Setting;
 use App\Models\Profile;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class UserSettingIndexPersonalComponent extends Component
@@ -39,6 +41,16 @@ class UserSettingIndexPersonalComponent extends Component
     public $avatarUrl = null;
 
     /**
+     * @var array<int, string>
+     */
+    public $interests = [];
+
+    /**
+     * @var string
+     */
+    public $newInterest = "";
+
+    /**
      * @var string|null
      */
     public $password = null;
@@ -49,8 +61,6 @@ class UserSettingIndexPersonalComponent extends Component
     public $passwordConfirmation = null;
 
     /**
-     * Mount the component.
-     *
      * @return void
      */
     public function mount(): void
@@ -64,29 +74,79 @@ class UserSettingIndexPersonalComponent extends Component
         if ($profile) {
             $this->fullName = $profile->full_name;
             $this->avatarUrl = $profile->avatar;
+            $this->interests = $profile->interests ?? [];
         }
     }
 
     /**
-     * Validation rules.
-     *
      * @return array<string, string>
      */
     protected function rules(): array
     {
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+        $user = auth()->user();
+
         return [
             "name" => ["required", "string", "max:255"],
-            "email" => ["required", "string", "email", "max:255"],
+            "email" => [
+                "required",
+                "string",
+                "email",
+                "max:255",
+                $tenant
+                    ? $tenant->unique("users", "email")->ignore($user->id)
+                    : (config("tenancy.is_tenancy")
+                        ? (filled($user->tenant_id)
+                            ? Rule::unique("users", "email")->where("tenant_id", $user->tenant_id)->ignore($user->id)
+                            : Rule::unique("users", "email")->whereNull("tenant_id")->ignore($user->id))
+                        : Rule::unique("users", "email")->ignore($user->id)),
+            ],
             "fullName" => ["nullable", "string", "max:255"],
             "avatar" => ["nullable", "image", "max:2048"],
+            "interests" => ["nullable", "array"],
+            "interests.*" => ["string", "max:100"],
             "password" => ["nullable", "string", "min:8", "max:255"],
             "passwordConfirmation" => ["nullable", "string", "same:password"],
         ];
     }
 
     /**
-     * Save the profile.
-     *
+     * @return void
+     */
+    public function addInterest(): void
+    {
+        $tag = trim($this->newInterest);
+        if ($tag !== "" && ! in_array($tag, $this->interests, true)) {
+            $this->interests[] = $tag;
+            $this->newInterest = "";
+        }
+    }
+
+    /**
+     * @param string $value
+     * @return void
+     */
+    public function addInterestValue(string $value): void
+    {
+        $tag = trim($value);
+        if ($tag !== "" && ! in_array($tag, $this->interests, true)) {
+            $this->interests[] = $tag;
+        }
+        $this->newInterest = "";
+    }
+
+    /**
+     * @param int $index
+     * @return void
+     */
+    public function removeInterest(int $index): void
+    {
+        if (isset($this->interests[$index])) {
+            array_splice($this->interests, $index, 1);
+        }
+    }
+
+    /**
      * @return void
      */
     public function save(): void
@@ -118,6 +178,8 @@ class UserSettingIndexPersonalComponent extends Component
             $this->reset("avatar");
         }
 
+        $profile->interests = array_values(array_map("trim", $this->interests));
+
         $profile->save();
 
         if ($this->password) {
@@ -132,12 +194,23 @@ class UserSettingIndexPersonalComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
     {
-        return view("livewire.admin.setting.setting-personal-component");
+        $existingInterests = Profile::query()
+            ->whereNotNull("interests")
+            ->get()
+            ->pluck("interests")
+            ->flatten()
+            ->unique()
+            ->filter()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        return view("livewire.admin.setting.setting-personal-component", [
+            "existingInterests" => $existingInterests,
+        ]);
     }
 }

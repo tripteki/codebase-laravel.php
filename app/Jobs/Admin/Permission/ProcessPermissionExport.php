@@ -9,8 +9,6 @@ use Src\V1\Api\Acl\Models\Permission;
 class ProcessPermissionExport extends ProcessExportJob
 {
     /**
-     * Get the export class name.
-     *
      * @return string
      */
     protected function getExportClass(): string
@@ -19,8 +17,6 @@ class ProcessPermissionExport extends ProcessExportJob
     }
 
     /**
-     * Get export data.
-     *
      * @return array
      */
     protected function getExportData(): array
@@ -41,8 +37,6 @@ class ProcessPermissionExport extends ProcessExportJob
     }
 
     /**
-     * Get file name for export.
-     *
      * @return string
      */
     protected function getFileName(): string

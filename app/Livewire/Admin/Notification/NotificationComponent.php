@@ -8,21 +8,27 @@ use Illuminate\View\View;
 class NotificationComponent extends Component
 {
     /**
-     * Active tab: 'unread' or 'read'.
-     *
      * @var string
      */
-    public string $activeTab = 'unread';
+    public string $activeTab = 'all';
 
     /**
-     * Set active tab.
-     *
+     * @var string
+     */
+    public string $notificationsIndexUrl = '';
+
+    public function mount(): void
+    {
+        $this->notificationsIndexUrl = tenant_routes('admin.notifications.index');
+    }
+
+    /**
      * @param string $tab
      * @return void
      */
     public function setTab(string $tab): void
     {
-        if (in_array($tab, ['unread', 'read'])) {
+        if (in_array($tab, ['all', 'unread', 'read'])) {
             $this->activeTab = $tab;
         }
 
@@ -30,8 +36,6 @@ class NotificationComponent extends Component
     }
 
     /**
-     * Mark a notification as read.
-     *
      * @param string $notificationId
      * @return void
      */
@@ -45,8 +49,6 @@ class NotificationComponent extends Component
     }
 
     /**
-     * Mark all notifications as read.
-     *
      * @return void
      */
     public function markAllAsRead(): void
@@ -55,8 +57,6 @@ class NotificationComponent extends Component
     }
 
     /**
-     * Refresh notifications data.
-     *
      * @return void
      */
     public function refresh(): void
@@ -65,8 +65,6 @@ class NotificationComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -78,7 +76,7 @@ class NotificationComponent extends Component
 
             if ($this->activeTab === 'unread') {
                 $query->whereNull('read_at');
-            } else {
+            } elseif ($this->activeTab === 'read') {
                 $query->whereNotNull('read_at');
             }
 

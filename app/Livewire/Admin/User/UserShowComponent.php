@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\User;
 
 use App\Models\User;
+use Src\V1\Api\Acl\Enums\RoleEnum;
 use Src\V1\Api\User\Enums\PermissionEnum;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -20,9 +21,13 @@ class UserShowComponent extends Component
      */
     public function mount(User $user): void
     {
-        $this->authorize(PermissionEnum::USER_VIEW->value);
+        $this->authorize(PermissionEnum::USER_VIEW->value, $user);
 
-        $this->user = $user->load("roles");
+        $relations = ["roles", "profile"];
+        if (config("tenancy.is_tenancy")) {
+            $relations[] = "tenant.domains";
+        }
+        $this->user = $user->load($relations);
     }
 
     /**
@@ -34,6 +39,7 @@ class UserShowComponent extends Component
             "user" => $this->user,
         ])->layout("layouts.app", [
             "title" => __("module_user.show_title"),
+            "showSidebar" => true,
         ]);
     }
 }

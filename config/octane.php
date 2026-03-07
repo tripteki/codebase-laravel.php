@@ -23,11 +23,15 @@ use Laravel\Octane\Listeners\ReportException;
 use Laravel\Octane\Listeners\StopWorkerIfNecessary;
 use Laravel\Octane\Octane;
 
+$octaneAppUrl = (string) config("app.url");
+$octaneParsed = $octaneAppUrl !== "" ? @parse_url($octaneAppUrl) : null;
+$octaneScheme = is_array($octaneParsed) && isset($octaneParsed["scheme"]) ? $octaneParsed["scheme"] : "http";
+
 return [
 
-    "host" => @parse_url(config("app.url", "http://localhost"))["host"] ?? "localhost",
-    "port" => @parse_url(config("app.url", "http://localhost"))["port"] ?? "80",
-    "https" => (@parse_url(config("app.url", "http://localhost"))["scheme"] ?? "http") === "https",
+    "host" => is_array($octaneParsed) && isset($octaneParsed["host"]) ? $octaneParsed["host"] : "",
+    "port" => is_array($octaneParsed) && isset($octaneParsed["port"]) ? (int) $octaneParsed["port"] : 80,
+    "https" => $octaneScheme === "https",
 
     "state_file" => storage_path("logs/server-state.json"),
 
@@ -42,7 +46,7 @@ return [
             "pid_file" => storage_path("logs/server/server.pid"),
             "log_file" => storage_path("logs/server.log"),
 
-            ...((@parse_url(config("app.url", "http://localhost"))["scheme"] ?? "http") === "https" ? [
+            ...($octaneScheme === "https" ? [
 
                 "ssl_key_file" => env("SSL_KEY_FILE", ".key"),
                 "ssl_cert_file" => env("SSL_CERT_FILE", ".cert"),
@@ -53,7 +57,7 @@ return [
             // "ssl_cert_file" => ".cert", //
         ],
 
-        "ssl" => (@parse_url(config("app.url", "http://localhost"))["scheme"] ?? "http") === "https",
+        "ssl" => $octaneScheme === "https",
     ],
 
     "cache" => [

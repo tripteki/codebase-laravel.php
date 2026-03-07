@@ -217,33 +217,32 @@
             }
         }
 
+        var bellFilledSvg = '<svg class="notification-bell-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M17.133 12.632v-1.8a5.406 5.406 0 0 0-4.154-5.262.955.955 0 0 0 .021-.106V3.1a1 1 0 0 0-2 0v2.364a.955.955 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C6.867 15.018 5 15.614 5 16.807 5 17.4 5 18 5.538 18h12.924C19 18 19 17.4 19 16.807c0-1.193-1.867-1.789-1.867-4.175ZM6 6a1 1 0 0 1-.707-.293l-1-1a1 1 0 0 1 1.414-1.414l1 1A1 1 0 0 1 6 6Zm-2 4H3a1 1 0 0 1 0-2h1a1 1 0 1 1 0 2Zm14-4a1 1 0 0 1-.707-1.707l1-1a1 1 0 1 1 1.414 1.414l-1 1A1 1 0 0 1 18 6Zm3 4h-1a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2ZM8.823 19a3.453 3.453 0 0 0 6.354 0H8.823Z"/></svg>';
+        var bellOutlineSvg = '<svg class="notification-bell-outline" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5 18 5 17.301 5 16.708c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 12 5.365ZM8.733 18c.094.852.306 1.54.944 2.112a3.48 3.48 0 0 0 4.646 0c.638-.572 1.236-1.26 1.33-2.112h-6.92Z"/></svg>';
+
         function updateBellIcon(unreadCount) {
 
             if (! toggleButton) return;
 
-            let bellIcon = toggleButton.querySelector('svg');
-            let redDot = toggleButton.querySelector('span[aria-hidden="true"]');
+            var bellSvg = toggleButton.querySelector('svg');
+            var redDot = toggleButton.querySelector('span.notification-dot');
 
             if (unreadCount > 0) {
-                if (bellIcon) {
-                    const filledBell = '<svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/></svg>';
-                    bellIcon.outerHTML = filledBell;
+                if (bellSvg && !bellSvg.classList.contains('notification-bell-icon')) {
+                    bellSvg.outerHTML = bellFilledSvg;
                 }
-
-                if (! redDot) {
+                if (!redDot) {
                     redDot = document.createElement('span');
-                    redDot.className = 'absolute top-0 right-0 h-2.5 w-2.5 translate-x-[35%] -translate-y-[35%] rounded-full bg-red-500 shadow-[0_0_0_2px_white] dark:shadow-[0_0_0_2px_#1f2937]';
+                    redDot.className = 'notification-dot absolute top-0 right-0 h-2.5 w-2.5 translate-x-[35%] -translate-y-[35%] rounded-full shadow-[0_0_0_2px_white] dark:shadow-[0_0_0_2px_#1f2937]';
                     redDot.setAttribute('aria-hidden', 'true');
                     toggleButton.appendChild(redDot);
                 } else {
-                    redDot.style.display = 'block';
+                    redDot.style.display = '';
                 }
             } else {
-                if (bellIcon) {
-                    const outlineBell = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A1.932 1.932 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>';
-                    bellIcon.outerHTML = outlineBell;
+                if (bellSvg && !bellSvg.classList.contains('notification-bell-outline')) {
+                    bellSvg.outerHTML = bellOutlineSvg;
                 }
-
                 if (redDot) {
                     redDot.style.display = 'none';
                 }

@@ -17,8 +17,6 @@ class PermissionIndexDataTableComponent extends DataTableComponent
     protected $model = Permission::class;
 
     /**
-     * Configure the datatable.
-     *
      * @return void
      */
     public function configure(): void
@@ -30,12 +28,14 @@ class PermissionIndexDataTableComponent extends DataTableComponent
             ->setPerPage(10)
             ->setPaginationEnabled()
             ->setSearchEnabled()
-            ->setColumnSelectDisabled();
+            ->setColumnSelectDisabled()
+            ->setDefaultSort('created_at', 'desc')
+            ->setAdditionalSelects([
+                "permissions.id",
+            ]);
     }
 
     /**
-     * Base query for the datatable.
-     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function builder(): Builder
@@ -45,7 +45,7 @@ class PermissionIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Custom view for modals.
+     * @return string
      */
     public function customView(): string
     {
@@ -53,8 +53,6 @@ class PermissionIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Columns definition.
-     *
      * @return array<int, \Rappasoft\LaravelLivewireTables\Views\Column>
      */
     public function columns(): array
@@ -102,8 +100,6 @@ class PermissionIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Open delete confirmation modal.
-     *
      * @param int|string $permissionId
      * @return void
      */
@@ -118,8 +114,6 @@ class PermissionIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Delete a permission.
-     *
      * @param array|int $data
      * @return void
      */

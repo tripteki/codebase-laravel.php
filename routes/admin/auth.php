@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Livewire\Admin\Dashboard\DashboardIndexComponent;
 use Illuminate\Support\Facades\Route;
+use Laravel\Pulse\Http\Middleware\Authorize as PulseAuthorize;
 
 Route::middleware("guest:web")->group(function () {
 
@@ -22,10 +24,10 @@ Route::middleware("guest:web")->group(function () {
     Route::post("/admin/reset-password", [ ResetPasswordController::class, "store", ])->name("admin.password.update");
 });
 
-Route::middleware("auth:web")->group(function () {
+Route::middleware(["auth:web", "central.admin"])->group(function () {
 
     Route::get("/admin", DashboardIndexComponent::class)->name("admin.dashboard");
-    Route::get("/admin/dashboard", DashboardIndexComponent::class)->name("admin.dashboard.index");
-
     Route::post("/admin/logout", [ LoginController::class, "destroy", ])->name("admin.logout");
+    Route::get("/admin/dashboard", DashboardIndexComponent::class)->name("admin.dashboard.index");
+    Route::middleware([PulseAuthorize::class])->get("/admin/dashboard/pulse-metrics", DashboardController::class)->name("admin.dashboard.pulse-metrics");
 });

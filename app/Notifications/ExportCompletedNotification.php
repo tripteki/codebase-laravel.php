@@ -17,9 +17,8 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
     use Queueable;
 
     /**
-     * Create a new notification instance.
-     *
      * @param \App\Models\Export $export
+     * @return void
      */
     public function __construct(
         public Export $export
@@ -27,8 +26,6 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the type of the notification being broadcast.
-     *
      * @return string
      */
     public function broadcastType(): string
@@ -37,8 +34,6 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
      * @param mixed $notifiable
      * @return array<string>
      */
@@ -52,8 +47,6 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the database representation of the notification.
-     *
      * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\DatabaseMessage
      */
@@ -82,12 +75,12 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
             "url" => $filePath,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
+            "icon" => "export",
+            "refresh_datatables" => true,
         ]);
     }
 
     /**
-     * Get the broadcast representation of the notification.
-     *
      * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\BroadcastMessage
      */
@@ -116,12 +109,12 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
             "url" => $filePath,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
+            "icon" => "export",
+            "refresh_datatables" => true,
         ]);
     }
 
     /**
-     * Get the web push representation of the notification.
-     *
      * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      * @return \NotificationChannels\WebPush\WebPushMessage
@@ -162,6 +155,8 @@ class ExportCompletedNotification extends Notification implements ShouldQueue
                 'url' => $downloadUrl ?: null,
                 'successful_rows' => $successfulRows,
                 'failed_rows' => $failedRows,
+                'icon' => 'export',
+                'refresh_datatables' => true,
             ]);
 
         if ($downloadUrl) {

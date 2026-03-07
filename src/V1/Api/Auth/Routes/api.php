@@ -11,9 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Auths.
- */
 Route::post("v1/auth/register", [ RegisteredUserController::class, "store", ])
                 ->middleware("guest:api");
 

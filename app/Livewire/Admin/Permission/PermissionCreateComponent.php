@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Admin\Permission;
 
+use App\Models\Tenant;
 use Src\V1\Api\Acl\Enums\GuardEnum;
 use Src\V1\Api\Acl\Enums\PermissionEnum;
 use Src\V1\Api\Acl\Models\Permission;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -22,13 +25,17 @@ class PermissionCreateComponent extends Component
     public $guard_name = "";
 
     /**
-     * Mount the component.
-     *
+     * @var string|null
+     */
+    public $currentTenantId = null;
+
+    /**
      * @return void
      */
     public function mount(): void
     {
         $this->guard_name = GuardEnum::WEB->value;
+        $this->currentTenantId = config("tenancy.is_tenancy") && tenant() ? tenant()->id : null;
     }
 
     /**
@@ -36,15 +43,20 @@ class PermissionCreateComponent extends Component
      */
     protected function rules(): array
     {
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+
         return [
-            "name" => "required|string|max:255|unique:permissions,name",
+            "name" => [
+                "required",
+                "string",
+                "max:255",
+                $tenant ? $tenant->unique("permissions", "name") : Rule::unique("permissions", "name"),
+            ],
             "guard_name" => "required|string|max:255",
         ];
     }
 
     /**
-     * Persist a new permission.
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function save()
@@ -56,25 +68,38 @@ class PermissionCreateComponent extends Component
         DB::beginTransaction();
 
         try {
+            if (config("tenancy.is_tenancy") && filled($this->currentTenantId)) {
+                $tenant = Tenant::find($this->currentTenantId);
+                if ($tenant) {
+                    tenancy()->initialize($tenant);
+                }
+            }
+
             Permission::query()->create($data);
+
+            if (config("tenancy.is_tenancy") && filled($this->currentTenantId)) {
+                tenancy()->end();
+            }
 
             DB::commit();
 
             session()->flash("message", __("module_permission.permission_created_successfully"));
 
-            return redirect()->route("admin.permissions.index");
+            return redirect()->to(tenant_routes("admin.permissions.index"));
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
 
             session()->flash("error", __("module_permission.permission_created_failed"));
 
-            return redirect()->back();
+            return redirect()->to(tenant_routes("admin.permissions.create"));
         }
     }
 
     /**
-     * Render the create view.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -82,6 +107,7 @@ class PermissionCreateComponent extends Component
         return view("livewire.admin.permission.create")
             ->layout("layouts.app", [
                 "title" => __("module_permission.create_title"),
+                "showSidebar" => true,
             ]);
     }
 }

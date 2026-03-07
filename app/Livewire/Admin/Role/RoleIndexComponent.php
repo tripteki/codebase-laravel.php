@@ -9,8 +9,6 @@ use Livewire\Component;
 class RoleIndexComponent extends Component
 {
     /**
-     * Mount the component.
-     *
      * @return void
      */
     public function mount(): void
@@ -19,8 +17,6 @@ class RoleIndexComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -28,6 +24,7 @@ class RoleIndexComponent extends Component
         return view("livewire.admin.role.index")
             ->layout("layouts.app", [
                 "title" => __("module_role.title"),
+                "showSidebar" => true,
             ]);
     }
 }

@@ -2,11 +2,10 @@
 
 namespace Src\V1\Api\Acl\Database\Seeders;
 
-use Src\V1\Api\Acl\Enums\PermissionEnum;
-use Src\V1\Api\Acl\Enums\RoleEnum;
-use Src\V1\Api\Acl\Enums\GuardEnum;
-use Src\V1\Api\Acl\Models\Role;
 use Illuminate\Database\Seeder;
+use Src\V1\Api\Acl\Enums\GuardEnum;
+use Src\V1\Api\Acl\Enums\RoleEnum;
+use Src\V1\Api\Acl\Models\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -17,47 +16,12 @@ class RoleSeeder extends Seeder
     {
         $guard = GuardEnum::WEB->value;
 
-        $superAdmin = Role::firstOrCreate([
-
-            "name" => RoleEnum::SUPERADMIN->value,
-            "guard_name" => $guard,
-        ]);
-
-        $superAdmin?->givePermissionTo(array_column(PermissionEnum::cases(), "value"));
-
-        $admin = Role::firstOrCreate([
-
-            "name" => RoleEnum::ADMIN->value,
-            "guard_name" => $guard,
-        ]);
-
-        $admin?->givePermissionTo([
-
-            PermissionEnum::ROLE_VIEW->value,
-            PermissionEnum::ROLE_CREATE->value,
-            PermissionEnum::ROLE_UPDATE->value,
-            PermissionEnum::ROLE_DELETE->value,
-            PermissionEnum::ROLE_IMPORT->value,
-            PermissionEnum::ROLE_EXPORT->value,
-
-            PermissionEnum::PERMISSION_VIEW->value,
-            PermissionEnum::PERMISSION_CREATE->value,
-            PermissionEnum::PERMISSION_UPDATE->value,
-            PermissionEnum::PERMISSION_DELETE->value,
-            PermissionEnum::PERMISSION_IMPORT->value,
-            PermissionEnum::PERMISSION_EXPORT->value,
-        ]);
-
-        $user = Role::firstOrCreate([
-
-            "name" => RoleEnum::USER->value,
-            "guard_name" => $guard,
-        ]);
-
-        $guest = Role::firstOrCreate([
-
-            "name" => RoleEnum::GUEST->value,
-            "guard_name" => $guard,
-        ]);
+        $superadmin = Role::firstOrCreate(["name" => RoleEnum::SUPERADMIN->value, "guard_name" => $guard]);
+        $admin = Role::firstOrCreate(["name" => RoleEnum::ADMIN->value, "guard_name" => $guard]);
+        $speaker = Role::firstOrCreate(["name" => RoleEnum::SPEAKER->value, "guard_name" => $guard]);
+        $delegate = Role::firstOrCreate(["name" => RoleEnum::DELEGATE->value, "guard_name" => $guard]);
+        $exhibitor = Role::firstOrCreate(["name" => RoleEnum::EXHIBITOR->value, "guard_name" => $guard]);
+        $sponsor = Role::firstOrCreate(["name" => RoleEnum::SPONSOR->value, "guard_name" => $guard]);
+        $visitor = Role::firstOrCreate(["name" => RoleEnum::VISITOR->value, "guard_name" => $guard]);
     }
 }

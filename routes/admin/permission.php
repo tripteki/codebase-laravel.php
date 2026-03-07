@@ -6,7 +6,7 @@ use App\Livewire\Admin\Permission\PermissionIndexComponent;
 use App\Livewire\Admin\Permission\PermissionShowComponent;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware("auth:web")->prefix("/admin/permissions")->name("admin.permissions.")->group(function () {
+Route::middleware(["auth:web", "central.admin"])->prefix("/admin/permissions")->name("admin.permissions.")->group(function () {
 
     Route::get("/", PermissionIndexComponent::class)->middleware("can:permission.view")->name("index");
     Route::get("/create", PermissionCreateComponent::class)->middleware("can:permission.create")->name("create");

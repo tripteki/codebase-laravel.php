@@ -17,6 +17,7 @@ return [
     "import_permissions" => "Import Permissions",
     "name" => "Name",
     "name_description" => "Enter the name of the permission",
+    "name_placeholder" => "e.g. view-posts or edit-users",
     "name_label" => "Name of the permission",
     "permission_created_failed" => "Failed to create permission. Please try again.",
     "permission_created_successfully" => "Permission created successfully.",

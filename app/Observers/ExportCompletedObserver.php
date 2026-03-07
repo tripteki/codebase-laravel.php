@@ -4,13 +4,12 @@ namespace App\Observers;
 
 use Filament\Actions\Exports\Models\Export;
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\DatabaseNotification as FilamentDatabaseNotification;
 use Filament\Notifications\Notification;
 
 class ExportCompletedObserver
 {
     /**
-     * Handle the Export "updated" event.
-     *
      * @param \Filament\Actions\Exports\Models\Export $export
      * @return void
      */
@@ -41,41 +40,44 @@ class ExportCompletedObserver
             return;
         }
 
-        $user->notify(
-            Notification::make()
-                ->title(__("module.{$moduleName}.messages.export_completed"))
-                ->body(__("module.{$moduleName}.messages.export_body_with_download", [
-                    'count' => $export->successful_rows ?? 0,
-                ]))
-                ->success()
-                ->actions([
-                    Action::make('download_csv')
-                        ->button()
-                        ->label(__("module.{$moduleName}.labels.download_csv"))
-                        ->url(route('filament.exports.download', [
-                            'export' => $export->getKey(),
-                            'format' => 'csv',
-                        ]))
-                        ->openUrlInNewTab()
-                        ->markAsRead(),
-                    Action::make('download_xlsx')
-                        ->button()
-                        ->color('success')
-                        ->label(__("module.{$moduleName}.labels.download_xlsx"))
-                        ->url(route('filament.exports.download', [
-                            'export' => $export->getKey(),
-                            'format' => 'xlsx',
-                        ]))
-                        ->openUrlInNewTab()
-                        ->markAsRead(),
-                ])
-                ->toDatabase()
-        );
+        $filament = Notification::make()
+            ->title(__("module.{$moduleName}.messages.export_completed"))
+            ->body(__("module.{$moduleName}.messages.export_body_with_download", [
+                'count' => $export->successful_rows ?? 0,
+            ]))
+            ->success()
+            ->actions([
+                Action::make('download_csv')
+                    ->button()
+                    ->label(__("module.{$moduleName}.labels.download_csv"))
+                    ->url(tenant_routes('filament.exports.download', [
+                        'export' => $export->getKey(),
+                        'format' => 'csv',
+                    ]))
+                    ->openUrlInNewTab()
+                    ->markAsRead(),
+                Action::make('download_xlsx')
+                    ->button()
+                    ->color('success')
+                    ->label(__("module.{$moduleName}.labels.download_xlsx"))
+                    ->url(tenant_routes('filament.exports.download', [
+                        'export' => $export->getKey(),
+                        'format' => 'xlsx',
+                    ]))
+                    ->openUrlInNewTab()
+                    ->markAsRead(),
+            ]);
+
+        $payload = $filament->getDatabaseMessage();
+        $payload['refresh_datatables'] = true;
+        $payload['presentation_icon'] = 'export';
+        $payload['failed_rows'] = $export->getFailedRowsCount();
+        $payload['successful_rows'] = (int) ($export->successful_rows ?? 0);
+
+        $user->notify(new FilamentDatabaseNotification($payload));
     }
 
     /**
-     * Automatically extracts module name from Exporter class.
-     *
      * @param string $exporterClass
      * @return string|null
      */
@@ -91,8 +93,6 @@ class ExportCompletedObserver
     }
 
     /**
-     * Check if module has required translations for export notifications.
-     *
      * @param string $moduleName
      * @return bool
      */

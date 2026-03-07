@@ -1,0 +1,38 @@
+<?php
+
+return [
+
+    "add_new_role" => "Tambah peranan baru",
+    "all_roles" => "Semua peranan",
+    "column_guard_name" => "Nama Guard",
+    "create_title" => "Buat peranan",
+    "created_at" => "Dibuat Pada",
+    "created_at_description" => "Tarikh dan masa pembuatan peranan",
+    "edit_role" => "Edit peranan",
+    "edit_title" => "Edit peranan",
+    "export_roles" => "Eksport Peranan",
+    "guard_name" => "Nama Guard",
+    "guard_name_description" => "Pilih nama guard dari dropdown",
+    "guard_name_label" => "Nama guard dari peranan",
+    "import_roles" => "Import Peranan",
+    "name" => "Nama",
+    "name_description" => "Masukkan nama peranan",
+    "name_placeholder" => "cth. editor atau content-manager",
+    "name_label" => "Nama peranan",
+    "role_created_failed" => "Gagal membuat peranan. Sila cuba lagi.",
+    "role_created_successfully" => "Peranan berjaya dibuat.",
+    "role_deleted_failed" => "Gagal memadam peranan. Sila cuba lagi.",
+    "role_deleted_successfully" => "Peranan berjaya dipadam.",
+    "role_updated" => "Peranan dikemaskini.",
+    "role_updated_failed" => "Gagal mengemaskini peranan. Sila cuba lagi.",
+    "show_title" => "Lihat peranan",
+    "title" => "Peranan",
+    "view_role" => "Lihat peranan",
+    "permissions" => "Kebenaran",
+    "permissions_description" => "Pilih kebenaran yang akan dilampirkan kepada peranan ini",
+    "permissions_label" => "Kebenaran yang dilampirkan kepada peranan ini",
+    "no_permissions_available" => "Tiada kebenaran yang tersedia untuk guard ini.",
+    "no_permissions_assigned" => "Tiada kebenaran yang ditetapkan kepada peranan ini.",
+    "permissions_not_found" => "Kebenaran berikut tidak dijumpai: :permissions",
+
+];

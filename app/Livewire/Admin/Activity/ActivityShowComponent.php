@@ -22,7 +22,11 @@ class ActivityShowComponent extends Component
     {
         $this->authorize(PermissionEnum::ACTIVITY_VIEW->value);
 
-        $this->activity = $activity->load(["causer", "subject"]);
+        $relations = ["causer", "subject"];
+        if (config("tenancy.is_tenancy")) {
+            $relations[] = "tenant.domains";
+        }
+        $this->activity = $activity->load($relations);
     }
 
     /**
@@ -34,6 +38,7 @@ class ActivityShowComponent extends Component
             "activity" => $this->activity,
         ])->layout("layouts.app", [
             "title" => __("module_activity.show_title"),
+            "showSidebar" => true,
         ]);
     }
 }

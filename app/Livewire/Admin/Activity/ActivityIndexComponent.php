@@ -9,8 +9,6 @@ use Livewire\Component;
 class ActivityIndexComponent extends Component
 {
     /**
-     * Mount the component.
-     *
      * @return void
      */
     public function mount(): void
@@ -19,8 +17,6 @@ class ActivityIndexComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -28,6 +24,7 @@ class ActivityIndexComponent extends Component
         return view("livewire.admin.activity.index")
             ->layout("layouts.app", [
                 "title" => __("module_activity.title"),
+                "showSidebar" => true,
             ]);
     }
 }

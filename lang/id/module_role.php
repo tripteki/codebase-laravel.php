@@ -17,6 +17,7 @@ return [
     "import_roles" => "Impor Peran",
     "name" => "Nama",
     "name_description" => "Masukkan nama peran",
+    "name_placeholder" => "mis. editor atau content-manager",
     "name_label" => "Nama peran",
     "role_created_failed" => "Gagal membuat peran. Silakan coba lagi.",
     "role_created_successfully" => "Peran berhasil dibuat.",
@@ -30,8 +31,8 @@ return [
     "permissions" => "Izin",
     "permissions_description" => "Pilih izin yang akan dilampirkan ke peran ini",
     "permissions_label" => "Izin yang dilampirkan ke peran ini",
-    "no_permissions_available" => "Tidak ada izin yang tersedia untuk guard ini",
-    "no_permissions_assigned" => "Tidak ada izin yang ditetapkan ke peran ini",
+    "no_permissions_available" => "Tidak ada izin yang tersedia untuk guard ini.",
+    "no_permissions_assigned" => "Tidak ada izin yang ditetapkan ke peran ini.",
     "permissions_not_found" => "Izin berikut tidak ditemukan: :permissions",
 
 ];

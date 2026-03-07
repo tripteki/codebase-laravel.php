@@ -21,9 +21,8 @@ abstract class ProcessImportJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * Create a new job instance.
-     *
      * @param \App\Models\Import $import
+     * @return void
      */
     public function __construct(
         public Import $import
@@ -31,8 +30,6 @@ abstract class ProcessImportJob implements ShouldQueue
     }
 
     /**
-     * Execute the job.
-     *
      * @return void
      */
     public function handle(): void
@@ -139,15 +136,11 @@ abstract class ProcessImportJob implements ShouldQueue
     }
 
     /**
-     * Get the import class name.
-     *
      * @return string
      */
     abstract protected function getImportClass(): string;
 
     /**
-     * Normalize row data.
-     *
      * @param array $rowData
      * @return array
      */
@@ -164,16 +157,12 @@ abstract class ProcessImportJob implements ShouldQueue
     }
 
     /**
-     * Get validator for row data.
-     *
      * @param array $normalizedData
      * @return \Illuminate\Contracts\Validation\Validator
      */
     abstract protected function getValidator(array $normalizedData): \Illuminate\Contracts\Validation\Validator;
 
     /**
-     * Validate before processing (optional, for additional business logic validation).
-     *
      * @param array $validatedData
      * @param array $normalizedData
      * @return void
@@ -185,8 +174,6 @@ abstract class ProcessImportJob implements ShouldQueue
     }
 
     /**
-     * Process a single row.
-     *
      * @param array $validatedData
      * @param array $normalizedData
      * @return void
@@ -194,8 +181,6 @@ abstract class ProcessImportJob implements ShouldQueue
     abstract protected function processRow(array $validatedData, array $normalizedData): void;
 
     /**
-     * Save failed import row.
-     *
      * @param array $normalizedData
      * @param string $errorMessage
      * @return void

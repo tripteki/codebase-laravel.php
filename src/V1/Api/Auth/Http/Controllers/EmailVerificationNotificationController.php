@@ -28,8 +28,11 @@ class EmailVerificationNotificationController extends BaseController
     {
         $user = $request->user();
 
-        if ($user->hasVerifiedEmail()) return response()->json(__("auth.verified"), 200);
-            $user->sendEmailVerificationNotification();
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(__("auth.verified"), 200);
+        }
+
+        $user->sendEmailVerificationNotification();
 
         return response()->json(__("auth.verification-sent"), 200);
     }

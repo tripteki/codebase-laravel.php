@@ -4,13 +4,12 @@ namespace App\Observers;
 
 use Filament\Actions\Imports\Models\Import;
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\DatabaseNotification as FilamentDatabaseNotification;
 use Filament\Notifications\Notification;
 
 class ImportCompletedObserver
 {
     /**
-     * Handle the Import "updated" event.
-     *
      * @param \Filament\Actions\Imports\Models\Import $import
      * @return void
      */
@@ -41,28 +40,31 @@ class ImportCompletedObserver
             return;
         }
 
-        $user->notify(
-            Notification::make()
-                ->title(__("module.{$moduleName}.messages.import_completed"))
-                ->body(__("module.{$moduleName}.messages.import_body_with_stats", [
-                    'successful' => $import->successful_rows ?? 0,
-                    'failed' => $import->failed_rows ?? 0,
-                ]))
-                ->success()
-                ->actions([
-                    Action::make('mark_read')
-                        ->button()
-                        ->label(__("module.{$moduleName}.labels.mark_as_read"))
-                        ->markAsRead()
-                        ->close(),
-                ])
-                ->toDatabase()
-        );
+        $filament = Notification::make()
+            ->title(__("module.{$moduleName}.messages.import_completed"))
+            ->body(__("module.{$moduleName}.messages.import_body_with_stats", [
+                'successful' => $import->successful_rows ?? 0,
+                'failed' => $import->failed_rows ?? 0,
+            ]))
+            ->success()
+            ->actions([
+                Action::make('mark_read')
+                    ->button()
+                    ->label(__("module.{$moduleName}.labels.mark_as_read"))
+                    ->markAsRead()
+                    ->close(),
+            ]);
+
+        $payload = $filament->getDatabaseMessage();
+        $payload['refresh_datatables'] = true;
+        $payload['presentation_icon'] = 'import';
+        $payload['failed_rows'] = (int) ($import->failed_rows ?? 0);
+        $payload['successful_rows'] = (int) ($import->successful_rows ?? 0);
+
+        $user->notify(new FilamentDatabaseNotification($payload));
     }
 
     /**
-     * Automatically extracts module name from Importer class.
-     *
      * @param string $importerClass
      * @return string|null
      */
@@ -78,8 +80,6 @@ class ImportCompletedObserver
     }
 
     /**
-     * Check if module has required translations for import notifications.
-     *
      * @param string $moduleName
      * @return bool
      */

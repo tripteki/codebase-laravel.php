@@ -11,12 +11,12 @@ use Src\V1\Api\I18N\Services\I18NService;
 class HandleInertiaRequestsResponses extends Middleware
 {
     /**
-     * The root template that's loaded on the initial page visit.
+     * @var string
      */
     protected $rootView = "app";
 
     /**
-     * Determines the current asset version.
+     * @return string|null
      */
     public function version(Request $request): ?string
     {
@@ -24,7 +24,7 @@ class HandleInertiaRequestsResponses extends Middleware
     }
 
     /**
-     * Define the props that are shared by default.
+     * @return array
      */
     public function share(Request $request): array
     {

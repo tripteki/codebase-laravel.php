@@ -84,8 +84,9 @@
                 }
 
                 var csrf = getCsrfToken ();
+                var subscribeUrl = (document.querySelector("meta[name='webpush-subscribe-url']") || {}).content || "/webpush/subscribe";
 
-                return fetch("/webpush/subscribe", {
+                return fetch(subscribeUrl, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

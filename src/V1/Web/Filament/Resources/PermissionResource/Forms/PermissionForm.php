@@ -17,6 +17,8 @@ abstract class PermissionForm
      */
     public static function validation(string $validation, $exception = null): array
     {
+        $tenant = config("tenancy.is_tenancy") ? tenant() : null;
+
         return [
 
             "name" => [
@@ -25,7 +27,9 @@ abstract class PermissionForm
                 "string",
                 "min:2",
                 "max:64",
-                ! $exception ? Rule::unique(Permission::class) : Rule::unique(Permission::class)->ignore($exception),
+                ! $exception
+                    ? ($tenant ? $tenant->unique("permissions", "name") : Rule::unique(Permission::class, "name"))
+                    : ($tenant ? $tenant->unique("permissions", "name")->ignore($exception) : Rule::unique(Permission::class, "name")->ignore($exception)),
             ],
 
             "guard_name" => [

@@ -22,8 +22,6 @@ abstract class ImportComponent extends Component
     public $showModal = false;
 
     /**
-     * Validation rules for import file.
-     *
      * @return array<string, string>
      */
     protected function rules(): array
@@ -34,8 +32,6 @@ abstract class ImportComponent extends Component
     }
 
     /**
-     * Open import modal.
-     *
      * @return void
      */
     public function openModal(): void
@@ -45,8 +41,6 @@ abstract class ImportComponent extends Component
     }
 
     /**
-     * Close import modal.
-     *
      * @return void
      */
     public function closeModal(): void
@@ -56,8 +50,6 @@ abstract class ImportComponent extends Component
     }
 
     /**
-     * Handle import file upload and process.
-     *
      * @return void
      */
     public function import(): void
@@ -86,8 +78,6 @@ abstract class ImportComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -96,36 +86,26 @@ abstract class ImportComponent extends Component
     }
 
     /**
-     * Get the importer class name.
-     *
      * @return string
      */
     abstract protected function getImporterClass(): string;
 
     /**
-     * Get the process import job class name.
-     *
      * @return string
      */
     abstract protected function getProcessImportJobClass(): string;
 
     /**
-     * Get the view name.
-     *
      * @return string
      */
     abstract protected function getViewName(): string;
 
     /**
-     * Get import started message.
-     *
      * @return string
      */
     abstract protected function getImportStartedMessage(): string;
 
     /**
-     * Get import upload permission.
-     *
      * @return string
      */
     abstract protected function getImportUploadPermission(): string;

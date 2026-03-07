@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Admin\User;
 
+use App\Enum\Event\AddOnEnum;
+use App\Exports\Admin\User\UserExport;
+use App\Helpers\AddOnsHelper;
 use App\Jobs\Admin\User\ProcessUserExport;
 use App\Livewire\Base\ExportComponent;
 use App\Models\User;
@@ -10,27 +13,24 @@ use Src\V1\Api\User\Enums\PermissionEnum;
 class UserExportComponent extends ExportComponent
 {
     /**
-     * Mount the component.
-     *
      * @return void
      */
     public function mount(): void
     {
         $this->authorize(PermissionEnum::USER_EXPORT->value);
+        if (! AddOnsHelper::has(AddOnEnum::FEATURES_EXPORT)) {
+            abort(403);
+        }
     }
     /**
-     * Get the exporter class name.
-     *
      * @return string
      */
     protected function getExporterClass(): string
     {
-        return \App\Exports\Admin\User\UserExport::class;
+        return UserExport::class;
     }
 
     /**
-     * Get the process export job class name.
-     *
      * @return string
      */
     protected function getProcessExportJobClass(): string
@@ -39,8 +39,6 @@ class UserExportComponent extends ExportComponent
     }
 
     /**
-     * Get the view name.
-     *
      * @return string
      */
     protected function getViewName(): string
@@ -49,8 +47,6 @@ class UserExportComponent extends ExportComponent
     }
 
     /**
-     * Get total rows count for export.
-     *
      * @return int
      */
     protected function getTotalRowsCount(): int
@@ -59,8 +55,6 @@ class UserExportComponent extends ExportComponent
     }
 
     /**
-     * Get export started message.
-     *
      * @return string
      */
     protected function getExportStartedMessage(): string
@@ -69,8 +63,6 @@ class UserExportComponent extends ExportComponent
     }
 
     /**
-     * Get export download permission.
-     *
      * @return string
      */
     protected function getExportDownloadPermission(): string

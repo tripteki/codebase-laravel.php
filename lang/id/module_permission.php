@@ -17,6 +17,7 @@ return [
     "import_permissions" => "Impor Izin",
     "name" => "Nama",
     "name_description" => "Masukkan nama izin",
+    "name_placeholder" => "mis. view-posts atau edit-users",
     "name_label" => "Nama izin",
     "permission_created_failed" => "Gagal membuat izin. Silakan coba lagi.",
     "permission_created_successfully" => "Izin berhasil dibuat.",

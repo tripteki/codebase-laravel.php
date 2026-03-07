@@ -9,15 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Import extends Model
 {
     /**
-     * The table associated with the model.
-     *
      * @var string
      */
     protected $table = "imports";
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -32,9 +28,7 @@ class Import extends Model
     ];
 
     /**
-     * Cast attributes to specific data types.
-     *
-     * @return array
+     * @return array<string, string>
      */
     protected function casts(): array
     {
@@ -47,8 +41,6 @@ class Import extends Model
     }
 
     /**
-     * Get the user that owns the import.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
@@ -57,8 +49,6 @@ class Import extends Model
     }
 
     /**
-     * Get the failed import rows.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function failedRows(): HasMany
@@ -67,8 +57,6 @@ class Import extends Model
     }
 
     /**
-     * Get the count of failed rows.
-     *
      * @return int
      */
     public function getFailedRowsCount(): int
@@ -77,8 +65,6 @@ class Import extends Model
     }
 
     /**
-     * Check if the import is completed.
-     *
      * @return bool
      */
     public function isCompleted(): bool

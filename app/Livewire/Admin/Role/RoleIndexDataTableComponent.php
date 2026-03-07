@@ -17,8 +17,6 @@ class RoleIndexDataTableComponent extends DataTableComponent
     protected $model = Role::class;
 
     /**
-     * Configure the datatable.
-     *
      * @return void
      */
     public function configure(): void
@@ -30,12 +28,14 @@ class RoleIndexDataTableComponent extends DataTableComponent
             ->setPerPage(10)
             ->setPaginationEnabled()
             ->setSearchEnabled()
-            ->setColumnSelectDisabled();
+            ->setColumnSelectDisabled()
+            ->setDefaultSort('created_at', 'desc')
+            ->setAdditionalSelects([
+                "roles.id",
+            ]);
     }
 
     /**
-     * Base query for the datatable.
-     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function builder(): Builder
@@ -46,7 +46,7 @@ class RoleIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Custom view for modals.
+     * @return string
      */
     public function customView(): string
     {
@@ -54,8 +54,6 @@ class RoleIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Columns definition.
-     *
      * @return array<int, \Rappasoft\LaravelLivewireTables\Views\Column>
      */
     public function columns(): array
@@ -89,13 +87,13 @@ class RoleIndexDataTableComponent extends DataTableComponent
                     $totalPermissions = $permissions->count();
 
                     if ($totalPermissions === 0) {
-                        return '<span class="text-gray-500 dark:text-gray-400">—</span>';
+                        return '<span class="text-gray-500 dark:text-gray-400">-</span>';
                     }
 
                     $displayPermissions = $permissions->take(2);
                     $badges = $displayPermissions->map(function ($permission) {
                         $name = e($permission->name);
-                        return '<span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">' . $name . '</span>';
+                        return '<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium badge-primary dark:badge-primary-dark">' . $name . '</span>';
                     })->join(' ');
 
                     if ($totalPermissions > 2) {
@@ -127,8 +125,6 @@ class RoleIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Open delete confirmation modal.
-     *
      * @param int|string $roleId
      * @return void
      */
@@ -143,8 +139,6 @@ class RoleIndexDataTableComponent extends DataTableComponent
     }
 
     /**
-     * Delete a role.
-     *
      * @param array|int $data
      * @return void
      */

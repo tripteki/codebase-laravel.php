@@ -2,47 +2,64 @@
 
 namespace App\Livewire\Admin\Dashboard;
 
-use App\Models\Setting;
-use App\Models\User;
-use Livewire\Component;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Livewire\Component;
+use Spatie\Permission\Models\Role;
+use Src\V1\Api\Acl\Enums\GuardEnum;
+use Src\V1\Api\Acl\Enums\RoleEnum;
 
 class DashboardIndexComponent extends Component
 {
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
     {
-        $totalSettings = Setting::query()->count();
-        $activeSettings = Setting::query()->withoutTrashed()->count();
-        $deletedSettings = Setting::query()->onlyTrashed()->count();
+        $user = auth()->user();
 
-        $totalUsers = User::query()->count();
-        $verifiedUsers = User::query()->whereNotNull('email_verified_at')->count();
-        $unverifiedUsers = User::query()->whereNull('email_verified_at')->count();
-        $deletedUsers = User::query()->onlyTrashed()->count();
-        $usersWithProfile = User::query()->whereHas('profile')->count();
-        $usersWithoutProfile = User::query()->whereDoesntHave('profile')->count();
+        $isCentral = ! hasTenant();
+        $isTenantAdmin = $user && $user->hasRole(RoleEnum::ADMIN->value);
+
+        $showUsersByRole = $isCentral || $isTenantAdmin;
+        $pulseEnabled = (bool) config("pulse.enabled", true);
+        $canViewPulse = $user && Gate::forUser($user)->allows("viewPulse");
+        $showPulseSection = $isCentral && $pulseEnabled;
+        $showPulseMetricsEmbed = $showPulseSection && $canViewPulse;
+        $showNotificationsPanel = hasTenant();
+
+        $usersByRoleLabels = [];
+        $usersByRoleSeries = [];
+
+        if ($showUsersByRole) {
+            foreach (
+                Role::query()
+                    ->where("guard_name", GuardEnum::WEB->value)
+                    ->orderBy("name")
+                    ->withCount("users")
+                    ->get() as $role
+            ) {
+                $usersByRoleLabels[] = $role->name;
+                $usersByRoleSeries[] = (int) $role->users_count;
+            }
+        }
+
+        $pulsePath = trim((string) config("pulse.path", "monitor"), "/");
+        $pulseUrl = url($pulsePath === "" ? "/monitor" : "/" . $pulsePath);
+        $pulseMetricsUrl = $showPulseMetricsEmbed ? tenant_routes("admin.dashboard.pulse-metrics") : "";
 
         return view("livewire.admin.dashboard.index", [
-            "systemStats" => [
-                "total_settings" => $totalSettings,
-                "active_settings" => $activeSettings,
-                "deleted_settings" => $deletedSettings,
-            ],
-            "userStats" => [
-                "total_users" => $totalUsers,
-                "verified_users" => $verifiedUsers,
-                "unverified_users" => $unverifiedUsers,
-                "deleted_users" => $deletedUsers,
-                "users_with_profile" => $usersWithProfile,
-                "users_without_profile" => $usersWithoutProfile,
-            ],
+            "showUsersByRole" => $showUsersByRole,
+            "showPulseSection" => $showPulseSection,
+            "showPulseMetricsEmbed" => $showPulseMetricsEmbed,
+            "showNotificationsPanel" => $showNotificationsPanel,
+            "usersByRoleLabels" => $usersByRoleLabels,
+            "usersByRoleSeries" => $usersByRoleSeries,
+            "pulseUrl" => $pulseUrl,
+            "pulseMetricsUrl" => $pulseMetricsUrl,
         ])->layout("layouts.app", [
             "title" => __("common.dashboard"),
+            "showSidebar" => true,
         ]);
     }
 }

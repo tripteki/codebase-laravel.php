@@ -35,7 +35,7 @@ function shouldSkipRequest(request) {
     const url = new URL(request.url);
 
     // Skip non-HTTP(S) requests
-    if (!url.protocol.startsWith("http")) {
+    if (! url.protocol.startsWith("http")) {
         return true;
     }
 
@@ -171,7 +171,7 @@ self.addEventListener("push", function (event) {
 
     console.log("📬 Service Worker: Push received", event);
 
-    if (!event.data) {
+    if (! event.data) {
 
         console.warn("Service Worker: Push event has no data.");
         return;

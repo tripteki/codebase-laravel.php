@@ -51,7 +51,9 @@
         setIcon(isDark);
     }
 
-    var initialDark = storedTheme === "dark";
+    var defaultTheme = (root.getAttribute("data-default-theme") || "light").toLowerCase();
+    var storedValue = (storedTheme || "").toLowerCase();
+    var initialDark = defaultTheme === "dark" || storedValue === "dark";
 
     applyTheme(initialDark);
 

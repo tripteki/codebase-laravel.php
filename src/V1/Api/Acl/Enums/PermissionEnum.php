@@ -8,26 +8,72 @@ namespace Src\V1\Api\Acl\Enums;
 enum PermissionEnum: string
 {
     /**
-     * Role Resource Permissions
+     * @var string
      */
     case ROLE_VIEW = "role.view";
+
+    /**
+     * @var string
+     */
     case ROLE_CREATE = "role.create";
+
+    /**
+     * @var string
+     */
     case ROLE_UPDATE = "role.update";
+
+    /**
+     * @var string
+     */
     case ROLE_DELETE = "role.delete";
+
+    /**
+     * @var string
+     */
     case ROLE_RESTORE = "role.restore";
-    case ROLE_FORCE_DELETE = "role.force-delete";
+
+    /**
+     * @var string
+     */
     case ROLE_IMPORT = "role.import";
+
+    /**
+     * @var string
+     */
     case ROLE_EXPORT = "role.export";
 
     /**
-     * Permission Resource Permissions
+     * @var string
      */
     case PERMISSION_VIEW = "permission.view";
+
+    /**
+     * @var string
+     */
     case PERMISSION_CREATE = "permission.create";
+
+    /**
+     * @var string
+     */
     case PERMISSION_UPDATE = "permission.update";
+
+    /**
+     * @var string
+     */
     case PERMISSION_DELETE = "permission.delete";
+
+    /**
+     * @var string
+     */
     case PERMISSION_RESTORE = "permission.restore";
-    case PERMISSION_FORCE_DELETE = "permission.force-delete";
+
+    /**
+     * @var string
+     */
     case PERMISSION_IMPORT = "permission.import";
+
+    /**
+     * @var string
+     */
     case PERMISSION_EXPORT = "permission.export";
 }

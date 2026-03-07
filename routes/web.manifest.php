@@ -1,32 +1,63 @@
 <?php
 
+use App\Helpers\SettingHelper;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/manifest.json", function () {
 
+    $tenantSegment = request()->route("tenant");
+    $basePath = $tenantSegment ? "/" . $tenantSegment . "/" : "/";
+
+    $baseName = \Illuminate\Support\Str::headline(config("app.name"));
+    $tenantTitle = (config("tenancy.is_tenancy") && tenancy()->initialized)
+        ? (tenant("title") ? \Illuminate\Support\Str::headline(tenant("title")) : null)
+        : null;
+    $appName = $tenantTitle ?: $baseName;
+    $shortName = $tenantTitle && config("tenancy.is_tenancy") && tenancy()->initialized && tenant("slug")
+        ? \Illuminate\Support\Str::slug(tenant("slug"))
+        : \Illuminate\Support\Str::slug(config("app.name"));
+
+    $defaultFaviconPng = asset("asset/favicon.png");
+    $defaultLogoPng = asset("asset/logo.png");
+
+    $tenantFaviconPng = (config("tenancy.is_tenancy") && hasTenant() && tenant("favicon_png")) ? asset("storage/" . tenant("favicon_png")) : $defaultFaviconPng;
+    $tenantLogoPng = (config("tenancy.is_tenancy") && hasTenant() && tenant("icon")) ? asset("storage/" . tenant("icon")) : $defaultLogoPng;
+
+    $defaultPrimaryHex = ($p = SettingHelper::get("COLOR_PRIMARY")) !== null ? trim((string) $p) : null;
+    $defaultBackgroundHex = "#ffffff";
+
+    $primaryHex = (config("tenancy.is_tenancy") && hasTenant() && tenant("primary_color")) ? (string) tenant("primary_color") : $defaultPrimaryHex;
+    $backgroundHex = $defaultBackgroundHex;
+
     $manifest = [
 
-        "name" => \Illuminate\Support\Str::headline(config("app.name")),
-        "short_name" => \Illuminate\Support\Str::slug(config("app.name")),
-        "description" => \Illuminate\Support\Str::headline(config("app.name")),
-        "start_url" => "/",
+        "name" => $appName,
+        "short_name" => $shortName,
+        "description" => $appName,
+        "start_url" => $basePath,
         "display" => "standalone",
         "orientation" => "portrait-primary",
-        "theme_color" => "#ffffff",
-        "background_color" => "#ffffff",
-        "scope" => "/",
+        "theme_color" => $primaryHex ?? "",
+        "background_color" => $backgroundHex,
+        "scope" => $basePath,
         "icons" => [
             [
-                "src" => asset("asset/favicon.png"),
+                "src" => $tenantFaviconPng,
                 "sizes" => "128x128",
                 "type" => "image/png",
                 "purpose" => "any",
             ],
             [
-                "src" => asset("asset/logo.png"),
+                "src" => $tenantLogoPng,
                 "sizes" => "512x512",
                 "type" => "image/png",
-                "purpose" => "any maskable",
+                "purpose" => "any",
+            ],
+            [
+                "src" => $tenantLogoPng,
+                "sizes" => "512x512",
+                "type" => "image/png",
+                "purpose" => "maskable",
             ],
         ],
         "categories" => ["productivity", "utilities"],

@@ -17,9 +17,8 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
     use Queueable;
 
     /**
-     * Create a new notification instance.
-     *
      * @param \App\Models\Import $import
+     * @return void
      */
     public function __construct(
         public Import $import
@@ -27,8 +26,6 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the type of the notification being broadcast.
-     *
      * @return string
      */
     public function broadcastType(): string
@@ -37,8 +34,6 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
      * @param mixed $notifiable
      * @return array<string>
      */
@@ -52,8 +47,6 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the database representation of the notification.
-     *
      * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\DatabaseMessage
      */
@@ -88,12 +81,12 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             "url" => $this->import->file_path,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
+            "icon" => "import",
+            "refresh_datatables" => true,
         ]);
     }
 
     /**
-     * Get the broadcast representation of the notification.
-     *
      * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\BroadcastMessage
      */
@@ -128,12 +121,12 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
             "url" => $this->import->file_path,
             "successful_rows" => $successfulRows,
             "failed_rows" => $failedRows,
+            "icon" => "import",
+            "refresh_datatables" => true,
         ]);
     }
 
     /**
-     * Get the web push representation of the notification.
-     *
      * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      * @return \NotificationChannels\WebPush\WebPushMessage
@@ -185,6 +178,8 @@ class ImportCompletedNotification extends Notification implements ShouldQueue
                 'url' => $downloadUrl ?: null,
                 'successful_rows' => $successfulRows,
                 'failed_rows' => $failedRows,
+                'icon' => 'import',
+                'refresh_datatables' => true,
             ]);
 
         if ($downloadUrl) {

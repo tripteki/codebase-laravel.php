@@ -78,7 +78,7 @@ class RegisteredUserController extends BaseController
         $userService = $this->userService->create($request);
 
         $user = User::find($userService->id);
-        $user->assignRole(RoleEnum::USER->value);
+        $user->assignRole(RoleEnum::VISITOR->value);
 
         event(new Registered($user));
 

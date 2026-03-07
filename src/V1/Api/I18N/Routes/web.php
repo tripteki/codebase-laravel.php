@@ -5,7 +5,4 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-/**
- * I18Ns.
- */
 Route::get("i18n/{lang}", [ I18NController::class, "update", ])->name("i18n");

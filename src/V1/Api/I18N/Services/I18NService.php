@@ -44,7 +44,8 @@ class I18NService extends BaseService
      */
     public function setLanguageFromSession(Request $request, string $lang): void
     {
-        $request->session()->put("lang", $lang);
+        session(["lang" => $lang]);
+        $this->setLang($lang);
     }
 
     /**
@@ -53,7 +54,9 @@ class I18NService extends BaseService
      */
     public function getLanguageFromSession(Request $request): string
     {
-        if ($language = $request->session()->get("lang")) $this->setLang($language);
+        if ($language = session("lang")) {
+            $this->setLang($language);
+        }
 
         return $language ?? $this->fallbackLang();
     }

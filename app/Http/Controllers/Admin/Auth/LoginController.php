@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use App\Helpers\SettingHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -10,21 +11,24 @@ use Illuminate\View\View;
 class LoginController
 {
     /**
-     * Show the login form.
-     *
      * @return \Illuminate\View\View
      */
     public function create()
     {
-        return view("livewire.admin.auth.login");
+        if (! is_central()) {
+            return view("livewire.admin.auth.tenant.login");
+        }
+
+        $authTenancyView = trim((string) SettingHelper::get("AUTH_TENANCY", "0")) === "1";
+
+        return $authTenancyView
+            ? view("livewire.admin.auth.tenant.login")
+            : view("livewire.admin.auth.login");
     }
 
     /**
-     * Handle an incoming authentication request.
-     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
@@ -50,14 +54,31 @@ class LoginController
             ]);
         }
 
+        $user = Auth::guard("web")->user();
+
+        if (! $user) {
+            Auth::guard("web")->logout();
+            throw ValidationException::withMessages([
+                "identifier" => __("auth.failed"),
+            ]);
+        }
+
+        $isCentral = is_central();
+        $hasSuperAdminRole = $user->hasRole(\Src\V1\Api\Acl\Enums\RoleEnum::SUPERADMIN->value);
+
+        if ($isCentral && ! $hasSuperAdminRole) {
+            Auth::guard("web")->logout();
+            throw ValidationException::withMessages([
+                "identifier" => __("auth.failed"),
+            ]);
+        }
+
         $request->session()->regenerate();
 
-        return redirect()->intended("/admin");
+        return redirect()->intended(tenant_routes("home"));
     }
 
     /**
-     * Destroy an authenticated session.
-     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -69,6 +90,6 @@ class LoginController
 
         $request->session()->regenerateToken();
 
-        return redirect("/admin/login");
+        return redirect()->to(tenant_routes("admin.login"));
     }
 }

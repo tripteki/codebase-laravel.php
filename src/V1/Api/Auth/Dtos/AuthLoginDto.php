@@ -21,7 +21,6 @@ class AuthLoginDto extends Data
     /**
      * @param string|null $identifier
      * @param string|null $password
-     *
      * @param string|null $expires
      * @param string|null $type
      * @param string|null $token

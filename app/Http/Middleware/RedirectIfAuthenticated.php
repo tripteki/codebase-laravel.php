@@ -11,8 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 class RedirectIfAuthenticated
 {
     /**
-     * Handle an incoming request.
-     *
      * @param \Illuminate\Http\Request $request
      * @param \Closure $next
      * @param string ...$guards
@@ -24,7 +22,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                return redirect()->to(tenant_routes("home"));
             }
         }
 

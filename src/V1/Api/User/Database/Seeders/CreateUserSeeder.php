@@ -11,19 +11,23 @@ use Illuminate\Support\Facades\Hash;
 class CreateUserSeeder extends Seeder
 {
     /**
+     * @var string
+     */
+    public const DEFAULT_PASSWORD = "12345678";
+
+    /**
      * @return void
      */
     public function run(): void
     {
         $name = UserEnum::SUPERUSER->value;
-        $email = UserEnum::SUPERUSER->value."@mail.com";
-        $password = "12345678";
+        $email = UserEnum::SUPERUSER->value . "@" . config("app.email_server");
 
         $user = User::firstOrCreate(
             [ "email" => $email, ],
             [
                 "name" => $name,
-                "password" => Hash::make($password),
+                "password" => Hash::make(self::DEFAULT_PASSWORD),
                 "email_verified_at" => now(),
             ]
         );

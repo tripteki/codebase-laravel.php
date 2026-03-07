@@ -7,12 +7,22 @@ namespace Src\V1\Api\I18N\Enums;
  */
 enum LanguageEnum: string
 {
+    /**
+     * @var string
+     */
     case ENGLISH = "en";
+
+    /**
+     * @var string
+     */
     case INDONESIA = "id";
 
     /**
-     * Get the label for the language.
-     *
+     * @var string
+     */
+    case MALAYSIA = "ms";
+
+    /**
      * @return string
      */
     public function label(): string
@@ -21,12 +31,11 @@ enum LanguageEnum: string
 
             self::ENGLISH => "English",
             self::INDONESIA => "Indonesia",
+            self::MALAYSIA => "Malaysia",
         };
     }
 
     /**
-     * Get all language labels as array.
-     *
      * @return array<string, string>
      */
     public static function labels(): array
@@ -39,8 +48,6 @@ enum LanguageEnum: string
     }
 
     /**
-     * Get label by language code.
-     *
      * @param string $code
      * @return string|null
      */

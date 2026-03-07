@@ -13,9 +13,8 @@ class UserExport implements FromArray, WithHeadings
     protected array $users;
 
     /**
-     * Create a new export instance.
-     *
      * @param array $users
+     * @return void
      */
     public function __construct(array $users)
     {
@@ -35,14 +34,20 @@ class UserExport implements FromArray, WithHeadings
      */
     public function headings(): array
     {
-        return [
+        $headings = [
             "ID",
+            "Full Name",
             "Name",
             "Email",
             "Roles",
+        ];
+        if (config("tenancy.is_tenancy")) {
+            $headings[] = "Tenant ID";
+        }
+        return array_merge($headings, [
             "Email Verified At",
             "Created At",
             "Updated At",
-        ];
+        ]);
     }
 }

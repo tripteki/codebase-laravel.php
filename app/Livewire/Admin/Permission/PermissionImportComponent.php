@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Permission;
 
+use App\Imports\Admin\Permission\PermissionImport;
 use App\Jobs\Admin\Permission\ProcessPermissionImport;
 use App\Livewire\Base\ImportComponent;
 use Src\V1\Api\Acl\Enums\PermissionEnum;
@@ -9,8 +10,6 @@ use Src\V1\Api\Acl\Enums\PermissionEnum;
 class PermissionImportComponent extends ImportComponent
 {
     /**
-     * Mount the component.
-     *
      * @return void
      */
     public function mount(): void
@@ -18,18 +17,14 @@ class PermissionImportComponent extends ImportComponent
         $this->authorize(PermissionEnum::PERMISSION_IMPORT->value);
     }
     /**
-     * Get the importer class name.
-     *
      * @return string
      */
     protected function getImporterClass(): string
     {
-        return \App\Imports\Admin\Permission\PermissionImport::class;
+        return PermissionImport::class;
     }
 
     /**
-     * Get the process import job class name.
-     *
      * @return string
      */
     protected function getProcessImportJobClass(): string
@@ -38,8 +33,6 @@ class PermissionImportComponent extends ImportComponent
     }
 
     /**
-     * Get the view name.
-     *
      * @return string
      */
     protected function getViewName(): string
@@ -48,8 +41,6 @@ class PermissionImportComponent extends ImportComponent
     }
 
     /**
-     * Get import started message.
-     *
      * @return string
      */
     protected function getImportStartedMessage(): string
@@ -58,8 +49,6 @@ class PermissionImportComponent extends ImportComponent
     }
 
     /**
-     * Get import upload permission.
-     *
      * @return string
      */
     protected function getImportUploadPermission(): string

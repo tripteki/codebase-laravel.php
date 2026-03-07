@@ -7,24 +7,18 @@ use App\Models\Setting;
 class SettingHelper
 {
     /**
-     * Get a setting value by key.
-     *
      * @param string $key
      * @param mixed $default
      * @return mixed
      */
     public static function get(string $key, $default = null): mixed
     {
-        $setting = Setting::query()
+        return Setting::query()
             ->where("key", $key)
-            ->first();
-
-        return $setting ? $setting->value : $default;
+            ->value("value") ?? $default;
     }
 
     /**
-     * Set a setting value by key.
-     *
      * @param string $key
      * @param mixed $value
      * @return \App\Models\Setting
@@ -38,8 +32,6 @@ class SettingHelper
     }
 
     /**
-     * Check if a setting exists.
-     *
      * @param string $key
      * @return bool
      */
@@ -51,8 +43,6 @@ class SettingHelper
     }
 
     /**
-     * Remove a setting by key.
-     *
      * @param string $key
      * @return bool
      */
@@ -64,8 +54,6 @@ class SettingHelper
     }
 
     /**
-     * Get all settings.
-     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function all()
@@ -74,8 +62,6 @@ class SettingHelper
     }
 
     /**
-     * Get all settings as a key-value array.
-     *
      * @return array<string, mixed>
      */
     public static function toArray(): array
@@ -86,37 +72,32 @@ class SettingHelper
     }
 
     /**
-     * Set multiple settings at once.
-     *
      * @param array<string, mixed> $settings
      * @return void
      */
     public static function setMany(array $settings): void
     {
         foreach ($settings as $key => $value) {
-            Setting::query()->updateOrCreate(
-                ["key" => $key],
-                ["value" => $value]
-            );
+            self::set((string) $key, $value);
         }
     }
 
     /**
-     * Remove multiple settings by keys.
-     *
      * @param array<string> $keys
      * @return int
      */
     public static function removeMany(array $keys): int
     {
+        if ($keys === []) {
+            return 0;
+        }
+
         return Setting::query()
             ->whereIn("key", $keys)
             ->delete();
     }
 
     /**
-     * Clear all settings.
-     *
      * @return int
      */
     public static function clear(): int

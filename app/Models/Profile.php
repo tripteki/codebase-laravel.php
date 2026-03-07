@@ -12,26 +12,28 @@ class Profile extends Model
     use HasFactory, HasUlids;
 
     /**
-     * The table associated with the model.
-     *
      * @var string
      */
     protected $table = "profiles";
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        "interests" => "array",
+    ];
+
+    /**
      * @var array<int, string>
      */
     protected $fillable = [
         "user_id",
         "full_name",
         "avatar",
+        "interests",
     ];
 
     /**
-     * Get the user that owns the profile.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo

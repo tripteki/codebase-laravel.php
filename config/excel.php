@@ -62,8 +62,8 @@ return [
         */
         'properties' => [
 
-            'creator' => '',
             'lastModifiedBy' => '',
+            'creator' => '',
             'title' => '',
             'description' => '',
             'subject' => '',
@@ -138,8 +138,8 @@ return [
         */
         'properties' => [
 
-            'creator' => '',
             'lastModifiedBy' => '',
+            'creator' => '',
             'title' => '',
             'description' => '',
             'subject' => '',

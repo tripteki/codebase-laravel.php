@@ -13,9 +13,8 @@ class RoleExport implements FromArray, WithHeadings
     protected array $roles;
 
     /**
-     * Create a new export instance.
-     *
      * @param array $roles
+     * @return void
      */
     public function __construct(array $roles)
     {

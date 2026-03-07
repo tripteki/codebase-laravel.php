@@ -11,42 +11,33 @@ class NotificationIndexComponent extends Component
     use WithPagination;
 
     /**
-     * Active tab: 'unread' or 'read'.
-     *
      * @var string
      */
-    public string $activeTab = 'unread';
+    public string $activeTab = 'all';
 
     /**
-     * Mount the component.
-     *
-     * @param string|null $tab
+     * @param string $tab
      * @return void
      */
-    public function mount(?string $tab = null): void
+    public function mount(string $tab = "all"): void
     {
-        if ($tab && in_array($tab, ['unread', 'read'])) {
+        if (in_array($tab, ["all", "unread", "read"], true)) {
             $this->activeTab = $tab;
         }
     }
 
     /**
-     * Set active tab.
-     *
      * @param string $tab
      * @return void
      */
     public function setTab(string $tab): void
     {
-        if (in_array($tab, ['unread', 'read'])) {
-            $this->activeTab = $tab;
-            $this->resetPage();
+        if (in_array($tab, ["all", "unread", "read"], true)) {
+            redirect()->to(tenant_routes("admin.notifications.tab", ["tab" => $tab]));
         }
     }
 
     /**
-     * Mark a notification as read.
-     *
      * @param string $notificationId
      * @return void
      */
@@ -62,8 +53,6 @@ class NotificationIndexComponent extends Component
     }
 
     /**
-     * Mark all notifications as read.
-     *
      * @return void
      */
     public function markAllAsRead(): void
@@ -74,8 +63,6 @@ class NotificationIndexComponent extends Component
     }
 
     /**
-     * Delete a notification.
-     *
      * @param string $notificationId
      * @return void
      */
@@ -91,8 +78,6 @@ class NotificationIndexComponent extends Component
     }
 
     /**
-     * Delete all notifications.
-     *
      * @return void
      */
     public function deleteAll(): void
@@ -103,8 +88,6 @@ class NotificationIndexComponent extends Component
     }
 
     /**
-     * Render the component.
-     *
      * @return \Illuminate\View\View
      */
     public function render(): View
@@ -113,7 +96,7 @@ class NotificationIndexComponent extends Component
 
         if ($this->activeTab === 'unread') {
             $query->whereNull('read_at');
-        } else {
+        } elseif ($this->activeTab === 'read') {
             $query->whereNotNull('read_at');
         }
 
@@ -123,6 +106,7 @@ class NotificationIndexComponent extends Component
             'notifications' => $notifications,
         ])->layout('layouts.app', [
             'title' => __('common.notifications'),
+            'showSidebar' => true,
         ]);
     }
 }

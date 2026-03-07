@@ -22,5 +22,7 @@ return [
     "subject_id_label" => "ID subjek aktivitas",
     "causer_label" => "Pengguna yang menyebabkan aktivitas",
     "properties_label" => "Properti tambahan aktivitas",
+    "tenant" => "Tenant",
+    "tenant_label" => "Tenant yang terkait dengan aktivitas ini",
 
 ];

@@ -7,15 +7,36 @@ return [
     "name" => env("APP_NAME", "Basecode"),
     "version" => env("APP_VERSION", @json_decode(file_get_contents(base_path("composer.json")), JSON_PRETTY_PRINT)["version"]),
 
-    "url" => (function() {
-        $url = env("APP_URL", "http://localhost");
-        if ($url && !preg_match('/^https?:\/\//', $url)) {
+    "url" => (function () {
+        $url = env("APP_URL");
+        if (! is_string($url) || $url === "") {
+            return "";
+        }
+        if (! preg_match('/^https?:\/\//', $url)) {
             $url = "http://".$url;
         }
-        return $url ?: "http://localhost";
+
+        return $url;
     })(),
 
-    "frontend_url" => env("FRONTEND_URL", "http://frontend.localhost"),
+    "email_server" => (function () {
+        $override = env("APP_EMAIL_SERVER");
+        if (is_string($override) && $override !== "") {
+            return $override;
+        }
+        $url = env("APP_URL");
+        if (! is_string($url) || $url === "") {
+            return "";
+        }
+        if (! preg_match("/^https?:\/\//", $url)) {
+            $url = "http://".$url;
+        }
+        $host = parse_url($url, PHP_URL_HOST);
+
+        return is_string($host) && $host !== "" ? $host : "";
+    })(),
+
+    "frontend_url" => env("FRONTEND_URL"),
 
     "asset_url" => env("ASSET_URL", null),
 
@@ -91,6 +112,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\SecurityServiceProvider::class,
+        App\Providers\TenancyServiceProvider::class,
 
         /*
          * Module Service Providers...
@@ -100,7 +122,7 @@ return [
 
         // Src\V1\Api\Auth\Providers\AuthServiceProvider::class,
         // Src\V1\Api\User\Providers\UserServiceProvider::class,
-        // Src\V1\Api\Acl\Providers\AclServiceProvider::class,
+        Src\V1\Api\Acl\Providers\AclServiceProvider::class,
 
     ],
 

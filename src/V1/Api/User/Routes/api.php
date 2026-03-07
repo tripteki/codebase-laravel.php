@@ -8,8 +8,5 @@ use Illuminate\Http\JsonResponse;
 
 Route::middleware([ "auth:api", "verified", ])->group(function (): void {
 
-    /**
-     * Users.
-     */
     Route::get("v1/users/me", [ UserController::class, "show", ]);
 });
