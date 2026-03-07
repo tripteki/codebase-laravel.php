@@ -6,4 +6,5 @@ return [
     'unauthenticated' => 'Unauthenticated.',
     'unprocessable_entity' => 'Validation failed.',
     'not_found' => 'The requested link does not exist.',
+    'forbidden' => 'Access denied.',
 ];

@@ -1,0 +1,27 @@
+{
+    "name": "tripteki/notification",
+    "description": "",
+    "authors": [
+        {
+            "name": "Trip Teknologi",
+            "email": "noreply@tripteki.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Notification\\": "",
+            "Modules\\Notification\\App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Notification\\Tests\\": "tests/"
+        }
+    }
+}

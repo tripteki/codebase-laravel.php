@@ -187,6 +187,11 @@ return [
 
             'rule-name' => 'pesan-kustom',
         ],
+
+        'slug' => [
+
+            'immutable' => 'Slug tidak dapat diubah setelah dibuat.',
+        ],
     ],
 
     /*

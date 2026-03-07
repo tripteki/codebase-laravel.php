@@ -1,0 +1,23 @@
+{
+    "name": "tripteki/log",
+    "description": "",
+    "authors": [
+        {
+            "name": "Trip Teknologi",
+            "email": "noreply@tripteki.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Log\\": "",
+            "Modules\\Log\\App\\": "app/",
+            "Modules\\Log\\Database\\Seeders\\": "Database/Seeders/"
+        }
+    }
+}

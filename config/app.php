@@ -7,15 +7,36 @@ return [
     "name" => env("APP_NAME", "Basecode"),
     "version" => env("APP_VERSION", @json_decode(file_get_contents(base_path("composer.json")), JSON_PRETTY_PRINT)["version"]),
 
-    "url" => (function() {
-        $url = env("APP_URL", "http://localhost");
-        if ($url && !preg_match('/^https?:\/\//', $url)) {
+    "url" => (function () {
+        $url = env("APP_URL");
+        if (! is_string($url) || $url === "") {
+            return "";
+        }
+        if (! preg_match('/^https?:\/\//', $url)) {
             $url = "http://".$url;
         }
-        return $url ?: "http://localhost";
+
+        return $url;
     })(),
 
-    "frontend_url" => env("FRONTEND_URL", "http://frontend.localhost"),
+    "email_server" => (function () {
+        $override = env("APP_EMAIL_SERVER");
+        if (is_string($override) && $override !== "") {
+            return $override;
+        }
+        $url = env("APP_URL");
+        if (! is_string($url) || $url === "") {
+            return "";
+        }
+        if (! preg_match("/^https?:\/\//", $url)) {
+            $url = "http://".$url;
+        }
+        $host = parse_url($url, PHP_URL_HOST);
+
+        return is_string($host) && $host !== "" ? $host : "";
+    })(),
+
+    "frontend_url" => env("FRONTEND_URL"),
 
     "asset_url" => env("ASSET_URL", null),
 
@@ -57,7 +78,6 @@ return [
          * Laravel Framework Service Providers...
          */
         Illuminate\Auth\AuthServiceProvider::class,
-        Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
@@ -78,6 +98,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -87,20 +108,10 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\SecurityServiceProvider::class,
-
-        /*
-         * Module Service Providers...
-         */
-        // Src\V1\Web\Providers\Filament\AdminPanelProvider::class,
-        // Src\V1\Web\Providers\Filament\FilamentServiceProvider::class,
-
-        // Src\V1\Api\Auth\Providers\AuthServiceProvider::class,
-        // Src\V1\Api\User\Providers\UserServiceProvider::class,
-        // Src\V1\Api\Acl\Providers\AclServiceProvider::class,
 
     ],
 

@@ -1,5 +1,5 @@
 {
-    "version": "1.1.1",
+    "version": "1.2.0",
 
     "type": "project",
 
@@ -10,24 +10,19 @@
         "php": "^8.1",
         "laravel/framework": "^10.3",
         "laravel/octane": "^2.5",
-        "laravel/pulse": "^1.2",
+        "nwidart/laravel-modules": "^10.0",
 
-        "rappasoft/laravel-livewire-tables": "^3.7",
         "tripteki/laravelphp-import-export": "^1.0",
         "tripteki/laravelphp-request-response-query": "^1.0",
         "spatie/laravel-data": "^4.11",
         "darkaonline/l5-swagger": "^8.6",
         "tymon/jwt-auth": "^2.1",
-        "filament/filament": "^3.2",
-        "bezhansalleh/filament-language-switch": "^3.1",
-        "inertiajs/inertia-laravel": "^2.0",
-        "tightenco/ziggy": "^2.4",
         "spatie/laravel-permission": "^6.24",
         "spatie/laravel-activitylog": "^4.10",
+        "wikimedia/composer-merge-plugin": "^2.1",
 
         "guzzlehttp/guzzle": "^7.10",
-        "pusher/pusher-php-server": "^7.2",
-        "laravel-notification-channels/webpush": "^9.0"
+        "pusher/pusher-php-server": "^7.2"
     },
 
     "require-dev": {
@@ -44,11 +39,15 @@
 
         "psr-4": {
 
-            "Src\\": "src/",
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+
+        "files": [
+
+            "app/Helpers/UrlHelper.php"
+        ]
     },
 
     "autoload-dev": {
@@ -64,37 +63,17 @@
         "dev": [
 
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#86efac\" \"php artisan octane:start --watch\" \"php artisan queue:work\" \"php artisan schedule:work\" \"npm run soketi:development\" \"npm run dev\" --names=server,queue,soketi,vite"
+            "php artisan octane:start --watch"
         ],
 
         "build": [
 
-            "npm run production"
+            "@php artisan optimize"
         ],
-
 
         "test": [
 
-            "./vendor/bin/phpunit --testsuite Unit,Integration,Feature,ModuleUnit,ModuleIntegration,ModuleFeature"
-        ],
-
-        "e2e": [
-
-            "./vendor/bin/phpunit --testsuite E2E,ModuleE2E"
-        ],
-
-        "start": [
-
-            "nohup bash -c 'php artisan inertia:start-ssr & php artisan octane:start --watch & php artisan queue:work & php artisan schedule:work & npm run soketi:production' > ./storage/logs/run.log 2>&1 &"
-        ],
-
-        "stop": [
-
-            "pkill -f 'php artisan inertia:start-ssr' || true",
-            "pkill -f 'php artisan octane:start' || true",
-            "pkill -f 'php artisan queue:work' || true",
-            "pkill -f 'php artisan schedule:work' || true",
-            "pkill -f 'soketi' || true"
+            "./vendor/bin/phpunit --testsuite Feature"
         ],
 
         "post-autoload-dump": [
@@ -109,8 +88,15 @@
         "laravel": {
 
             "dont-discover": []
+        },
+
+        "merge-plugin": {
+
+            "include": [
+                "src/*/composer.json"
+            ]
         }
     },
 
-    "config": { "preferred-install": "dist", "sort-packages": true, "optimize-autoloader": true, "allow-plugins": { "pestphp/pest-plugin": true, "php-http/discovery": true } }, "minimum-stability": "stable", "prefer-stable": true
+    "config": { "preferred-install": "dist", "sort-packages": true, "optimize-autoloader": true, "allow-plugins": { "pestphp/pest-plugin": true, "php-http/discovery": true, "wikimedia/composer-merge-plugin": true } }, "minimum-stability": "stable", "prefer-stable": true
 }

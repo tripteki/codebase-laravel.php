@@ -1,0 +1,75 @@
+<?php
+
+namespace Modules\Notification\App\Services;
+
+use Modules\Notification\App\Dtos\NotificationTransformerDto;
+use Modules\Notification\App\Dtos\NotificationValidatorDto;
+use Modules\Notification\App\Repositories\NotificationAdminRepository;
+use App\Services\Service as BaseService;
+use Spatie\LaravelData\PaginatedDataCollection;
+
+class NotificationAdminService extends BaseService
+{
+    /**
+     * @var \Modules\Notification\App\Repositories\NotificationAdminRepository
+     */
+    protected NotificationAdminRepository $notificationAdminRepository;
+
+    /**
+     * @param \Modules\Notification\App\Repositories\NotificationAdminRepository $notificationAdminRepository
+     * @return void
+     */
+    public function __construct(NotificationAdminRepository $notificationAdminRepository)
+    {
+        $this->notificationAdminRepository = $notificationAdminRepository;
+    }
+
+    /**
+     * @return \Spatie\LaravelData\PaginatedDataCollection
+     */
+    public function all(): PaginatedDataCollection
+    {
+        $paginator = $this->notificationAdminRepository->all();
+        $paginator->setCollection(
+            $paginator->getCollection()->map(fn ($notification) => NotificationTransformerDto::fromNotification($notification, true))
+        );
+
+        return NotificationTransformerDto::collect($paginator, PaginatedDataCollection::class);
+    }
+
+    /**
+     * @param \Modules\Notification\App\Dtos\NotificationValidatorDto $notificationData
+     * @return \Modules\Notification\App\Dtos\NotificationTransformerDto
+     */
+    public function get(NotificationValidatorDto $notificationData): NotificationTransformerDto
+    {
+        return NotificationTransformerDto::fromNotification(
+            $this->notificationAdminRepository->get($notificationData->id),
+            true
+        );
+    }
+
+    /**
+     * @param \Modules\Notification\App\Dtos\NotificationValidatorDto $notificationData
+     * @return \Modules\Notification\App\Dtos\NotificationTransformerDto
+     */
+    public function delete(NotificationValidatorDto $notificationData): NotificationTransformerDto
+    {
+        return NotificationTransformerDto::fromNotification(
+            $this->notificationAdminRepository->delete($notificationData->id),
+            true
+        );
+    }
+
+    /**
+     * @param \Modules\Notification\App\Dtos\NotificationValidatorDto $notificationData
+     * @return \Modules\Notification\App\Dtos\NotificationTransformerDto
+     */
+    public function restore(NotificationValidatorDto $notificationData): NotificationTransformerDto
+    {
+        return NotificationTransformerDto::fromNotification(
+            $this->notificationAdminRepository->restore($notificationData->id),
+            true
+        );
+    }
+}

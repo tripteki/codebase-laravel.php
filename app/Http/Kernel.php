@@ -7,10 +7,6 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * The application's global HTTP middleware stack.
-     *
-     * These middleware are run during every request to your application.
-     *
      * @var array<int, class-string|string>
      */
     protected $middleware = [
@@ -24,8 +20,6 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware groups.
-     *
      * @var array<string, array<int, class-string|string>>
      */
     protected $middlewareGroups = [
@@ -36,21 +30,16 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\HandleInertiaRequestsResponses::class,
         ],
 
         "api" => [
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Src\V1\Api\Common\Http\Middlewares\ApiMiddleware::class,
-            \Src\V1\Api\I18N\Http\Middlewares\I18NApiMiddleware::class,
+            \App\Http\Middleware\ApiMiddleware::class,
+            \Modules\I18N\App\Http\Middlewares\I18NApiMiddleware::class,
         ],
     ];
 
     /**
-     * The application's middleware aliases.
-     *
-     * Aliases may be used instead of class names to assign middleware to routes and groups.
-     *
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
@@ -65,6 +54,6 @@ class Kernel extends HttpKernel
         "signed" => \App\Http\Middleware\ValidateSignature::class,
         "throttle" => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         "verified" => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        "i18n" => \Src\V1\Api\I18N\Http\Middlewares\I18NWebMiddleware::class,
+        "jwt.scope" => \Modules\Auth\App\Http\Middleware\EnsureJwtScopeMiddleware::class,
     ];
 }

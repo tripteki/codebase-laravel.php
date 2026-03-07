@@ -187,6 +187,11 @@ return [
 
             'rule-name' => 'custom-message',
         ],
+
+        'slug' => [
+
+            'immutable' => 'The slug cannot be changed after creation.',
+        ],
     ],
 
     /*

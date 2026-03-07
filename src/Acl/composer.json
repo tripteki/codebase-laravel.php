@@ -1,0 +1,23 @@
+{
+    "name": "tripteki/acl",
+    "description": "",
+    "authors": [
+        {
+            "name": "Trip Teknologi",
+            "email": "noreply@tripteki.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Acl\\": "",
+            "Modules\\Acl\\App\\": "app/",
+            "Modules\\Acl\\Database\\Seeders\\": "Database/Seeders/"
+        }
+    }
+}

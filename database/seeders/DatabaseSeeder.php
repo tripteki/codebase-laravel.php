@@ -2,16 +2,15 @@
 
 namespace Database\Seeders;
 
-use Src\V1\Api\Acl\Database\Seeders\AclSeeder;
-use Src\V1\Api\User\Database\Seeders\UserSeeder;
-use Src\V1\Api\Log\Database\Seeders\LogSeeder;
+use Modules\Acl\Database\Seeders\AclSeeder;
+use Modules\User\Database\Seeders\UserSeeder;
+use Modules\Log\Database\Seeders\LogSeeder;
+use Modules\Notification\Database\Seeders\NotificationSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
-     *
      * @return void
      */
     public function run(): void
@@ -21,7 +20,7 @@ class DatabaseSeeder extends Seeder
             AclSeeder::class,
             UserSeeder::class,
             LogSeeder::class,
-            SettingSeeder::class,
+            NotificationSeeder::class,
         ]);
     }
 }

@@ -27,8 +27,6 @@ xcuserdata/
 # Package
 /.verdaccio/build/local-registry
 vendor/
-!resources/views/vendor/
-!public/vendor/
 node_modules/
 .Python/
 /.vagrant/

@@ -2,14 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Http\Responses\ApiErrorResponse;
+use App\Http\Responses\ApiValidationResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
-     *
      * @var array<int, string>
      */
     protected $dontFlash = [
@@ -19,8 +19,6 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
-     *
      * @return void
      */
     public function register(): void
@@ -31,34 +29,48 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return response()->json([
-                    "message" => __("route.not_found"),
-                ], 400);
+                return ApiErrorResponse::detail(__("route.not_found"), 404);
             }
         });
 
         $this->renderable(function (\Illuminate\Database\Eloquent\ModelNotFoundException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return response()->json([
-                    "message" => __("route.model_not_found"),
-                ], 404);
+                return ApiErrorResponse::detail(__("route.model_not_found"), 404);
+            }
+        });
+
+        $this->renderable(function (\Illuminate\Auth\Access\AuthorizationException $exception, \Illuminate\Http\Request $request) {
+            if ($request->wantsJson() || $request->is("api/*")) {
+                return ApiErrorResponse::detail(__("auth.not_authorized"), 403);
+            }
+        });
+
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\HttpException $exception, \Illuminate\Http\Request $request) {
+            if ($request->wantsJson() || $request->is("api/*")) {
+                $message = $exception->getMessage();
+
+                if ($message === "") {
+                    $message = match ($exception->getStatusCode()) {
+                        401 => __("auth.not_authorized"),
+                        403 => __("auth.not_authorized"),
+                        404 => __("route.not_found"),
+                        default => "An error occurred.",
+                    };
+                }
+
+                return ApiErrorResponse::detail($message, $exception->getStatusCode());
             }
         });
 
         $this->renderable(function (\Illuminate\Auth\AuthenticationException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return response()->json([
-                    "message" => __("route.unauthenticated"),
-                ], 401);
+                return ApiErrorResponse::detail(__("auth.not_authorized"), 401);
             }
         });
 
         $this->renderable(function (\Illuminate\Validation\ValidationException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return response()->json([
-                    "message" => __("route.unprocessable_entity"),
-                    "errors" => $exception->errors(),
-                ], 422);
+                return ApiValidationResponse::fromException($exception, $request);
             }
         });
     }

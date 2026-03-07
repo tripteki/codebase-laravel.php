@@ -1,0 +1,8 @@
+{
+    "Auth": true,
+    "User": true,
+    "Acl": true,
+    "Notification": true,
+    "Log": true,
+    "I18N": true
+}

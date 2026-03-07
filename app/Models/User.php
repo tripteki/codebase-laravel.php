@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use Src\V1\Api\User\Enums\UserEnum;
-use Src\V1\Api\User\Database\Factories\UserFactory;
+use Modules\Auth\App\Notifications\VerifyNotification;
+use Modules\Notification\App\Models\Notification as NotificationModel;
+use Modules\User\Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Filament\Panel;
-use Filament\Models\Contracts\FilamentUser as IAuthSession;
 use Tymon\JWTAuth\Contracts\JWTSubject as IAuthJWT;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -21,18 +20,16 @@ use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
-use NotificationChannels\WebPush\HasPushSubscriptions as NotifiablePushTrait;
 use Spatie\Permission\Traits\HasRoles as ACLTrait;
 use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
 use Spatie\Activitylog\LogOptions;
 
-class User extends Authenticatable implements IAuthSession, IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
+class User extends Authenticatable implements IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
 {
     use AuthorizableTrait,
         MustVerifyEmailTrait,
         CanResetPasswordTrait,
         NotifiableTrait,
-        NotifiablePushTrait,
         ACLTrait,
         LogTrait,
         HasUlids,
@@ -40,15 +37,11 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
         HasFactory;
 
     /**
-     * The table associated with the model.
-     *
      * @var string
      */
     protected $table = "users";
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -60,8 +53,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var array<int, string>
      */
     protected $hidden = [
@@ -71,9 +62,7 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     ];
 
     /**
-     * Cast attributes to specific data types.
-     *
-     * @return array
+     * @return array<string, string>
      */
     protected function casts()
     {
@@ -84,19 +73,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Check if the user has access to a given Filament panel.
-     *
-     * @param \Filament\Panel $panel
-     * @return bool
-     */
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->hasVerifiedEmail();
-    }
-
-    /**
-     * Hash the password attribute.
-     *
      * @param mixed $value
      * @return void
      */
@@ -114,8 +90,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Set the log_activities attribute.
-     *
      * @param mixed $value
      * @return void
      */
@@ -125,8 +99,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Get the log_activities attribute.
-     *
      * @param mixed $value
      * @return array|null
      */
@@ -144,8 +116,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Get the options for logging activity.
-     *
      * @return \Spatie\Activitylog\LogOptions
      */
     public function getActivitylogOptions(): LogOptions
@@ -165,8 +135,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * The identifier that will be used to identify the JWT.
-     *
      * @return mixed
      */
     public function getJWTIdentifier()
@@ -175,8 +143,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * The custom claims for the JWT token.
-     *
      * @return array
      */
     public function getJWTCustomClaims()
@@ -188,8 +154,14 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Create a new factory instance for the model.
-     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function notifications()
+    {
+        return $this->morphMany(NotificationModel::class, "notifiable")->latest();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory()
@@ -198,8 +170,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Scope a query to only include activated users.
-     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return void
      */
@@ -209,8 +179,6 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Scope a query to only include deactivated users.
-     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return void
      */
@@ -220,13 +188,10 @@ class User extends Authenticatable implements IAuthSession, IAuthJWT, Authentica
     }
 
     /**
-     * Get the profile associated with the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return void
      */
-    public function profile()
+    public function sendEmailVerificationNotification(): void
     {
-        return $this->hasOne(Profile::class);
+        $this->notify(new VerifyNotification());
     }
-
 }

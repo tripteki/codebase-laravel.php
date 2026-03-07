@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Providers\RouteServiceProvider;
+use App\Http\Responses\ApiErrorResponse;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,8 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 class RedirectIfAuthenticated
 {
     /**
-     * Handle an incoming request.
-     *
      * @param \Illuminate\Http\Request $request
      * @param \Closure $next
      * @param string ...$guards
@@ -23,9 +21,15 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+            if (! Auth::guard($guard)->check()) {
+                continue;
             }
+
+            if ($request->expectsJson() || $request->is("api/*")) {
+                return ApiErrorResponse::detail(__("auth.not_authorized"), 403);
+            }
+
+            return redirect()->to(frontend_url());
         }
 
         return $next($request);

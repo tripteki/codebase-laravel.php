@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AppController;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__."/../src/V1/Api/Auth/Routes/api.php";
-require __DIR__."/../src/V1/Api/User/Routes/api.php";
-require __DIR__."/../src/V1/Api/Notification/Routes/api.php";
+Route::get("version", [ AppController::class, "version", ])
+    ->middleware("throttle:app-version");
+
+Route::get("status", [ AppController::class, "status", ])
+    ->middleware("throttle:app-status");

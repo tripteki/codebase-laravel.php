@@ -6,4 +6,5 @@ return [
     'unauthenticated' => 'Tidak terautentikasi.',
     'unprocessable_entity' => 'Validasi gagal.',
     'not_found' => 'Tautan yang diminta tidak ada.',
+    'forbidden' => 'Akses ditolak.',
 ];

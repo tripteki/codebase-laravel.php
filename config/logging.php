@@ -2,7 +2,7 @@
 
 return [
 
-    "default" => env("LOG_CHANNEL", "stack"),
+    "default" => env("LOG_CHANNEL", "stack") ?: "stack",
 
     "deprecations" => [
 
@@ -15,7 +15,10 @@ return [
         "stack" => [
 
             "driver" => "stack",
-            "channels" => explode(",", env("LOG_STACK", "single,daily")),
+            "channels" => array_values(array_filter(
+                explode(",", env("LOG_STACK", "single,daily")),
+                fn (string $channel): bool => $channel !== "",
+            )) ?: ["single", "daily"],
             "ignore_exceptions" => false,
         ],
 

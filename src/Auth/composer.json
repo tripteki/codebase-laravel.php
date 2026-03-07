@@ -1,0 +1,27 @@
+{
+    "name": "tripteki/auth",
+    "description": "",
+    "authors": [
+        {
+            "name": "Trip Teknologi",
+            "email": "noreply@tripteki.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Auth\\": "",
+            "Modules\\Auth\\App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Auth\\Tests\\": "tests/"
+        }
+    }
+}

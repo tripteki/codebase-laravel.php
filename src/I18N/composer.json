@@ -1,0 +1,22 @@
+{
+    "name": "tripteki/i18n",
+    "description": "",
+    "authors": [
+        {
+            "name": "Trip Teknologi",
+            "email": "noreply@tripteki.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\I18N\\": "",
+            "Modules\\I18N\\App\\": "app/"
+        }
+    }
+}

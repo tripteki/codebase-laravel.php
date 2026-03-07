@@ -25,7 +25,7 @@ return [
      * It should implement the Spatie\Activitylog\Contracts\Activity interface
      * and extend Illuminate\Database\Eloquent\Model.
      */
-    'activity_model' => \Src\V1\Api\Log\Models\Activity::class,
+    'activity_model' => \Modules\Log\App\Models\Activity::class,
 
 
 
