@@ -50,7 +50,7 @@
             <div class="mt-4 text-center text-xs sm:text-sm text-white/80">
                 <span>{{ __('auth.or_return_to') }}</span>
                 <a href="{{ tenant_routes('admin.login') }}"
-                    class="inline-flex items-center gap-1 font-medium hover:underline link-primary">
+                    class="inline-flex items-center gap-1 text-white/80 hover:text-white/80 underline transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-3 w-3">
                         <path fill-rule="evenodd"
                             d="M12.5 9.75A2.75 2.75 0 0 0 9.75 7H4.56l2.22 2.22a.75.75 0 1 1-1.06 1.06l-3.5-3.5a.75.75 0 0 1 0-1.06l3.5-3.5a.75.75 0 1 1 1.06 1.06L4.56 5.5h5.19a4.25 4.25 0 0 1 0 8.5h-1a.75.75 0 0 1 0-1.5h1a2.75 2.75 0 0 0 2.75-2.75Z"

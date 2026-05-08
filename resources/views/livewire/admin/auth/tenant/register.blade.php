@@ -124,7 +124,7 @@
 
             <div class="mt-4 text-center text-xs sm:text-sm text-white/80">
                 {{ __('auth.already_have_account') }}
-                <a href="{{ tenant_routes('admin.login') }}" class="font-medium link-primary hover:underline">
+                <a href="{{ tenant_routes('admin.login') }}" class="text-white/80 hover:text-white/80 underline transition-colors">
                     {{ __('auth.log_in') }}
                 </a>
             </div>

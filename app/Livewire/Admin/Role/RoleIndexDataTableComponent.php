@@ -132,10 +132,7 @@ class RoleIndexDataTableComponent extends DataTableComponent
     {
         $role = Role::query()->findOrFail($roleId);
 
-        $this->dispatch("open-delete-modal", [
-            "roleId" => $roleId,
-            "roleName" => $role->name,
-        ]);
+        $this->dispatch("open-delete-modal", roleId: $roleId, roleName: $role->name);
     }
 
     /**
@@ -144,6 +141,8 @@ class RoleIndexDataTableComponent extends DataTableComponent
      */
     public function deleteRole($data): void
     {
+        $this->authorize(PermissionEnum::ROLE_DELETE->value);
+
         $roleId = is_array($data) ? ($data["roleId"] ?? null) : $data;
 
         if (! $roleId) {
@@ -160,6 +159,43 @@ class RoleIndexDataTableComponent extends DataTableComponent
             DB::commit();
 
             session()->flash("message", __("module_role.role_deleted_successfully"));
+            $this->dispatch("refreshDatatable");
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            session()->flash("error", __("module_role.role_deleted_failed"));
+        }
+    }
+
+    /**
+     * @param array|int|string $data
+     * @return void
+     */
+    public function forceDeleteRole($data): void
+    {
+        $roleId = is_array($data) ? ($data["roleId"] ?? null) : $data;
+
+        if (! $roleId) {
+            return;
+        }
+
+        $this->authorize(PermissionEnum::ROLE_DELETE->value);
+
+        DB::beginTransaction();
+
+        try {
+            $role = Role::query()->findOrFail($roleId);
+
+            if (method_exists($role, "forceDelete")) {
+                $role->forceDelete();
+            } else {
+                $role->delete();
+            }
+
+            DB::commit();
+
+            session()->flash("message", __("module_role.role_deleted_successfully"));
+            $this->dispatch("refreshDatatable");
         } catch (\Exception $e) {
             DB::rollBack();
 

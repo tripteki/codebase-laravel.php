@@ -1,6 +1,6 @@
 <div x-data="{ show: false, permissionId: null, permissionName: '' }" x-show="show" x-cloak id="delete-permission-modal" tabindex="-1"
     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm" @click.away="show = false"
-    @open-delete-modal.window="show = true; permissionId = '{{ $row->id ?? null }}'; permissionName = '{{ $row->name ?? null }}'"
+    @open-delete-modal.window="show = true; permissionId = $event.detail?.permissionId ?? null; permissionName = $event.detail?.permissionName ?? ''"
     @close-delete-modal.window="show = false">
     <div class="relative w-full max-w-md bg-white rounded-lg shadow dark:bg-gray-800" @click.stop>
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
@@ -25,9 +25,13 @@
                     class="py-1.5 px-3 text-xs font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 flex items-center justify-center">
                     {{ __('module_base.cancel') }}
                 </button>
-                <button type="button" wire:click="deletePermission({ permissionId }); show = false"
+                <button type="button" wire:click="deletePermission({ permissionId: permissionId }); show = false"
                     class="py-1.5 px-3 text-xs font-medium text-white rounded-lg btn-tertiary flex items-center justify-center">
                     {{ __('module_base.delete') }}
+                </button>
+                <button type="button" wire:click="forceDeletePermission({ permissionId: permissionId }); show = false"
+                    class="py-1.5 px-3 text-xs font-medium text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 flex items-center justify-center">
+                    {{ __('module_base.force_delete') }}
                 </button>
             </div>
         </div>

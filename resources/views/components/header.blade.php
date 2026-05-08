@@ -2,7 +2,8 @@
     $AddOnsHelper = App\Helpers\AddOnsHelper::class;
     $AddOnEnum = App\Enum\Event\AddOnEnum::class;
 
-    $isAdminRoute = request()->routeIs('admin.*') || str_starts_with(request()->path(), 'admin/');
+    $path = request()->path();
+    $isAdminRoute = request()->routeIs('admin.*') || (bool) preg_match('#(?:^|/)admin(?:/|$)#', $path);
     if (auth()->check() && $isAdminRoute) {
         session()->put('admin_page', true);
     }
@@ -11,6 +12,8 @@
         || (request()->header('referer') && str_contains((parse_url(request()->header('referer'), PHP_URL_PATH) ?? ''), '/admin/'))
         || (request()->hasHeader('X-Livewire') && session()->has('admin_page'))
     );
+
+    view()->share('isAdminPage', $isAdminPage);
 @endphp
 
 <header

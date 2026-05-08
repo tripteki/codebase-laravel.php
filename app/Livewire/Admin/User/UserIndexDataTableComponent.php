@@ -183,7 +183,7 @@ class UserIndexDataTableComponent extends DataTableComponent
                 ->html(),
         ];
 
-        if (config("tenancy.is_tenancy")) {
+        if (config("tenancy.is_tenancy") && ! hasTenant()) {
             array_splice($columns, 3, 0, [
                 Column::make(__("module_user.tenant"), "tenant_id")
                     ->label(function (User $row) {
@@ -217,10 +217,7 @@ class UserIndexDataTableComponent extends DataTableComponent
         $user = User::query()->with("profile")->findOrFail($userId);
         $displayName = $user->profile?->full_name ?? $user->name;
 
-        $this->dispatch("open-delete-modal", [
-            "userId" => $userId,
-            "userName" => $displayName,
-        ]);
+        $this->dispatch("open-delete-modal", userId: $userId, userName: $displayName);
     }
 
     /**
@@ -246,6 +243,38 @@ class UserIndexDataTableComponent extends DataTableComponent
             DB::commit();
 
             session()->flash("message", __("module_user.user_deleted_successfully"));
+            $this->dispatch("refreshDatatable");
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            session()->flash("error", __("module_user.user_deleted_failed"));
+        }
+    }
+
+    /**
+     * @param array|int|string $data
+     * @return void
+     */
+    public function forceDeleteUser($data): void
+    {
+        $userId = is_array($data) ? ($data["userId"] ?? null) : $data;
+
+        if (! $userId) {
+            return;
+        }
+
+        $user = User::query()->withTrashed()->findOrFail($userId);
+        $this->authorize(PermissionEnum::USER_DELETE->value, $user);
+
+        DB::beginTransaction();
+
+        try {
+            $user->forceDelete();
+
+            DB::commit();
+
+            session()->flash("message", __("module_user.user_deleted_successfully"));
+            $this->dispatch("refreshDatatable");
         } catch (\Exception $e) {
             DB::rollBack();
 

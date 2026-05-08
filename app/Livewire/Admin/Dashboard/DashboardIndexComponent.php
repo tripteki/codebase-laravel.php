@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Dashboard;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -35,7 +36,10 @@ class DashboardIndexComponent extends Component
             foreach (
                 Role::query()
                     ->where("guard_name", GuardEnum::WEB->value)
-                    ->orderBy("name")
+                    ->when(! $isCentral, function (Builder $q) {
+                        $q->where("name", "!=", RoleEnum::SUPERADMIN->value);
+                    })
+                    ->orderBy("id")
                     ->withCount("users")
                     ->get() as $role
             ) {

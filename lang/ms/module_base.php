@@ -15,6 +15,8 @@ return [
     "created_failed" => "Gagal membuat :resource. Sila cuba lagi.",
     "created_successfully" => ":resource berjaya dibuat.",
     "delete" => "Padam",
+    "force_delete" => "Padam paksa",
+    "confirm_force_delete_message" => "Adakah anda pasti mahu memadam data ini secara kekal? Tindakan ini tidak boleh dibatalkan.",
     "deleted_failed" => "Gagal memadam :resource. Sila cuba lagi.",
     "deleted_successfully" => ":resource berjaya dipadam.",
     "edit" => "Edit",

@@ -146,7 +146,7 @@ class ActivityIndexDataTableComponent extends DataTableComponent
                 ->html(),
         ];
 
-        if (config("tenancy.is_tenancy")) {
+        if (config("tenancy.is_tenancy") && ! hasTenant()) {
             array_splice($columns, 4, 0, [
                 Column::make(__("module_activity.tenant"), "tenant_id")
                     ->sortable()

@@ -5,13 +5,26 @@
         use App\Models\Setting;
 
         $isCentralAuthLayout = ! hasTenant();
-        $authBrandDotted = implode(
-            '.',
-            array_map(
-                static fn (string $c): string => mb_strtoupper($c, 'UTF-8'),
-                mb_str_split((string) preg_replace('/\s+/u', '', config('app.name')), 1, 'UTF-8'),
-            ),
-        );
+        $authBrandFromTenantTitle = false;
+        $authBrandSource = (string) config('app.name');
+        if (! $isCentralAuthLayout) {
+            $tenantTitle = trim((string) (tenant('title') ?? ''));
+            if ($tenantTitle !== '') {
+                $authBrandSource = $tenantTitle;
+                $authBrandFromTenantTitle = true;
+            }
+        }
+        if ($authBrandFromTenantTitle) {
+            $authBrandDotted = $authBrandSource;
+        } else {
+            $authBrandDotted = implode(
+                '.',
+                array_map(
+                    static fn (string $c): string => mb_strtoupper($c, 'UTF-8'),
+                    mb_str_split((string) preg_replace('/\s+/u', '', $authBrandSource), 1, 'UTF-8'),
+                ),
+            );
+        }
         $centralAuthSetting = static function (string $key): string {
             $v = Setting::query()->whereNull('tenant_id')->where('key', $key)->value('value');
 
@@ -47,9 +60,9 @@
                         <span class="auth-text-animate-2 inline-block">{{ $paneInteractiveTech }}</span><br>
                         <span class="auth-text-animate-3 inline-block">{{ $paneEcosystem }}</span>
                     @else
-                        <span class="auth-text-animate-1 inline-block">{{ tenant_trans('auth.event_live') }}</span><br>
-                        <span class="auth-text-animate-2 inline-block">{{ tenant_trans('auth.interactive_tech') }}</span><br>
-                        <span class="auth-text-animate-3 inline-block">{{ tenant_trans('auth.ecosystem') }}</span>
+                        <span class="auth-text-animate-1 inline-block">{!! tenant_trans('auth.event_live') !!}</span><br>
+                        <span class="auth-text-animate-2 inline-block">{!! tenant_trans('auth.interactive_tech') !!}</span><br>
+                        <span class="auth-text-animate-3 inline-block">{!! tenant_trans('auth.ecosystem') !!}</span>
                     @endif
                 </h1>
 
@@ -57,7 +70,7 @@
                     @if ($isCentralAuthLayout)
                         {{ $paneBrandDescription }}
                     @else
-                        {{ tenant_trans('auth.brand_description', ['app' => $authBrandDotted]) }}
+                        {!! tenant_trans('auth.brand_description', ['app' => $authBrandDotted]) !!}
                     @endif
                 </p>
 

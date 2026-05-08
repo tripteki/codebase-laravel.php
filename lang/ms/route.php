@@ -6,4 +6,5 @@ return [
     'unauthenticated' => 'Tidak diautentikasi.',
     'unprocessable_entity' => 'Pengesahan gagal.',
     'not_found' => 'Pautan yang diminta tidak wujud.',
+    'forbidden' => 'Akses ditolak.',
 ];

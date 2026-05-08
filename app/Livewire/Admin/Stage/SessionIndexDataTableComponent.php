@@ -112,10 +112,7 @@ class SessionIndexDataTableComponent extends DataTableComponent
     {
         $session = StageSession::query()->findOrFail($sessionId);
 
-        $this->dispatch("open-delete-modal", [
-            "sessionId" => $sessionId,
-            "sessionTitle" => $session->title,
-        ]);
+        $this->dispatch("open-delete-modal", sessionId: $sessionId, sessionTitle: $session->title);
     }
 
     /**

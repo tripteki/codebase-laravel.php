@@ -15,6 +15,8 @@ return [
     "created_failed" => "Failed to create :resource. Please try again.",
     "created_successfully" => ":resource created successfully.",
     "delete" => "Delete",
+    "force_delete" => "Force delete",
+    "confirm_force_delete_message" => "Are you sure you want to permanently delete this data? This action cannot be undone.",
     "deleted_failed" => "Failed to delete :resource. Please try again.",
     "deleted_successfully" => ":resource deleted successfully.",
     "edit" => "Edit",

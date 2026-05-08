@@ -20,7 +20,6 @@ class RoleSeeder extends Seeder
         $admin = Role::where("name", RoleEnum::ADMIN->value)->where("guard_name", $guard)->first();
         $admin?->givePermissionTo([
             LogPermissionEnum::ACTIVITY_VIEW->value,
-            LogPermissionEnum::ACTIVITY_DELETE->value,
         ]);
 
         $speaker = Role::where("name", RoleEnum::SPEAKER->value)->where("guard_name", $guard)->first();

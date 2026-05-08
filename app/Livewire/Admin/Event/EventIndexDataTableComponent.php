@@ -137,7 +137,17 @@ class EventIndexDataTableComponent extends DataTableComponent
 
                     $hasAny = $startDate !== "" || $endDate !== "" || $startTime !== "" || $endTime !== "";
                     if (! $hasAny) {
-                        return '<span class="text-gray-500 dark:text-gray-400">-</span>';
+                        $createdAt = $row->created_at;
+                        if ($createdAt === null) {
+                            return '<span class="text-gray-500 dark:text-gray-400">-</span>';
+                        }
+
+                        return '<div class="text-xs text-gray-900 dark:text-gray-200">'
+                            . '<div class="flex items-center gap-2">'
+                                . '<span>' . e($createdAt->format("Y-m-d")) . '</span>'
+                                . '<span>' . e($createdAt->format("g:i A")) . '</span>'
+                            . '</div>'
+                        . '</div>';
                     }
 
                     $startDateText = $startDate !== "" ? e($startDate) : "-";
@@ -173,10 +183,7 @@ class EventIndexDataTableComponent extends DataTableComponent
         $tenant = Tenant::query()->findOrFail($tenantId);
         $domain = $tenant->domains->first();
         $name = $tenant->getAttribute("title") ?: ($domain ? $domain->domain : $tenantId);
-        $this->dispatch("open-delete-modal", [
-            "tenantId" => $tenantId,
-            "tenantName" => $name,
-        ]);
+        $this->dispatch("open-delete-modal", tenantId: $tenantId, tenantName: $name);
     }
 
     /**

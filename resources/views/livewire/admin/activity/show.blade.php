@@ -78,10 +78,20 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __('module_activity.description') }}</label>
                             <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">
                                 {{ __('module_activity.description_label') }}</p>
-                            <div
-                                class="bg-gray-50 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white">
-                                {{ $activity->description }}
-                            </div>
+                            @php
+                                $activityDescription = (string) ($activity->description ?? '');
+                            @endphp
+                            @if (filled(trim(strip_tags($activityDescription))))
+                                <div
+                                    class="prose prose-sm max-w-none rounded-lg bg-gray-50 p-2.5 text-gray-900 dark:prose-invert dark:bg-gray-700 dark:text-white">
+                                    {!! $activityDescription !!}
+                                </div>
+                            @else
+                                <div
+                                    class="bg-gray-50 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white">
+                                    -
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="grid grid-cols-6 gap-6">

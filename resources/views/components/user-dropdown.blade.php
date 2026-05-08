@@ -1,6 +1,7 @@
 @php
     $user = auth()->user();
-    $initials = strtoupper(substr($user->name ?? 'U', 0, 1));
+    $displayName = trim((string) ($user->profile?->full_name ?? $user->name ?? 'U'));
+    $initials = strtoupper(substr($displayName, 0, 1));
     $avatarUrl = $user->profile?->avatar ? asset('storage/' . $user->profile->avatar) : asset('asset/avatar.png');
     $primaryRole = $user->roles->first()?->name ?? '';
 @endphp
@@ -14,18 +15,18 @@
     >
         <div class="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
             @if ($avatarUrl && $avatarUrl !== asset('asset/avatar.png'))
-                <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="w-full h-full object-cover" />
+                <img src="{{ $avatarUrl }}" alt="{{ $displayName }}" class="w-full h-full object-cover" />
             @else
                 <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $initials }}</span>
             @endif
         </div>
 
         <div class="hidden xl:flex flex-col items-start leading-tight">
-            <span class="text-xs font-semibold text-gray-900 dark:text-white truncate" style="max-width:220px">
-                {{ $user->name }}
+            <span class="text-xs font-semibold text-gray-900 dark:text-white truncate" style="max-width:180px">
+                {{ \Illuminate\Support\Str::limit($displayName, 16) }}
             </span>
-            <span class="text-[0.7rem] text-gray-500 dark:text-gray-400 truncate" style="max-width:220px">
-                {{ $user->email }}
+            <span class="text-[0.7rem] text-gray-500 dark:text-gray-400 truncate" style="max-width:180px">
+                {{ \Illuminate\Support\Str::limit(\Illuminate\Support\Str::before($user->email, "@") ?: (string) $user->email, 18) }}
             </span>
             @if ($primaryRole)
                 <span class="text-[0.7rem] text-gray-500 dark:text-gray-400 capitalize">
@@ -47,17 +48,17 @@
             <div class="flex items-center gap-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
                     @if ($avatarUrl && $avatarUrl !== asset('asset/avatar.png'))
-                        <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="w-full h-full object-cover" />
+                        <img src="{{ $avatarUrl }}" alt="{{ $displayName }}" class="w-full h-full object-cover" />
                     @else
                         <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $initials }}</span>
                     @endif
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="font-semibold text-gray-900 dark:text-white truncate" style="max-width:160px">
-                        {{ $user->name }}
+                    <div class="font-semibold text-gray-900 dark:text-white truncate" style="max-width:180px">
+                        {{ \Illuminate\Support\Str::limit($displayName, 16) }}
                     </div>
-                    <div class="text-[0.7rem] text-gray-500 dark:text-gray-400 truncate" style="max-width:160px">
-                        {{ $user->email }}
+                    <div class="text-[0.7rem] text-gray-500 dark:text-gray-400 truncate" style="max-width:180px">
+                        {{ \Illuminate\Support\Str::limit(\Illuminate\Support\Str::before($user->email, "@") ?: (string) $user->email, 18) }}
                     </div>
                     @if ($primaryRole)
                         <div class="text-[0.7rem] text-gray-500 dark:text-gray-400 capitalize">

@@ -139,10 +139,7 @@ class MeetingIndexDataTableComponent extends DataTableComponent
     {
         $meeting = StageMeeting::query()->findOrFail($meetingId);
 
-        $this->dispatch("open-delete-modal", [
-            "meetingId" => $meetingId,
-            "meetingTitle" => $meeting->title,
-        ]);
+        $this->dispatch("open-delete-modal", meetingId: $meetingId, meetingTitle: $meeting->title);
     }
 
     /**

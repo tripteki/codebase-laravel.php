@@ -107,10 +107,7 @@ class PermissionIndexDataTableComponent extends DataTableComponent
     {
         $permission = Permission::query()->findOrFail($permissionId);
 
-        $this->dispatch("open-delete-modal", [
-            "permissionId" => $permissionId,
-            "permissionName" => $permission->name,
-        ]);
+        $this->dispatch("open-delete-modal", permissionId: $permissionId, permissionName: $permission->name);
     }
 
     /**
@@ -137,6 +134,43 @@ class PermissionIndexDataTableComponent extends DataTableComponent
             DB::commit();
 
             session()->flash("message", __("module_permission.permission_deleted_successfully"));
+            $this->dispatch("refreshDatatable");
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            session()->flash("error", __("module_permission.permission_deleted_failed"));
+        }
+    }
+
+    /**
+     * @param array|int|string $data
+     * @return void
+     */
+    public function forceDeletePermission($data): void
+    {
+        $permissionId = is_array($data) ? ($data["permissionId"] ?? null) : $data;
+
+        if (! $permissionId) {
+            return;
+        }
+
+        $this->authorize(PermissionEnum::PERMISSION_DELETE->value);
+
+        DB::beginTransaction();
+
+        try {
+            $permission = Permission::query()->findOrFail($permissionId);
+
+            if (method_exists($permission, "forceDelete")) {
+                $permission->forceDelete();
+            } else {
+                $permission->delete();
+            }
+
+            DB::commit();
+
+            session()->flash("message", __("module_permission.permission_deleted_successfully"));
+            $this->dispatch("refreshDatatable");
         } catch (\Exception $e) {
             DB::rollBack();
 

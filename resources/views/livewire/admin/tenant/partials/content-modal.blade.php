@@ -42,7 +42,17 @@
 
         <div class="p-4 md:p-5 space-y-4 max-h-[calc(100vh-10rem)] sm:max-h-[75vh] overflow-y-auto">
             @foreach ($contentModalRows as $index => $row)
-                <div class="p-4 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                <div class="relative p-4 pr-14 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                    <button type="button" wire:click="removeContentRow({{ $index }})"
+                        class="absolute right-4 top-4 z-10 w-8 h-8 flex items-center justify-center text-sm font-medium text-white rounded-full btn-tertiary"
+                        title="{{ __('module_base.delete') }}">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                         <div class="md:col-span-3">
                             <label for="contentModalRows.{{ $index }}.group"
@@ -72,7 +82,20 @@
                                     {{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="min-w-0 md:col-span-4 space-y-3">
+                        @php
+                            $valueKind = ($row['value_kind'] ?? 'text') === 'file' ? 'file' : 'text';
+                            $storedPath = (string) ($row['value'] ?? '');
+                            $isPublicPath =
+                                $storedPath !== '' &&
+                                str_starts_with($storedPath, 'tenant-contents/');
+                        @endphp
+                        <div
+                            @class([
+                                'min-w-0 space-y-3',
+                                'md:col-span-12' => $valueKind === 'text',
+                                'md:col-span-4' => $valueKind !== 'text',
+                            ])
+                        >
                             <div class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 {{ __('module_setting.value') }}
                             </div>
@@ -89,19 +112,15 @@
                                         <option value="file">{{ __('module_content.value_kind_file') }}</option>
                                     </select>
                                 </div>
-                                @php
-                                    $valueKind = ($row['value_kind'] ?? 'text') === 'file' ? 'file' : 'text';
-                                    $storedPath = (string) ($row['value'] ?? '');
-                                    $isPublicPath =
-                                        $storedPath !== '' &&
-                                        str_starts_with($storedPath, 'tenant-contents/');
-                                @endphp
                                 @if ($valueKind === 'text')
-                                    <input type="text" id="contentModalRows.{{ $index }}.value"
-                                        wire:model.defer="contentModalRows.{{ $index }}.value"
-                                        class="input-primary shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="{{ __('module_setting.value_placeholder') }}"
-                                        aria-label="{{ __('module_setting.value') }}" />
+                                    <div wire:key="content-modal-text-{{ $index }}">
+                                        <x-wysiwyg-editor
+                                            :editor-id="'content-modal-editor-' . $index"
+                                            :input-id="'content-modal-input-' . $index"
+                                            :model="'contentModalRows.' . $index . '.value'"
+                                            min-height="170px"
+                                        />
+                                    </div>
                                 @else
                                     <div
                                         class="min-w-0 overflow-visible rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-800/50">
@@ -163,18 +182,6 @@
                                 <p class="text-sm text-[hsl(0,84.2%,60.2%)] dark:text-[hsl(0,62.8%,30.6%)]">
                                     {{ $message }}</p>
                             @enderror
-                        </div>
-                        <div class="md:col-span-1 flex justify-center md:justify-end md:self-center">
-                            <button type="button" wire:click="removeContentRow({{ $index }})"
-                                class="w-8 h-8 flex items-center justify-center text-sm font-medium text-white rounded-full btn-tertiary"
-                                title="{{ __('module_base.delete') }}">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>

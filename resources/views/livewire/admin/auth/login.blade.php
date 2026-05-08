@@ -40,13 +40,10 @@
                         @csrf
 
                         <div class="space-y-1">
-                            <input type="email" name="identifier" value="{{ old('identifier') }}"
-                                class="block w-full rounded-full border border-transparent bg-white px-4 py-3 sm:py-3.5 text-sm text-gray-900 shadow-[inset_0_1px_0_rgba(0,0,0,0.03),0_10px_24px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:border-[#FCB11D] focus-visible:ring-3 focus-visible:ring-[rgba(252,177,29,0.1)] placeholder-gray-500 transition-all @error('email') ring-2 ring-[hsl(0,84.2%,60.2%)] @enderror @error('identifier') ring-2 ring-[hsl(0,84.2%,60.2%)] @enderror"
-                                placeholder="{{ __('auth.email_placeholder') }}" autocomplete="email" autocapitalize="none"
-                                autocorrect="off" inputmode="email" spellcheck="false" required>
-                            @error('email')
-                                <p class="mt-1.5 text-sm text-white/90">{{ $message }}</p>
-                            @enderror
+                            <input type="text" name="identifier" value="{{ old('identifier') }}"
+                                class="block w-full rounded-full border border-transparent bg-white px-4 py-3 sm:py-3.5 text-sm text-gray-900 shadow-[inset_0_1px_0_rgba(0,0,0,0.03),0_10px_24px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:border-[#FCB11D] focus-visible:ring-3 focus-visible:ring-[rgba(252,177,29,0.1)] placeholder-gray-500 transition-all @error('identifier') ring-2 ring-[hsl(0,84.2%,60.2%)] @enderror"
+                                placeholder="{{ __('auth.identifier_placeholder') }}" autocomplete="username" autocapitalize="none"
+                                autocorrect="off" inputmode="text" spellcheck="false" required>
                             @error('identifier')
                                 <p class="mt-1.5 text-sm text-white/90">{{ $message }}</p>
                             @enderror
@@ -125,13 +122,10 @@
                         @csrf
 
                         <div class="space-y-1">
-                            <input type="email" name="identifier" value="{{ old('identifier') }}"
-                                class="block w-full rounded-full border border-transparent bg-white px-4 py-2.5 sm:py-3 text-sm text-gray-900 shadow-[inset_0_1px_0_rgba(0,0,0,0.03),0_10px_24px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:border-[#FCB11D] focus-visible:ring-3 focus-visible:ring-[rgba(252,177,29,0.1)] placeholder-gray-500 transition-all @error('email') ring-2 ring-[hsl(0,84.2%,60.2%)] @enderror @error('identifier') ring-2 ring-[hsl(0,84.2%,60.2%)] @enderror"
-                                placeholder="{{ __('auth.email_placeholder') }}" autocomplete="email" autocapitalize="none"
-                                autocorrect="off" inputmode="email" spellcheck="false" required>
-                            @error('email')
-                                <p class="mt-1.5 text-xs sm:text-sm text-white/90">{{ $message }}</p>
-                            @enderror
+                            <input type="text" name="identifier" value="{{ old('identifier') }}"
+                                class="block w-full rounded-full border border-transparent bg-white px-4 py-2.5 sm:py-3 text-sm text-gray-900 shadow-[inset_0_1px_0_rgba(0,0,0,0.03),0_10px_24px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:border-[#FCB11D] focus-visible:ring-3 focus-visible:ring-[rgba(252,177,29,0.1)] placeholder-gray-500 transition-all @error('identifier') ring-2 ring-[hsl(0,84.2%,60.2%)] @enderror"
+                                placeholder="{{ __('auth.identifier_placeholder') }}" autocomplete="username" autocapitalize="none"
+                                autocorrect="off" inputmode="text" spellcheck="false" required>
                             @error('identifier')
                                 <p class="mt-1.5 text-xs sm:text-sm text-white/90">{{ $message }}</p>
                             @enderror

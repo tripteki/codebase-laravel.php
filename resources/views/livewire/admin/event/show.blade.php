@@ -175,9 +175,20 @@
                             <div>
                                 <label
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __('module_event.description') }}</label>
-                                <div
-                                    class="bg-gray-50 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white">
-                                    {{ $tenant->getAttribute('description') ?: '-' }}</div>
+                                @php
+                                    $tenantDescription = (string) ($tenant->getAttribute('description') ?? '');
+                                @endphp
+                                @if (filled(trim(strip_tags($tenantDescription))))
+                                    <div
+                                        class="prose prose-sm max-w-none rounded-lg bg-gray-50 p-2.5 text-gray-900 dark:prose-invert dark:bg-gray-700 dark:text-white">
+                                        {!! $tenantDescription !!}
+                                    </div>
+                                @else
+                                    <div
+                                        class="bg-gray-50 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white">
+                                        -
+                                    </div>
+                                @endif
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>

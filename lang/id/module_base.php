@@ -15,6 +15,8 @@ return [
     "created_failed" => "Gagal membuat :resource. Silakan coba lagi.",
     "created_successfully" => ":resource berhasil dibuat.",
     "delete" => "Hapus",
+    "force_delete" => "Hapus permanen",
+    "confirm_force_delete_message" => "Apakah Anda yakin ingin menghapus data ini secara permanen? Tindakan ini tidak dapat dibatalkan.",
     "deleted_failed" => "Gagal menghapus :resource. Silakan coba lagi.",
     "deleted_successfully" => ":resource berhasil dihapus.",
     "edit" => "Edit",

@@ -17,6 +17,9 @@ class NotificationComponent extends Component
      */
     public string $notificationsIndexUrl = '';
 
+    /**
+     * @return void
+     */
     public function mount(): void
     {
         $this->notificationsIndexUrl = tenant_routes('admin.notifications.index');
@@ -80,7 +83,7 @@ class NotificationComponent extends Component
                 $query->whereNotNull('read_at');
             }
 
-            $notifications = $query->take(10)->get();
+            $notifications = $query->take(3)->get();
         } catch (\Exception $e) {
             $unreadCount = 0;
             $notifications = collect();

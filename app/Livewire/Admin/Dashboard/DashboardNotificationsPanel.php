@@ -73,7 +73,7 @@ class DashboardNotificationsPanel extends Component
                 $query->whereNotNull("read_at");
             }
 
-            $notifications = $query->take(20)->get();
+            $notifications = $query->take(3)->get();
         } catch (\Exception $e) {
             $unreadCount = 0;
             $notifications = collect();

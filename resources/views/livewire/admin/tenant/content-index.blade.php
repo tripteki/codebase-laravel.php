@@ -109,6 +109,25 @@
     <link href="{{ asset('css/module/content.css') }}" rel="stylesheet" />
 @endpush
 
+@push('scripts-start')
+    <script type="module">
+        import {
+            Editor,
+        } from "https://esm.sh/@tiptap/core@2.1.13";
+        import StarterKit from "https://esm.sh/@tiptap/starter-kit@2.1.13";
+        import TextAlign from "https://esm.sh/@tiptap/extension-text-align@2.1.13";
+        import Underline from "https://esm.sh/@tiptap/extension-underline@2.1.13";
+
+        window.tiptap = {
+            Editor,
+        };
+        window.StarterKit = StarterKit;
+        window.TextAlign = TextAlign;
+        window.Underline = Underline;
+        window.tiptapReady = true;
+    </script>
+@endpush
+
 @push('scripts-end')
     <script src="{{ asset('js/module/content.js') }}"></script>
 @endpush

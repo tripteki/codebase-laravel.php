@@ -2,8 +2,12 @@
     use Src\V1\Api\I18N\Enums\LanguageEnum;
 
     $i18n = app(\Src\V1\Api\I18N\Services\I18NService::class);
-    $currentLang = $i18n->getLanguageFromSession(request());
     $availableLangs = $i18n->availableLangs();
+    $sessionLang = $i18n->getLanguageFromSession(request());
+    $appLang = (string) app()->getLocale();
+    $currentLang = in_array($appLang, $availableLangs, true)
+        ? $appLang
+        : $sessionLang;
     $langLabels = LanguageEnum::labels();
 
     $position = $position ?? 'bottom';
