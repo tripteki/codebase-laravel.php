@@ -8,24 +8,19 @@ use Illuminate\Http\JsonResponse;
 use Modules\Auth\App\Events\UserAuthReverify;
 use Modules\User\App\Dtos\UserTransformerDto;
 use App\Http\Controllers\Controller as BaseController;
+use OpenApi\Attributes as OA;
 
 class EmailVerificationNotificationController extends BaseController
 {
-    /**
-     * @OA\Post(
-     *      path="/api/v1/auth/email/verification-notification",
-     *      tags={"Auth"},
-     *      summary="Re-Verification",
-     *      security={{ "bearerAuth": {} }},
-     *      @OA\Response(
-     *          response=200,
-     *          description="Success."
-     *      )
-     * )
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+    #[OA\Post(
+        path: "/api/v1/auth/email/verification-notification",
+        tags: ["UserAuth"],
+        summary: "Re-Verification",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success."),
+        ]
+    )]
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();

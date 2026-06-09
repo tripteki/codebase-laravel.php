@@ -20,25 +20,15 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        RateLimiter::for("api", function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for("api", fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+        RateLimiter::for("api-read", fn (Request $request) => Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()));
+        RateLimiter::for("api-write", fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
 
-        RateLimiter::for("api-read", function (Request $request) {
-            return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for("api-register", fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for("api-refresh", fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
 
-        RateLimiter::for("api-register", function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip());
-        });
-
-        RateLimiter::for("app-version", function (Request $request) {
-            return Limit::perMinute(60)->by($request->ip());
-        });
-
-        RateLimiter::for("app-status", function (Request $request) {
-            return Limit::perMinute(120)->by($request->ip());
-        });
+        RateLimiter::for("app-version", fn (Request $request) => Limit::perMinute(60)->by($request->ip()));
+        RateLimiter::for("app-status", fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
 
         $this->routes(function () {
             Route::middleware("api")

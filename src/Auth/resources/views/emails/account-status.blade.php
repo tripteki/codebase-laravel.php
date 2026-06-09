@@ -1,20 +1,40 @@
 @extends('auth::layouts.mail')
 
+@php
+    $isDeactivated = str_contains((string) $headingKey, 'deactivated');
+@endphp
+
 @section('title', __($headingKey))
 
-@section('content')
-    <h1 class="mb-2" style="color: var(--brand-primary);">{{ __($headingKey) }}</h1>
-
-    <p class="fw-bold mb-2">@if ($userName){{ __('auth.email_hi') }} {{ $userName }},@else{{ __('auth.hi_there') }}@endif</p>
-
-    <p class="mb-4 text-muted small">{{ __($lineKey) }}</p>
-
-    <p class="mt-4 mb-0">
-        {{ __('auth.thanks') }}<br>
-        <strong>{{ config('app.name') }}</strong>.
-    </p>
+@section('preheader')
+    {{ __($lineKey) }}
 @endsection
 
-@section('footer')
-    &copy; {{ date('Y') }} {{ config('app.name') }}
+@section('header_badge')
+    {{ $appName }}
+@endsection
+
+@section('content')
+    @include('auth::emails.partials.hero', [
+        'icon' => $isDeactivated ? '⏸' : '✓',
+        'tone' => $isDeactivated ? 'warning' : 'success',
+        'title' => __($headingKey),
+        'subtitle' => __($lineKey),
+    ])
+
+    @include('auth::emails.partials.greeting', ['userName' => $userName])
+
+    @include('auth::emails.partials.account-panel', [
+        'userName' => $userName,
+        'userEmail' => $userEmail,
+    ])
+
+    @if ($isDeactivated)
+        @include('auth::emails.partials.security-note', [
+            'title' => __('auth.account_status_support_title'),
+            'body' => __('auth.account_status_support_body'),
+        ])
+    @endif
+
+    @include('auth::emails.partials.signature')
 @endsection

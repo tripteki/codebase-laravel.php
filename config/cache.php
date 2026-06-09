@@ -6,6 +6,17 @@ return [
 
     "default" => env("CACHE_DRIVER", "file"),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | Allow-list classes that may be unserialized from cache.
+    | Set explicit class names if you store PHP objects in cache.
+    |
+    */
+    "serializable_classes" => false,
+
     "stores" => [
 
         "file" => [

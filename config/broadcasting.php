@@ -6,21 +6,20 @@ return [
 
     "connections" => [
 
-        "pusher" => [
+        "reverb" => [
 
-            "driver" => "pusher",
-            "key" => env("PUSHER_APP_KEY"),
-            "secret" => env("PUSHER_APP_SECRET"),
-            "app_id" => env("PUSHER_APP_ID"),
+            "driver" => "reverb",
+            "key" => env("REVERB_APP_KEY"),
+            "secret" => env("REVERB_APP_SECRET"),
+            "app_id" => env("REVERB_APP_ID"),
 
             "options" => [
 
-                "cluster" => env("PUSHER_APP_CLUSTER", "mt1"),
-                "host" => env("PUSHER_HOST", env("APP_ENV") === "local" ? "127.0.0.1" : "api-".env("PUSHER_APP_CLUSTER", "mt1").".pusher.com"),
-                "port" => (int) env("PUSHER_PORT", env("APP_ENV") === "local" ? 6001 : 443),
-                "scheme" => env("PUSHER_SCHEME", env("APP_ENV") === "local" ? "http" : "https"),
-                "useTLS" => env("PUSHER_SCHEME", env("APP_ENV") === "local" ? "http" : "https") === "https",
-                "encrypted" => env("PUSHER_SCHEME", env("APP_ENV") === "local" ? "http" : "https") === "https",
+                "host" => env("REVERB_HOST", "127.0.0.1"),
+                "port" => (int) env("REVERB_PORT", env("APP_ENV") === "local" ? 8080 : 443),
+                "scheme" => env("REVERB_SCHEME", env("APP_ENV") === "local" ? "http" : "https"),
+                "useTLS" => env("REVERB_SCHEME", env("APP_ENV") === "local" ? "http" : "https") === "https",
+                "path" => env("REVERB_SERVER_PATH", ""),
             ],
 
             "client_options" => [

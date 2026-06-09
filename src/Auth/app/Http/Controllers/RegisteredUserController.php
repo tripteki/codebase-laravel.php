@@ -12,6 +12,7 @@ use Modules\User\App\Dtos\UserDto;
 use Modules\User\App\Services\UserService;
 use Modules\Acl\App\Enums\RoleEnum;
 use App\Http\Controllers\Controller as BaseController;
+use OpenApi\Attributes as OA;
 
 class RegisteredUserController extends BaseController
 {
@@ -29,51 +30,32 @@ class RegisteredUserController extends BaseController
         $this->userService = $userService;
     }
 
-    /**
-     * @OA\Post(
-     *      path="/api/v1/auth/register",
-     *      tags={"Auth"},
-     *      summary="Registration",
-     *      @OA\RequestBody(
-     *          @OA\MediaType(
-     *              mediaType="application/x-www-form-urlencoded",
-     *              @OA\Schema(
-     *                  @OA\Property(
-     *                      property="name",
-     *                      type="string",
-     *                      description="Name"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="email",
-     *                      type="string",
-     *                      description="Email"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="password",
-     *                      type="string",
-     *                      description="Password"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="password_confirmation",
-     *                      type="string",
-     *                      description="Password Confirmation"
-     *                  )
-     *              )
-     *          )
-     *      ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="Created."
-     *      ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Validation Error."
-     *      )
-     * )
-     *
-     * @param \Modules\User\App\Dtos\UserDto $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+    #[OA\Post(
+        path: "/api/v1/auth/register",
+        tags: ["UserAuth"],
+        summary: "Registration",
+        requestBody: new OA\RequestBody(
+            content: new OA\MediaType(
+                mediaType: "application/x-www-form-urlencoded",
+                schema: new OA\Schema(
+                    properties: [
+                        new OA\Property(property: "name", type: "string", description: "Name"),
+                        new OA\Property(property: "email", type: "string", description: "Email"),
+                        new OA\Property(property: "password", type: "string", description: "Password"),
+                        new OA\Property(
+                            property: "password_confirmation",
+                            type: "string",
+                            description: "Password Confirmation"
+                        ),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "Created."),
+            new OA\Response(response: 422, description: "Validation Error."),
+        ]
+    )]
     public function store(UserDto $request): JsonResponse
     {
         $userService = $this->userService->create($request);

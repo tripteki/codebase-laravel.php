@@ -10,7 +10,7 @@ use Modules\Notification\App\Dtos\UnreadNotificationValidatorDto;
 use Modules\Notification\App\Dtos\NotificationTransformerDto;
 use Modules\Notification\App\Repositories\NotificationRepository;
 use App\Services\Service as BaseService;
-use Spatie\LaravelData\PaginatedDataCollection;
+use App\Dtos\OffsetPaginationDto;
 
 class NotificationService extends BaseService
 {
@@ -29,16 +29,16 @@ class NotificationService extends BaseService
     }
 
     /**
-     * @return \Spatie\LaravelData\PaginatedDataCollection
+     * @return \App\Dtos\OffsetPaginationDto
      */
-    public function all(): PaginatedDataCollection
+    public function all(): OffsetPaginationDto
     {
         $paginator = $this->notificationRepository->all();
-        $paginator->setCollection(
-            $paginator->getCollection()->map(fn ($notification) => NotificationTransformerDto::fromNotification($notification))
-        );
 
-        return NotificationTransformerDto::collect($paginator, PaginatedDataCollection::class);
+        return $this->toOffsetPagination(
+            $paginator,
+            fn ($notification) => NotificationTransformerDto::fromNotification($notification),
+        );
     }
 
     /**

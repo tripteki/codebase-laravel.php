@@ -2,6 +2,7 @@
 
 namespace Modules\User\App\Services;
 
+use App\Services\Service as BaseService;
 use Illuminate\Support\Facades\Auth;
 use Modules\User\App\Dtos\UserDto;
 use Modules\User\App\Dtos\UserIdentifierDto;
@@ -12,8 +13,7 @@ use Modules\User\App\Events\UserAdminDeactivated;
 use Modules\User\App\Jobs\UserAdminExportJob;
 use Modules\User\App\Jobs\UserAdminImportJob;
 use Modules\User\App\Repositories\UserAdminRepository;
-use App\Services\Service as BaseService;
-use Spatie\LaravelData\PaginatedDataCollection;
+use App\Dtos\OffsetPaginationDto;
 
 class UserAdminService extends BaseService
 {
@@ -32,16 +32,16 @@ class UserAdminService extends BaseService
     }
 
     /**
-     * @return \Spatie\LaravelData\PaginatedDataCollection
+     * @return \App\Dtos\OffsetPaginationDto
      */
-    public function all(): PaginatedDataCollection
+    public function all(): OffsetPaginationDto
     {
         $paginator = $this->userAdminRepository->all();
-        $paginator->setCollection(
-            $paginator->getCollection()->map(fn ($user) => UserTransformerDto::fromUser($user))
-        );
 
-        return UserTransformerDto::collect($paginator, PaginatedDataCollection::class);
+        return $this->toOffsetPagination(
+            $paginator,
+            fn ($user) => UserTransformerDto::fromUser($user),
+        );
     }
 
     /**
@@ -59,7 +59,10 @@ class UserAdminService extends BaseService
      */
     public function create(UserDto $userData): UserTransformerDto
     {
-        return UserTransformerDto::fromUser($this->userAdminRepository->create($userData->toArray()));
+        return UserTransformerDto::fromUser($this->userAdminRepository->create(
+            $userData->createPayload(),
+            $userData->profilePayload(),
+        ));
     }
 
     /**
@@ -69,7 +72,11 @@ class UserAdminService extends BaseService
     public function update(UserUpdateDto $userData): UserTransformerDto
     {
         return UserTransformerDto::fromUser(
-            $this->userAdminRepository->update((string) $userData->id, $userData->updatePayload())
+            $this->userAdminRepository->update(
+                (string) $userData->id,
+                $userData->updatePayload(),
+                $userData->profilePayload(),
+            ),
         );
     }
 
@@ -81,6 +88,17 @@ class UserAdminService extends BaseService
     {
         $user = $this->userAdminRepository->delete($identifier->id);
         event(new UserAdminDeactivated($user, (string) Auth::id()));
+
+        return UserTransformerDto::fromUser($user);
+    }
+
+    /**
+     * @param \Modules\User\App\Dtos\UserIdentifierDto $identifier
+     * @return \Modules\User\App\Dtos\UserTransformerDto
+     */
+    public function forceDelete(UserIdentifierDto $identifier): UserTransformerDto
+    {
+        $user = $this->userAdminRepository->forceDelete($identifier->id);
 
         return UserTransformerDto::fromUser($user);
     }

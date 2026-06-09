@@ -3,9 +3,8 @@
 namespace Modules\Notification\Tests\Feature;
 
 use App\Models\User;
-use Tests\TestCase;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class NotificationTest extends TestCase
 {
@@ -45,7 +44,17 @@ class NotificationTest extends TestCase
     {
         $test = $this->getJson("/api/v1/notifications");
 
-        $test->assertStatus(200);
+        $test->assertStatus(200)
+            ->assertJsonStructure([
+                "totalPage",
+                "perPage",
+                "currentPage",
+                "nextPage",
+                "previousPage",
+                "firstPage",
+                "lastPage",
+                "data",
+            ]);
     }
 
     /**

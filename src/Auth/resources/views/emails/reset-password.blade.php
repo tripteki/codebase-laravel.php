@@ -2,25 +2,41 @@
 
 @section('title', __('auth.password_reset_subject'))
 
-@section('content')
-    <h1 class="mb-2" style="color: var(--brand-primary);">{{ __('auth.password_reset_heading') }}</h1>
-
-    <p class="fw-bold mb-2">@if ($userName){{ __('auth.email_hi') }} {{ $userName }},@else{{ __('auth.hi_there') }}@endif</p>
-
-    <p class="mb-4 text-muted small">{{ __('auth.password_reset_line') }}</p>
-
-    @if ($resetLink)
-        <p class="mb-4">
-            <a href="{{ $resetLink }}" style="color: var(--brand-primary);">{{ __('auth.password_reset_action') }}</a>
-        </p>
-    @endif
-
-    <p class="mt-4 mb-0">
-        {{ __('auth.thanks') }}<br>
-        <strong>{{ config('app.name') }}</strong>.
-    </p>
+@section('preheader')
+    {{ __('auth.password_reset_preheader', ['app' => $appName]) }}
 @endsection
 
-@section('footer')
-    &copy; {{ date('Y') }} {{ config('app.name') }}
+@section('header_badge')
+    {{ $appName }}
+@endsection
+
+@section('content')
+    @include('auth::emails.partials.hero', [
+        'icon' => '🔐',
+        'tone' => 'warning',
+        'title' => __('auth.password_reset_heading'),
+        'subtitle' => __('auth.password_reset_line'),
+    ])
+
+    @include('auth::emails.partials.greeting', ['userName' => $userName])
+
+    @include('auth::emails.partials.account-panel', [
+        'userName' => $userName,
+        'userEmail' => $userEmail,
+    ])
+
+    @include('auth::emails.partials.cta', [
+        'url' => $resetLink ?? null,
+        'label' => __('auth.password_reset_action'),
+    ])
+
+    @include('auth::emails.partials.security-note', [
+        'body' => __('auth.password_reset_ignore'),
+    ])
+
+    @include('auth::emails.partials.url-fallback', [
+        'url' => $resetLink ?? null,
+    ])
+
+    @include('auth::emails.partials.signature')
 @endsection

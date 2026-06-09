@@ -1,0 +1,166 @@
+---
+description: Core Laravel modular monolith conventions (structure, API, env, tests)
+alwaysApply: true
+---
+
+# Laravel — Project Conventions
+
+This is the **Laravel 13** backend in the Tripteki parallel-codebase family. It is a **modular monolith** (REST only, no GraphQL) sharing the same API contract with NestJS and FastAPI.
+
+## Stack
+
+| Layer | Choice |
+|-------|--------|
+| Framework | Laravel 13 + PHP 8.3 |
+| Server | **Laravel Octane** (dev and production) |
+| Architecture | Modular monolith via `nwidart/laravel-modules` |
+| Auth | `tymon/jwt-auth` — `ACCESS_TOKEN` / `REFRESH_TOKEN` scopes |
+| DTOs | Spatie Laravel Data |
+| Permissions | Spatie Permission + custom `Gate::before` for superadmin |
+| Query | Spatie Query Builder (filtering, sorting) |
+| Activity log | Spatie Activitylog |
+| Excel | maatwebsite/excel (import/export) |
+| Broadcast | Laravel Reverb + Echo (private channels) |
+| Web Push | optional VAPID |
+| Queue | Redis |
+| Database | MySQL (production); SQLite in-memory (tests) |
+
+## Directory layout
+
+```
+app/                            # Laravel application shell
+  Console/, Exceptions/, Helpers/, Providers/, Http/
+routes/
+  api.php                       # Root API route file
+src/                            # Domain modules
+  Auth/                         # Authentication module
+  User/                         # User management module
+  Notification/                 # Notifications module
+  Acl/                          # Access control module
+  Log/                          # Activity logging module
+  I18N/                         # Internationalization module
+database/seeders/
+lang/                           # Root translations
+tests/                          # Root test helpers
+  AuthenticatesWithJwt.php
+  TestCase.php
+```
+
+### Per-module structure
+
+```
+src/{Module}/
+  app/
+    Http/Controllers/
+    Services/
+    Repositories/
+    Dtos/
+    Events/
+    Listeners/
+    Jobs/
+    Imports/                    # Excel import classes
+    Exports/                    # Excel export classes
+  routes/                       # Module route definitions
+  Database/
+    Migrations/
+    Seeders/
+  lang/{en,ms,id}/              # Module translations
+  tests/Feature/                # Module feature tests
+  composer.json                 # Module-specific dependencies
+```
+
+## Naming conventions
+
+| Artifact | Convention | Example |
+|----------|-----------|---------|
+| Controller | PascalCase + Controller | `UserAdminController` |
+| Service | PascalCase + Service | `UserAdminService` |
+| DTO | PascalCase + Dto | `UserDto` |
+| Test | PascalCase + Test | `UserAdminTest` |
+| Namespace | `Modules\{Module}\App\{Layer}` | `Modules\User\App\Http\Controllers` |
+
+## Shared API contract (all backends)
+
+### Endpoints
+- REST base: `/api/v1`
+- OpenAPI docs via PHP 8 attributes: `#[OA\Get(...)]`, `#[OA\Post(...)]`
+- Use `OpenApiDocument` helper for consistent document structure
+
+### Auth
+- `POST /api/v1/auth/login` — `{ access_token, refresh_token, token_type, expires_in }`
+- `POST /api/v1/auth/refresh`, `POST /api/v1/auth/register`, `POST /api/v1/auth/logout`
+- `GET /api/v1/auth/profile`
+- Swagger tag for auth endpoints: **`UserAuth`** (not `Auth`)
+
+### Error responses
+```json
+// Validation (HTTP 422) — FastAPI-style, NOT Laravel default
+{ "detail": [{ "loc": ["body", "email"], "msg": "...", "type": "..." }] }
+
+// General
+{ "message": "Human-readable error" }
+```
+
+### Pagination
+```json
+{ "data": [...], "meta": { "total", "per_page", "current_page", "last_page" }, "links": { "first", "last", "prev", "next" } }
+```
+
+### Rate limiting
+- Named limiters: `api-read` (10/min), `api-write` (30/min), `api-refresh`, `api-register`
+- Applied in **production only**
+
+## Auth & ACL
+
+- `Gate::before` grants all permissions to `superadmin` role
+- Permission checks on admin routes via middleware
+- Default superuser: `superuser@{APP_EMAIL_SERVER}` / `12345678`
+
+## Environment variables
+
+```
+APP_KEY, APP_URL, APP_ENV, APP_DEBUG, APP_EMAIL_SERVER
+JWT_SECRET
+OCTANE_HOST, OCTANE_PORT
+DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+MM_REDIS_HOST, MM_REDIS_PORT, MM_REDIS_PASSWORD    # Redis
+QUEUE_CONNECTION
+BROADCAST_CONNECTION=log|reverb
+REVERB_APP_ID, REVERB_APP_KEY, REVERB_APP_SECRET, REVERB_HOST, REVERB_PORT
+VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT
+MAIL_DRIVER, MAIL_ADMIN_NAME, MAIL_ADMIN_EMAIL
+FILESYSTEM_DISK=private
+```
+
+## Required processes
+
+Laravel Octane alone is not sufficient — run these concurrently:
+
+```bash
+php artisan octane:start          # HTTP server
+php artisan queue:work              # Background jobs (import/export)
+php artisan schedule:work           # Scheduled tasks
+```
+
+## Module management
+
+- Each module has its own `composer.json`
+- Dependencies merged via `wikimedia/composer-merge-plugin`
+- To add a new module: follow existing `src/{Module}/` structure
+
+## Testing
+
+```bash
+composer test     # PHPUnit Feature suite (SQLite in-memory)
+composer lint     # Laravel Pint
+```
+
+- `phpunit.xml` sets `DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:`
+- Test helpers: `AuthenticatesWithJwt` trait for JWT-authenticated requests
+- Tests discovered in `./src` and `./tests` (`*Test.php`)
+
+## Lint
+
+```bash
+composer lint     # Laravel Pint (code style fixer)
+```

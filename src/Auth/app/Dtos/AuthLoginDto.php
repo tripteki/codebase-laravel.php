@@ -12,6 +12,7 @@ class AuthLoginDto extends Data
      * @param string|null $identifierValue
      * @param string|null $identifier
      * @param string|null $password
+     * @param bool|null $remember
      * @return void
      */
     public function __construct(
@@ -19,7 +20,15 @@ class AuthLoginDto extends Data
         public ?string $identifierValue = null,
         public ?string $identifier = null,
         public ?string $password = null,
-    ) {
+        public ?bool $remember = null,
+    ) {}
+
+    /**
+     * @return bool
+     */
+    public function rememberMe(): bool
+    {
+        return filter_var($this->remember, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -27,7 +36,7 @@ class AuthLoginDto extends Data
      */
     public function field(): string
     {
-        if ($this->identifierKey !== null && in_array($this->identifierKey, [ "email", "name", ], true)) {
+        if ($this->identifierKey !== null && in_array($this->identifierKey, ["email", "name"], true)) {
             return $this->identifierKey;
         }
 
@@ -59,6 +68,7 @@ class AuthLoginDto extends Data
             "identifierValue" => [ "required_without:identifier", "nullable", "string", ],
             "identifier" => [ "required_without:identifierValue", "nullable", "string", ],
             "password" => [ "required", "string", "min:8", ],
+            "remember" => [ "nullable", "boolean", ],
         ];
     }
 

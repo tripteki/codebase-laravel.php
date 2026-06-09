@@ -149,7 +149,7 @@ return [
 
             "base" => null,
             "docs" => storage_path("swagger"),
-            "views" => base_path("vendor/darkaonline/l5-swagger/resources/views"),
+            "views" => base_path("resources/views/vendor/l5-swagger"),
             "swagger_ui_assets_path" => "vendor/swagger-api/swagger-ui/dist",
 
             "excludes" => [

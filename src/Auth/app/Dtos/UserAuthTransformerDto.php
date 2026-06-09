@@ -18,6 +18,5 @@ class UserAuthTransformerDto extends Data
         public int $refreshTokenTtl,
         public string $accessToken,
         public string $refreshToken,
-    ) {
-    }
+    ) {}
 }

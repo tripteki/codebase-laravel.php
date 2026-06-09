@@ -2,6 +2,7 @@
 
 namespace Modules\User\App\Repositories;
 
+use App\Models\Profile;
 use App\Models\User;
 use App\Repositories\Repository as BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -17,7 +18,7 @@ class UserAdminRepository extends BaseRepository
      */
     public function all(): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $model = User::query();
+        $model = User::with("profile");
 
         return parent::accessAll(
             fn () => $model,
@@ -35,37 +36,56 @@ class UserAdminRepository extends BaseRepository
     public function get(string $id): ?User
     {
         return parent::accessGet(
-            fn () => User::findOrFail($id)
+            fn () => User::with("profile")->findOrFail($id),
         );
     }
 
     /**
      * @param array $userData
+     * @param array<string, mixed> $profileData
      * @return \App\Models\User|null
      */
-    public function create(array $userData): ?User
+    public function create(array $userData, array $profileData = []): ?User
     {
         return parent::mutateCreate(
-            fn () => User::create(array_merge($userData, [
-                "email_verified_at" => now(),
-            ]))
+            function () use ($userData, $profileData): User {
+                $user = User::create(array_merge($userData, [
+                    "email_verified_at" => now(),
+                ]));
+
+                if (filled($profileData["full_name"] ?? null)) {
+                    Profile::query()->create(array_merge($profileData, [
+                        "user_id" => $user->getKey(),
+                    ]));
+                }
+
+                return $user->fresh([ "profile", ]);
+            },
         );
     }
 
     /**
      * @param string $id
      * @param array $userData
+     * @param array<string, mixed> $profileData
      * @return \App\Models\User|null
      */
-    public function update(string $id, array $userData): ?User
+    public function update(string $id, array $userData, array $profileData = []): ?User
     {
         return parent::mutateUpdate(
-            function () use ($id, $userData): User {
+            function () use ($id, $userData, $profileData): User {
                 $user = User::findOrFail($id);
                 $user->update($userData);
 
-                return $user->fresh();
-            }
+                if ($profileData !== []) {
+                    Profile::query()->updateOrCreate(
+                        [ "user_id" => $user->getKey(), ],
+                        $profileData,
+                    );
+                }
+
+                return $user->fresh([ "profile", ]);
+            },
         );
     }
 
@@ -77,11 +97,27 @@ class UserAdminRepository extends BaseRepository
     {
         return parent::mutateDelete(
             function () use ($id): User {
-                $user = User::findOrFail($id);
+                $user = User::withTrashed()->findOrFail($id);
                 $user->delete();
 
                 return $user;
-            }
+            },
+        );
+    }
+
+    /**
+     * @param string $id
+     * @return \App\Models\User|null
+     */
+    public function forceDelete(string $id): ?User
+    {
+        return parent::mutateDelete(
+            function () use ($id): User {
+                $user = User::withTrashed()->findOrFail($id);
+                $user->forceDelete();
+
+                return $user;
+            },
         );
     }
 
@@ -97,7 +133,7 @@ class UserAdminRepository extends BaseRepository
                 $user->restore();
 
                 return $user->fresh();
-            }
+            },
         );
     }
 
@@ -113,7 +149,7 @@ class UserAdminRepository extends BaseRepository
                 $user->forceFill([ "email_verified_at" => now(), ])->save();
 
                 return $user->fresh();
-            }
+            },
         );
     }
 
@@ -127,7 +163,7 @@ class UserAdminRepository extends BaseRepository
             throw new ModelNotFoundException("Import file not found.");
         }
 
-        $rows = Excel::toArray(new UserAdminImport(), $path)[0] ?? [];
+        $rows = Excel::toArray(new UserAdminImport, $path)[0] ?? [];
         $imported = 0;
         $skipped = 0;
 
@@ -145,11 +181,22 @@ class UserAdminRepository extends BaseRepository
             }
 
             $name = $this->importColumnValue($normalized, "name");
+            $fullName = $this->importColumnValue($normalized, "full_name") ?? $name;
             $email = $this->importColumnValue($normalized, "email");
             $password = $this->importColumnValue($normalized, "password") ?: "12345678";
             $verifiedRaw = $this->importColumnValue($normalized, "email_verified");
 
-            if ($name === null || $email === null) {
+            if ($email === null) {
+                $skipped++;
+
+                continue;
+            }
+
+            if ($name === null) {
+                $name = strstr($email, "@", true) ?: $email;
+            }
+
+            if ($fullName === null) {
                 $skipped++;
 
                 continue;
@@ -161,11 +208,16 @@ class UserAdminRepository extends BaseRepository
                 continue;
             }
 
-            User::create([
+            $user = User::create([
                 "name" => $name,
                 "email" => $email,
                 "password" => $password,
                 "email_verified_at" => $this->isImportVerified($verifiedRaw) ? now() : null,
+            ]);
+
+            Profile::query()->create([
+                "user_id" => $user->getKey(),
+                "full_name" => $fullName,
             ]);
 
             $imported++;
@@ -196,28 +248,28 @@ class UserAdminRepository extends BaseRepository
         $headings = [
             __("user.export.column.id"),
             __("user.export.column.name"),
+            __("user.export.column.full_name"),
             __("user.export.column.email"),
             __("user.export.column.email_verified"),
             __("user.export.column.created_at"),
             __("user.export.column.updated_at"),
         ];
 
-        $rows = User::query()->orderBy("created_at")->get()->map(function (User $user): array {
-            return [
-                (string) $user->getKey(),
-                $user->name,
-                $user->email,
-                $user->email_verified_at ? __("user.common.yes") : __("user.common.no"),
-                $user->created_at?->toIso8601String(),
-                $user->updated_at?->toIso8601String(),
-            ];
-        })->all();
+        $rows = User::query()->with("profile")->orderBy("created_at")->get()->map(fn (User $user): array => [
+            (string) $user->getKey(),
+            $user->name,
+            $user->profile?->full_name,
+            $user->email,
+            $user->email_verified_at ? __("user.common.yes") : __("user.common.no"),
+            $user->created_at?->toIso8601String(),
+            $user->updated_at?->toIso8601String(),
+        ])->all();
 
         Excel::store(
             new UserAdminExport($rows, $headings, __("user.export.sheet_name")),
             $relativePath,
             "local",
-            $this->writerType($type)
+            $this->writerType($type),
         );
 
         return storage_path("app/".$relativePath);
@@ -233,6 +285,8 @@ class UserAdminRepository extends BaseRepository
         $candidates = array_unique(array_filter([
             strtolower($column),
             strtolower((string) __("user.import.column.{$column}")),
+            $column === "full_name" ? "name" : null,
+            $column === "full_name" ? strtolower((string) __("user.import.column.name")) : null,
             $column === "email_verified" ? "email_verified_at" : null,
         ]));
 

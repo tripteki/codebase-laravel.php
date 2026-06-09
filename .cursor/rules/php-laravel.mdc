@@ -1,0 +1,143 @@
+---
+description: Laravel module patterns — controllers, OpenAPI, events, validation, queues
+globs: "src/**/*.php"
+alwaysApply: false
+---
+
+# Laravel Module Implementation Patterns
+
+## Controller → Service → Repository
+
+```php
+// Controller: thin, delegates everything
+class UserAdminController extends Controller
+{
+    public function __construct(private UserAdminService $service) {}
+
+    #[OA\Get(path: '/api/v1/admin/users', tags: ['User'])]
+    public function index(Request $request): JsonResponse
+    {
+        return response()->json($this->service->paginate($request));
+    }
+}
+
+// Service: business logic, dispatches events
+class UserAdminService
+{
+    public function paginate(Request $request): array { /* ... */ }
+}
+
+// Repository: database queries only
+class UserRepository
+{
+    public function findById(int $id): ?User { /* ... */ }
+}
+```
+
+- Never put business logic in controllers
+- Never put HTTP concerns in services
+- Use Spatie Query Builder in services for filterable/sortable list endpoints
+
+## OpenAPI documentation
+
+```php
+use Modules\User\App\Helpers\OpenApiDocument;
+
+// Use OpenApiDocument helper for consistent swagger structure
+#[OA\Get(
+    path: '/api/v1/auth/login',
+    tags: ['UserAuth'],          // Always 'UserAuth' for auth endpoints
+    summary: 'Login user',
+    // ...
+)]
+```
+
+- All auth endpoints: tag = `UserAuth`
+- All admin endpoints: tag = `User` (or domain-specific)
+- Use PHP 8 attributes (`#[OA\...]`), not annotations
+
+## Validation & error format
+
+```php
+// Custom exception handler returns FastAPI-style errors
+// HTTP 422:
+return response()->json([
+    'detail' => [
+        ['loc' => ['body', 'email'], 'msg' => 'The email field is required.', 'type' => 'value_error'],
+    ],
+], 422);
+```
+
+- Do **not** return Laravel's default `{ "message": "...", "errors": { "email": ["..."] } }` format
+- Use Spatie Data DTOs in `Dtos/` for request validation and response shaping
+
+## Events & broadcasting
+
+```php
+// Event
+class UserAdminImported extends ShouldBroadcast
+{
+    public function broadcastOn(): array
+    {
+        return [new PrivateChannel("user.{$this->userId}")];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'v1.user.admin.imported';
+    }
+}
+```
+
+- Event prefix: `.v1.user.admin.*` on private channel `user.{id}`
+- Frontend listens via Laravel Echo (Reverb driver)
+- Event names must match NestJS and FastAPI exactly
+
+## Async jobs (import/export)
+
+```php
+// Jobs run on dedicated queue
+dispatch(new UserAdminImportJob($file))->onQueue('user-admin-queue');
+```
+
+- Import: `Imports/` classes (maatwebsite/excel)
+- Export: `Exports/` classes
+- Queue name: `user-admin-queue`
+- Dispatch event after job completes
+
+## DTOs (Spatie Data)
+
+```php
+class UserDto extends Data
+{
+    public function __construct(
+        public int $id,
+        public string $email,
+        public string $name,
+    ) {}
+}
+```
+
+- Request DTOs: validate input via `Data::from($request)`
+- Response DTOs: shape consistent API output
+- Located in `{Module}/app/Dtos/`
+
+## Adding a new module
+
+1. Create `src/{Module}/` following existing module structure
+2. Add `composer.json` with module dependencies
+3. Register module in `modules_statuses.json`
+4. Add routes in `{Module}/routes/`
+5. Add feature tests in `{Module}/tests/Feature/`
+6. Add translations in `{Module}/lang/{en,ms,id}/`
+
+## Common pitfalls (avoid)
+
+| Problem | Fix |
+|---------|-----|
+| Laravel default error format | Return `{ detail: [...] }` for 422 |
+| Swagger tag `Auth` | Use `UserAuth` for auth endpoints |
+| GraphQL endpoint | This project is REST-only — do not add GraphQL |
+| Missing queue worker | Run `queue:work` alongside Octane |
+| Error shape change without frontend update | Keep contract aligned with Nest/FastAPI/Next/Nuxt |
+| Business logic in controller | Extract to Service class |

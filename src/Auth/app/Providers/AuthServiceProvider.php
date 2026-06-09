@@ -2,13 +2,12 @@
 
 namespace Modules\Auth\App\Providers;
 
-use Illuminate\Auth\Events\Registered;
+use App\Http\Responses\ApiErrorResponse;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use App\Http\Responses\ApiErrorResponse;
-use Illuminate\Support\Facades\Event;
-use Modules\Auth\App\Listeners\SendEmailVerificationNotification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Providers\LaravelServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -34,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadViewsFrom(module_path("Auth", "resources/views"), "auth");
         $this->loadMigrationsFrom(module_path("Auth", "Database/migrations"));
         $this->registerTranslations();
-        $this->registerEvents();
+        $this->registerVerificationUrls();
         $this->registerExceptions();
     }
 
@@ -71,17 +70,19 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    protected function registerEvents(): void
+    protected function registerVerificationUrls(): void
     {
-        Event::listen(Registered::class, SendEmailVerificationNotification::class);
+        VerifyEmail::createUrlUsing(
+            fn ($notifiable): string => signed_frontend_url(
+                auth_verify_email_path($notifiable->getEmailForVerification()),
+            ),
+        );
 
-        VerifyEmail::createUrlUsing(function ($notifiable): string {
-            return signed_frontend_url("auth/verify-email/".$notifiable->getEmailForVerification());
-        });
-
-        ResetPassword::createUrlUsing(function ($notifiable, $token): string {
-            return signed_frontend_url("auth/reset-password/".$notifiable->getEmailForPasswordReset());
-        });
+        ResetPassword::createUrlUsing(
+            fn ($notifiable, $token): string => signed_frontend_url(
+                auth_reset_password_path($notifiable->getEmailForPasswordReset()),
+            ),
+        );
     }
 
     /**
@@ -93,37 +94,37 @@ class AuthServiceProvider extends ServiceProvider
 
         $exceptionHandler->renderable(function (\Tymon\JWTAuth\Exceptions\TokenInvalidException $exception, Request $request): JsonResponse {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.token_invalid"), 401);
+                return ApiErrorResponse::message(__("auth.token_invalid"), 401);
             }
         });
 
         $exceptionHandler->renderable(function (\Tymon\JWTAuth\Exceptions\TokenExpiredException $exception, Request $request): JsonResponse {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.token_expired"), 401);
+                return ApiErrorResponse::message(__("auth.token_expired"), 401);
             }
         });
 
         $exceptionHandler->renderable(function (\Tymon\JWTAuth\Exceptions\TokenBlacklistedException $exception, Request $request): JsonResponse {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.token_blacklisted"), 401);
+                return ApiErrorResponse::message(__("auth.token_blacklisted"), 401);
             }
         });
 
         $exceptionHandler->renderable(function (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $exception, Request $request): JsonResponse {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.user_not_defined"), 401);
+                return ApiErrorResponse::message(__("auth.user_not_defined"), 401);
             }
         });
 
         $exceptionHandler->renderable(function (\Tymon\JWTAuth\Exceptions\InvalidClaimException $exception, Request $request): JsonResponse {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.invalid_claim"), 401);
+                return ApiErrorResponse::message(__("auth.invalid_claim"), 401);
             }
         });
 
         $exceptionHandler->renderable(function (\Tymon\JWTAuth\Exceptions\PayloadException $exception, Request $request): JsonResponse {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.payload_invalid"), 401);
+                return ApiErrorResponse::message(__("auth.payload_invalid"), 401);
             }
         });
     }

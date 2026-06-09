@@ -17,16 +17,24 @@
 
         "single_quote": false,
         "no_trailing_comma_in_list_call": false,
-        "trailing_comma_in_multiline": { "after_heredoc": true, "elements": [ "arrays" ] },
+        "no_trailing_comma_in_singleline": false,
+        "trim_array_spaces": false,
+        "trailing_comma_in_multiline": {
+            "after_heredoc": true,
+            "elements": [ "arrays", "arguments", "parameters", "match" ]
+        },
         "semicolon_after_instruction": true,
         "no_empty_statement": true,
 
         "use_arrow_functions": true,
 
+        "fully_qualified_strict_types": false,
+
         "align_multiline_comment": { "comment_type": "phpdocs_only" },
         "single_line_comment_spacing": true,
-        "no_empty_comment": true,
-        "no_empty_phpdoc": true,
+        "no_empty_comment": false,
+        "no_empty_phpdoc": false,
+        "no_superfluous_phpdoc_tags": false,
         "no_trailing_whitespace_in_comment": true,
         "phpdoc_annotation_without_dot": true,
         "phpdoc_var_annotation_correct_order": true,

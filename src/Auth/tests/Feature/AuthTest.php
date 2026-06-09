@@ -3,13 +3,12 @@
 namespace Modules\Auth\Tests\Feature;
 
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Password;
+use Modules\Auth\App\Support\PasswordResetTokenHelper;
+use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
@@ -97,7 +96,7 @@ class AuthTest extends TestCase
         ]);
 
         $test->assertStatus(401)
-            ->assertJsonPath("detail", __("auth.failed"));
+            ->assertJsonPath("detail", __("auth.invalid_credentials"));
     }
 
     /**
@@ -232,10 +231,10 @@ class AuthTest extends TestCase
             "password" => Hash::make($this->password),
         ]);
 
-        $signedUrl = signed_frontend_url("auth/verify-email/".$user->email);
+        $signedUrl = signed_frontend_url(auth_verify_email_path($user->email));
         parse_str((string) parse_url($signedUrl, PHP_URL_QUERY), $query);
 
-        $this->postJson("/api/v1/auth/verify-email/".$user->email."?signed=".urlencode((string) $query["signed"]))
+        $this->postJson("/api/v1/auth/verify-email/".auth_email_path_segment($user->email)."?signed=".urlencode((string) $query["signed"]))
             ->assertStatus(200)
             ->assertJsonPath("email", $user->email);
 
@@ -247,16 +246,13 @@ class AuthTest extends TestCase
      */
     public function test_auth_reset_password_signed_post(): void
     {
-        $signedUrl = signed_frontend_url("auth/reset-password/".$this->user->email);
+        $signedUrl = signed_frontend_url(auth_reset_password_path($this->user->email));
         parse_str((string) parse_url($signedUrl, PHP_URL_QUERY), $query);
         $signed = (string) $query["signed"];
 
-        DB::table("password_reset_tokens")->updateOrInsert(
-            [ "email" => $this->user->email, ],
-            [ "token" => $signed, "created_at" => now(), ]
-        );
+        PasswordResetTokenHelper::upsertSigned($this->user->email, $signed);
 
-        $this->postJson("/api/v1/auth/reset-password/".$this->user->email."?signed=".urlencode($signed), [
+        $this->postJson("/api/v1/auth/reset-password/".auth_email_path_segment($this->user->email)."?signed=".urlencode($signed), [
             "password" => "NewPassword123!",
             "password_confirmation" => "NewPassword123!",
         ])->assertStatus(200)
@@ -268,7 +264,7 @@ class AuthTest extends TestCase
      */
     public function test_auth_reset_password(): void
     {
-        $token = Password::createToken($this->user);
+        $token = PasswordResetTokenHelper::storeBrokerToken($this->user);
 
         $test = $this->postJson("/api/v1/auth/reset-password", [
             "token" => $token,

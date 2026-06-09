@@ -7,12 +7,12 @@ use Illuminate\Http\JsonResponse;
 class ApiErrorResponse
 {
     /**
-     * @param string $detail
+     * @param string $message
      * @param int $status
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function detail(string $detail, int $status): JsonResponse
+    public static function message(string $message, int $status): JsonResponse
     {
-        return response()->json([ "detail" => $detail, ], $status);
+        return response()->json([ "detail" => $message, ], $status);
     }
 }

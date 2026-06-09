@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 class AppController extends Controller
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
+    #[OA\Get(
+        path: "/api/version",
+        tags: ["App"],
+        summary: "Version",
+        responses: [
+            new OA\Response(response: 200, description: "Success."),
+        ]
+    )]
     public function version(): JsonResponse
     {
         return response()->json([
@@ -18,9 +24,15 @@ class AppController extends Controller
         ], 200);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
+    #[OA\Get(
+        path: "/api/status",
+        tags: ["App"],
+        summary: "Status",
+        responses: [
+            new OA\Response(response: 200, description: "Healthy."),
+            new OA\Response(response: 503, description: "Unhealthy."),
+        ]
+    )]
     public function status(): JsonResponse
     {
         $memoryThreshold = app()->isProduction() ? 150 * 1024 * 1024 : 500 * 1024 * 1024;

@@ -2,10 +2,15 @@
 
 namespace Modules\User\App\Services;
 
+use App\Services\Service as BaseService;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Modules\User\App\Dtos\UserAccessTransformerDto;
 use Modules\User\App\Dtos\UserDto;
+use Modules\User\App\Dtos\UserMeTransformerDto;
+use Modules\User\App\Dtos\UserMeUpdateDto;
 use Modules\User\App\Dtos\UserTransformerDto;
 use Modules\User\App\Repositories\UserRepository;
-use App\Services\Service as BaseService;
 
 class UserService extends BaseService
 {
@@ -29,6 +34,58 @@ class UserService extends BaseService
     public function get(): UserTransformerDto
     {
         return UserTransformerDto::fromUser($this->userRepository->get());
+    }
+
+    /**
+     * @return \Modules\User\App\Dtos\UserMeTransformerDto
+     */
+    public function getMe(): UserMeTransformerDto
+    {
+        return UserMeTransformerDto::fromUser($this->userRepository->get());
+    }
+
+    /**
+     * @param \Modules\User\App\Dtos\UserMeUpdateDto $userData
+     * @param \Illuminate\Http\UploadedFile|null $avatar
+     * @return \Modules\User\App\Dtos\UserMeTransformerDto
+     */
+    public function updateMe(UserMeUpdateDto $userData, ?UploadedFile $avatar = null): UserMeTransformerDto
+    {
+        $user = $this->userRepository->get();
+        $avatarPath = null;
+
+        if ($avatar instanceof UploadedFile) {
+            if ($user->profile?->avatar) {
+                Storage::disk("public")->delete($user->profile->avatar);
+            }
+
+            $avatarPath = $avatar->store("avatars", "public");
+        }
+
+        $updated = $this->userRepository->updateMe(
+            $user,
+            $userData->userPayload(),
+            $userData->profilePayload(),
+            $avatarPath,
+        );
+
+        return UserMeTransformerDto::fromUser($updated);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function profileInterests(): array
+    {
+        return $this->userRepository->profileInterests();
+    }
+
+    /**
+     * @return \Modules\User\App\Dtos\UserAccessTransformerDto
+     */
+    public function access(): UserAccessTransformerDto
+    {
+        return UserAccessTransformerDto::fromUser($this->userRepository->get());
     }
 
     /**

@@ -2,39 +2,42 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as ResetableContract;
+use Illuminate\Contracts\Auth\MustVerifyEmail as VerifyableContract;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable as NotifiableTrait;
+use Illuminate\Support\Facades\Hash;
 use Modules\Auth\App\Notifications\VerifyNotification;
 use Modules\Notification\App\Models\Notification as NotificationModel;
 use Modules\User\Database\Factories\UserFactory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Tymon\JWTAuth\Contracts\JWTSubject as IAuthJWT;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\MustVerifyEmail as VerifyableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as ResetableContract;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
-use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
-use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
-use Illuminate\Notifications\Notifiable as NotifiableTrait;
-use Spatie\Permission\Traits\HasRoles as ACLTrait;
-use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
+use NotificationChannels\WebPush\HasPushSubscriptions as NotifiablePushTrait;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
+use Spatie\Permission\Traits\HasRoles as ACLTrait;
+use Tymon\JWTAuth\Contracts\JWTSubject as IAuthJWT;
 
-class User extends Authenticatable implements IAuthJWT, AuthenticatableContract, AuthorizableContract, VerifyableContract, ResetableContract
+class User extends Authenticatable implements AuthenticatableContract, AuthorizableContract, IAuthJWT, ResetableContract, VerifyableContract
 {
-    use AuthorizableTrait,
-        MustVerifyEmailTrait,
+    use ACLTrait,
+        AuthorizableTrait,
         CanResetPasswordTrait,
-        NotifiableTrait,
-        ACLTrait,
-        LogTrait,
+        HasFactory,
         HasUlids,
-        SoftDeletes,
-        HasFactory;
+        LogTrait,
+        MustVerifyEmailTrait,
+        NotifiablePushTrait,
+        NotifiableTrait,
+        SoftDeletes;
 
     /**
      * @var string
@@ -125,7 +128,7 @@ class User extends Authenticatable implements IAuthJWT, AuthenticatableContract,
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
 
-        if ($this->log_activities && is_array($this->log_activities) && !empty($this->log_activities)) {
+        if ($this->log_activities && is_array($this->log_activities) && ! empty($this->log_activities)) {
             $options->logEvents($this->log_activities);
         } else {
             $options->dontLogIfAttributesChangedOnly([]);
@@ -162,6 +165,50 @@ class User extends Authenticatable implements IAuthJWT, AuthenticatableContract,
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    /**
+     * @return string
+     */
+    public function displayName(): string
+    {
+        $this->loadMissing("profile");
+
+        $fullName = trim((string) ($this->profile?->full_name ?? ""));
+
+        if ($fullName !== "") {
+            return $fullName;
+        }
+
+        return (string) $this->name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasProfileFullName(): bool
+    {
+        $this->loadMissing("profile");
+
+        return trim((string) ($this->profile?->full_name ?? "")) !== "";
+    }
+
+    /**
+     * @return string
+     */
+    public function displayNameLabel(): string
+    {
+        return $this->hasProfileFullName()
+            ? (string) __("auth.full_name")
+            : (string) __("auth.name");
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory()
@@ -192,6 +239,6 @@ class User extends Authenticatable implements IAuthJWT, AuthenticatableContract,
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyNotification());
+        $this->notify(new VerifyNotification);
     }
 }

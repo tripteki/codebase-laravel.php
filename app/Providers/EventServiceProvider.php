@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Notification\App\Listeners\LogWebPushNotificationFailed;
+use NotificationChannels\WebPush\Events\NotificationFailed;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,9 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
 
-        //
+        NotificationFailed::class => [
+            LogWebPushNotificationFailed::class,
+        ],
     ];
 
     /**

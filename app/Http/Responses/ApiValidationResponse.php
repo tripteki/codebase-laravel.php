@@ -5,6 +5,7 @@ namespace App\Http\Responses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use stdClass;
 
 class ApiValidationResponse
 {
@@ -46,7 +47,7 @@ class ApiValidationResponse
     protected static function resolveType(string $rule): string
     {
         return match ($rule) {
-            "required" => "missing",
+            "required", "required_without", "required_with", "required_if", "present" => "missing",
             "email" => "value_error.email",
             "confirmed" => "value_error.confirmed",
             "unique" => "value_error.unique",
@@ -91,8 +92,9 @@ class ApiValidationResponse
             "in" => [ "expected" => $values, ],
             "mimes" => [ "mimes" => $values, ],
             "same" => [ "field" => (string) ($values[0] ?? ""), ],
+            "unique", "exists" => new stdClass(),
             default => $values === []
-                ? (object) []
+                ? new stdClass()
                 : [ "error" => self::resolveMessage(implode(", ", array_map("strval", $values))), ],
         };
     }
@@ -121,7 +123,17 @@ class ApiValidationResponse
      */
     protected static function resolveLocation(Request $request, string $field): array
     {
+        $routeParameters = $request->route()?->parameters() ?? [];
+
+        if (array_key_exists($field, $routeParameters)) {
+            return [ "path", $field, ];
+        }
+
         if ($request->isMethod("GET") || $request->isMethod("DELETE")) {
+            if ($request->query->has($field)) {
+                return [ "query", $field, ];
+            }
+
             return [ "query", $field, ];
         }
 

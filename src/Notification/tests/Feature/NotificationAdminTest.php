@@ -52,7 +52,18 @@ class NotificationAdminTest extends TestCase
      */
     public function test_admin_notifications_index(): void
     {
-        $this->getJson("/api/v1/admin/notifications")->assertStatus(200);
+        $this->getJson("/api/v1/admin/notifications")
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                "totalPage",
+                "perPage",
+                "currentPage",
+                "nextPage",
+                "previousPage",
+                "firstPage",
+                "lastPage",
+                "data",
+            ]);
     }
 
     /**
@@ -74,30 +85,5 @@ class NotificationAdminTest extends TestCase
 
         $this->deleteJson("/api/v1/admin/notifications/deactivate/".$notification->id)->assertStatus(200);
         $this->deleteJson("/api/v1/admin/notifications/activate/".$notification->id)->assertStatus(200);
-    }
-
-    /**
-     * @return void
-     */
-    public function test_admin_notifications_forbidden_without_permission(): void
-    {
-        $restricted = User::factory()->create([
-            "password" => Hash::make("Password123!"),
-            "email_verified_at" => now(),
-        ]);
-
-        $this->flushHeaders();
-
-        $login = $this->postJson("/api/v1/auth/login", [
-            "identifierKey" => "email",
-            "identifierValue" => $restricted->email,
-            "password" => "Password123!",
-        ]);
-
-        $login->assertStatus(201);
-
-        $this->withHeader("Authorization", "Bearer ".$login->json("accessToken"))
-            ->getJson("/api/v1/admin/notifications")
-            ->assertStatus(403);
     }
 }

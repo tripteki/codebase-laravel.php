@@ -6,7 +6,6 @@
  * @return string
  */
 if (! function_exists("frontend_url")) {
-
     function frontend_url(string $path = "", array $query = []): string
     {
         $base = rtrim((string) (config("app.frontend_url") ?: config("app.url")), "/");
@@ -26,7 +25,6 @@ if (! function_exists("frontend_url")) {
  * @return string
  */
 if (! function_exists("signed_url")) {
-
     function signed_url(string $url): string
     {
         $signature = hash_hmac("sha256", $url, (string) config("app.key"));
@@ -41,7 +39,6 @@ if (! function_exists("signed_url")) {
  * @return bool
  */
 if (! function_exists("verify_signed_url")) {
-
     function verify_signed_url(string $url, ?string $signed): bool
     {
         if (! is_string($signed) || $signed === "") {
@@ -55,14 +52,58 @@ if (! function_exists("verify_signed_url")) {
 }
 
 /**
+ * @param string $email
+ * @return string
+ */
+if (! function_exists("auth_email_path_segment")) {
+    function auth_email_path_segment(string $email): string
+    {
+        return rawurlencode($email);
+    }
+}
+
+/**
+ * @param string $email
+ * @return string
+ */
+if (! function_exists("auth_verify_email_path")) {
+    function auth_verify_email_path(string $email): string
+    {
+        return "auth/verify-email/".auth_email_path_segment($email);
+    }
+}
+
+/**
+ * @param string $email
+ * @return string
+ */
+if (! function_exists("auth_reset_password_path")) {
+    function auth_reset_password_path(string $email): string
+    {
+        return "auth/reset-password/".auth_email_path_segment($email);
+    }
+}
+
+/**
  * @param string $path
  * @return string
  */
 if (! function_exists("signed_frontend_url")) {
-
     function signed_frontend_url(string $path): string
     {
         return signed_url(frontend_url($path));
+    }
+}
+
+/**
+ * @param string $path
+ * @param string|null $signed
+ * @return bool
+ */
+if (! function_exists("verify_auth_signed_url")) {
+    function verify_auth_signed_url(string $path, ?string $signed): bool
+    {
+        return verify_signed_url(frontend_url($path), $signed);
     }
 }
 
@@ -71,7 +112,6 @@ if (! function_exists("signed_frontend_url")) {
  * @return string
  */
 if (! function_exists("signed_request_frontend_url")) {
-
     function signed_request_frontend_url(\Illuminate\Http\Request $request): string
     {
         $path = "/".$request->path();

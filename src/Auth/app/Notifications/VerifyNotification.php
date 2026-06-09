@@ -26,9 +26,10 @@ class VerifyNotification extends Notification
         $email = $notifiable->getEmailForVerification();
 
         return (new VerifyEmailMail(
-            appName: config("app.name"),
-            userName: $notifiable->name,
+            userName: $notifiable->displayName(),
+            userNameLabel: $notifiable->displayNameLabel(),
             userEmail: $email,
+            verificationUrl: signed_frontend_url(auth_verify_email_path($email)),
         ))->to($email);
     }
 }

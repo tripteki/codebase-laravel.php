@@ -1,42 +1,42 @@
 @extends('auth::layouts.mail')
 
-@php
-    $app = $appName ?? config('app.name');
-@endphp
+@section('title', __('auth.email_verification_subject'))
 
-@section('title', $appName ?? config('app.name'))
+@section('preheader')
+    {{ __('auth.verify_email_preheader', ['app' => $appName]) }}
+@endsection
 
 @section('header_badge')
-    {{ $appName ?? config('app.name') }}
+    {{ $appName }}
 @endsection
 
 @section('content')
-    <h1 class="mb-2" style="color: var(--brand-primary);">{{ __('auth.email_registration_confirmed') }}</h1>
+    @include('auth::emails.partials.hero', [
+        'icon' => '✉️',
+        'tone' => 'primary',
+        'title' => __('auth.verify_email_heading'),
+        'subtitle' => __('auth.verify_email_line'),
+    ])
 
-    <p class="fw-bold mb-2">@if ($userName){{ __('auth.email_hi') }} {{ $userName }},@else{{ __('auth.hi_there') }}@endif</p>
+    @include('auth::emails.partials.greeting', ['userName' => $userName])
 
-    <p class="mb-4 text-muted small">{{ __('auth.email_thank_you_register') }}</p>
+    @include('auth::emails.partials.cta', [
+        'url' => $verificationUrl ?? null,
+        'label' => __('auth.verify_email_action'),
+    ])
 
-    @if ($userName !== null || $userEmail !== null)
-        <div class="panel panel-account mb-4">
-            <p class="fw-semibold panel-account-title">{{ __('auth.email_user_information') }}</p>
-            <div class="small panel-account-body">
-                @if ($userName !== null)
-                    <p class="mb-2"><strong>{{ __('auth.full_name') }}</strong>: {{ $userName }}</p>
-                @endif
-                @if ($userEmail !== null)
-                    <p class="mb-0"><strong>{{ __('auth.email_address') }}</strong>: <span class="pill">{{ $userEmail }}</span></p>
-                @endif
-            </div>
-        </div>
-    @endif
+    @include('auth::emails.partials.account-panel', [
+        'userName' => $userName,
+        'userEmail' => $userEmail,
+    ])
 
-    <p class="mt-4 mb-0">
-        {{ __('auth.thanks') }}<br>
-        <strong>{{ $app }}</strong>.
-    </p>
-@endsection
+    @include('auth::emails.partials.security-note', [
+        'body' => __('auth.verify_email_ignore'),
+    ])
 
-@section('footer')
-    &copy; {{ date('Y') }} {{ $app }}
+    @include('auth::emails.partials.url-fallback', [
+        'url' => $verificationUrl ?? null,
+    ])
+
+    @include('auth::emails.partials.signature')
 @endsection

@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
             }
 
             if ($request->expectsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.not_authorized"), 403);
+                return ApiErrorResponse::message(__("auth.not_authorized"), 403);
             }
 
             return redirect()->to(frontend_url());

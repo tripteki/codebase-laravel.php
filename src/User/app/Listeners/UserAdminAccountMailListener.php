@@ -16,7 +16,8 @@ class UserAdminAccountMailListener
     public function handleActivated(UserAdminActivated $event): void
     {
         Mail::to($event->user->email)->send(new UserAccountMail(
-            userName: $event->user->name,
+            userName: $event->user->displayName(),
+            userNameLabel: $event->user->displayNameLabel(),
             userEmail: $event->user->email,
             subjectKey: "auth.account_activated_subject",
             headingKey: "auth.account_activated_heading",
@@ -31,7 +32,8 @@ class UserAdminAccountMailListener
     public function handleDeactivated(UserAdminDeactivated $event): void
     {
         Mail::to($event->user->email)->send(new UserAccountMail(
-            userName: $event->user->name,
+            userName: $event->user->displayName(),
+            userNameLabel: $event->user->displayNameLabel(),
             userEmail: $event->user->email,
             subjectKey: "auth.account_deactivated_subject",
             headingKey: "auth.account_deactivated_heading",

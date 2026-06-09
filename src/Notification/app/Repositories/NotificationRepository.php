@@ -2,15 +2,17 @@
 
 namespace Modules\Notification\App\Repositories;
 
-use Modules\Notification\App\Models\Notification;
 use App\Repositories\Repository as BaseRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Modules\Notification\App\Models\Notification;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class NotificationRepository extends BaseRepository
 {
     /**
-     * @return \Modules\Notification\App\Models\Notification[]
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function all(): \Illuminate\Pagination\LengthAwarePaginator
+    public function all(): LengthAwarePaginator
     {
         $model = $this->getUser()->notifications();
 
@@ -18,7 +20,19 @@ class NotificationRepository extends BaseRepository
             fn () => $model,
             sortables: [ "id", "type", "updated_at", "read_at", ],
             defaultSorts: [ "-updated_at", "-read_at", ],
-            filterables: [ "id", "type", "updated_at", "read_at", ],
+            filterables: [
+                AllowedFilter::partial("type"),
+                AllowedFilter::exact("id"),
+                AllowedFilter::callback("status", function ($query, $value): void {
+                    if ((string) $value === "unread") {
+                        $query->whereNull("read_at");
+                    }
+
+                    if ((string) $value === "read") {
+                        $query->whereNotNull("read_at");
+                    }
+                }),
+            ],
             defaultFilters: [],
         );
     }
@@ -54,7 +68,7 @@ class NotificationRepository extends BaseRepository
         $model = $this->getUser()->unreadNotifications()->findOrFail($id);
 
         return parent::mutateUpdate(
-            fn () => $model->markAsRead() ? null : $model
+            fn () => $model->markAsRead() ? null : $model,
         );
     }
 
@@ -75,7 +89,7 @@ class NotificationRepository extends BaseRepository
         $model = $this->getUser()->notifications()->findOrFail($id);
 
         return parent::accessGet(
-            fn () => $model ?? null
+            fn () => $model ?? null,
         );
     }
 
@@ -88,7 +102,7 @@ class NotificationRepository extends BaseRepository
         $model = $this->getUser()->notifications()->findOrFail($id);
 
         return parent::mutateDelete(
-            fn () => $model->delete() ? $model : null
+            fn () => $model->delete() ? $model : null,
         );
     }
 }

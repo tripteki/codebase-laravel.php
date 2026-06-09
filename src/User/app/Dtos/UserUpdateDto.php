@@ -18,6 +18,7 @@ class UserUpdateDto extends Data
 
     /**
      * @param string|null $name
+     * @param string|null $full_name
      * @param string|null $email
      * @param string|null $password
      * @param string|null $password_confirmation
@@ -25,11 +26,11 @@ class UserUpdateDto extends Data
      */
     public function __construct(
         public ?string $name = null,
+        public ?string $full_name = null,
         public ?string $email = null,
         public ?string $password = null,
         public ?string $password_confirmation = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @param \Spatie\LaravelData\Support\Validation\ValidationContext $context
@@ -41,6 +42,7 @@ class UserUpdateDto extends Data
 
         return [
             "name" => [ "sometimes", "nullable", "string", "min:2", "max:16", ],
+            "full_name" => [ "sometimes", "nullable", "string", "max:255", ],
             "email" => [
                 "sometimes",
                 "nullable",
@@ -75,6 +77,26 @@ class UserUpdateDto extends Data
         }
 
         return $payload;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function profilePayload(): array
+    {
+        if ($this->full_name === null) {
+            return [];
+        }
+
+        $fullName = trim($this->full_name);
+
+        if ($fullName === "") {
+            return [];
+        }
+
+        return [
+            "full_name" => $fullName,
+        ];
     }
 
     /**

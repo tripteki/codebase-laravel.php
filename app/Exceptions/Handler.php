@@ -29,19 +29,19 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("route.not_found"), 404);
+                return ApiErrorResponse::message(__("route.not_found"), 404);
             }
         });
 
         $this->renderable(function (\Illuminate\Database\Eloquent\ModelNotFoundException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("route.model_not_found"), 404);
+                return ApiErrorResponse::message(__("route.model_not_found"), 404);
             }
         });
 
         $this->renderable(function (\Illuminate\Auth\Access\AuthorizationException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.not_authorized"), 403);
+                return ApiErrorResponse::message(__("auth.not_authorized"), 403);
             }
         });
 
@@ -58,19 +58,31 @@ class Handler extends ExceptionHandler
                     };
                 }
 
-                return ApiErrorResponse::detail($message, $exception->getStatusCode());
+                return ApiErrorResponse::message($message, $exception->getStatusCode());
             }
         });
 
         $this->renderable(function (\Illuminate\Auth\AuthenticationException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
-                return ApiErrorResponse::detail(__("auth.not_authorized"), 401);
+                return ApiErrorResponse::message(__("auth.not_authorized"), 401);
             }
         });
 
         $this->renderable(function (\Illuminate\Validation\ValidationException $exception, \Illuminate\Http\Request $request) {
             if ($request->wantsJson() || $request->is("api/*")) {
                 return ApiValidationResponse::fromException($exception, $request);
+            }
+        });
+
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException $exception, \Illuminate\Http\Request $request) {
+            if ($request->wantsJson() || $request->is("api/*")) {
+                $message = $exception->getMessage();
+
+                if ($message === "") {
+                    $message = __("auth.throttle", [ "seconds" => $exception->getHeaders()["Retry-After"] ?? 60, ]);
+                }
+
+                return ApiErrorResponse::message($message, 429);
             }
         });
     }

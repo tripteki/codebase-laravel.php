@@ -11,6 +11,7 @@ return [
         "column" => [
             "id" => "ID",
             "name" => "Name",
+            "full_name" => "Full Name",
             "email" => "Email",
             "email_verified" => "Email Verified",
             "created_at" => "Created At",
@@ -22,11 +23,17 @@ return [
         "column" => [
             "id" => "ID",
             "name" => "Name",
+            "full_name" => "Full Name",
             "email" => "Email",
             "password" => "Password",
             "email_verified" => "Email Verified",
             "created_at" => "Created At",
             "updated_at" => "Updated At",
         ],
+    ],
+
+    "admin" => [
+        "already_inactive" => "This user is already inactive.",
+        "not_inactive" => "Only inactive users can be permanently deleted.",
     ],
 ];
