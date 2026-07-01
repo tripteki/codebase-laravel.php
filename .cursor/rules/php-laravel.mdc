@@ -6,6 +6,15 @@ alwaysApply: false
 
 # Laravel Module Implementation Patterns
 
+## Spacing
+
+Function/method calls use a space before `(` — see `.cursor/rules/code-style.mdc`:
+
+```php
+$content = QueryBuilder::for ($callback ());
+array_map (fn (RoleEnum $role) => $role->value, RoleEnum::cases ());
+```
+
 ## Controller → Service → Repository
 
 ```php

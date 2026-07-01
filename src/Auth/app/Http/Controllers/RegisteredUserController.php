@@ -2,16 +2,16 @@
 
 namespace Modules\Auth\App\Http\Controllers;
 
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller as BaseController;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Modules\Acl\App\Enums\RoleEnum;
 use Modules\Auth\App\Events\UserAuthRegistered;
+use Modules\Event\App\Support\AuthAddOnsHelper;
 use Modules\User\App\Dtos\UserDto;
 use Modules\User\App\Services\UserService;
-use Modules\Acl\App\Enums\RoleEnum;
-use App\Http\Controllers\Controller as BaseController;
 use OpenApi\Attributes as OA;
 
 class RegisteredUserController extends BaseController
@@ -40,30 +40,58 @@ class RegisteredUserController extends BaseController
                 schema: new OA\Schema(
                     properties: [
                         new OA\Property(property: "name", type: "string", description: "Name"),
+                        new OA\Property(property: "full_name", type: "string", description: "Full Name"),
                         new OA\Property(property: "email", type: "string", description: "Email"),
                         new OA\Property(property: "password", type: "string", description: "Password"),
                         new OA\Property(
                             property: "password_confirmation",
                             type: "string",
-                            description: "Password Confirmation"
+                            description: "Password Confirmation",
                         ),
-                    ]
-                )
-            )
+                        new OA\Property(property: "tenant", type: "string", description: "Tenant slug"),
+                    ],
+                ),
+            ),
         ),
         responses: [
             new OA\Response(response: 201, description: "Created."),
             new OA\Response(response: 422, description: "Validation Error."),
-        ]
+        ],
     )]
-    public function store(UserDto $request): JsonResponse
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request): JsonResponse
     {
-        $userService = $this->userService->create($request);
+        $tenantId = $request->string("tenant")->toString() ?: null;
+        AuthAddOnsHelper::initializeFromTenantId($tenantId);
 
-        $user = User::find($userService->id);
-        $user->assignRole(RoleEnum::VISITOR->value);
+        if (! AuthAddOnsHelper::isRegistrationEnabled()) {
+            abort(403, __("event.add_ons.auth.registration_disabled"));
+        }
 
-        event(new Registered($user));
+        $userData = UserDto::from($request);
+
+        $userService = $this->userService->create($userData, $tenantId);
+
+        $user = User::query()->withoutTenancy()->find($userService->id);
+
+        if ($user instanceof User) {
+            if (! filled($tenantId) && function_exists("tenancy") && tenancy()->initialized) {
+                tenancy()->end();
+            }
+
+            sync_permissions_team_context();
+            $user->assignRole(RoleEnum::GUEST->value);
+
+            if (AuthAddOnsHelper::isMailingEnabled()) {
+                event(new Registered($user));
+            } else {
+                $user->markEmailAsVerified();
+            }
+        }
+
         event(new UserAuthRegistered($userService));
 
         return response()->json($userService, 201);

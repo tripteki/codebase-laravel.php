@@ -192,6 +192,8 @@ class UserController extends BaseController
      */
     public function access(): JsonResponse
     {
+        sync_permissions_team_context();
+
         return response()->json($this->userService->access(), 200);
     }
 }

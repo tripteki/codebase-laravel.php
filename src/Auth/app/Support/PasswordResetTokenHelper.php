@@ -11,14 +11,28 @@ use Illuminate\Support\Str;
 final class PasswordResetTokenHelper
 {
     /**
+     * @param string|null $tenantId
+     * @return string|null
+     */
+    public static function normalizeTenantId(?string $tenantId): ?string
+    {
+        if (! is_string($tenantId) || trim($tenantId) === "") {
+            return null;
+        }
+
+        return trim($tenantId);
+    }
+
+    /**
      * @param string $email
      * @param string $token
+     * @param string|null $tenantId
      * @return void
      */
-    public static function upsertSigned(string $email, string $token): void
+    public static function upsertSigned(string $email, string $token, ?string $tenantId = null): void
     {
         DB::table("password_reset_tokens")->updateOrInsert(
-            self::lookupKey($email),
+            self::lookupKey($email, $tenantId),
             [
                 "token" => $token,
                 "created_at" => now(),
@@ -34,7 +48,11 @@ final class PasswordResetTokenHelper
     {
         $plainToken = Str::random(64);
 
-        self::upsertBroker($user->email, Hash::make($plainToken));
+        self::upsertBroker(
+            $user->email,
+            Hash::make($plainToken),
+            $user->tenant_id !== null ? (string) $user->tenant_id : null,
+        );
 
         return $plainToken;
     }
@@ -42,12 +60,13 @@ final class PasswordResetTokenHelper
     /**
      * @param string $email
      * @param string $hashedToken
+     * @param string|null $tenantId
      * @return void
      */
-    public static function upsertBroker(string $email, string $hashedToken): void
+    public static function upsertBroker(string $email, string $hashedToken, ?string $tenantId = null): void
     {
         DB::table("password_reset_tokens")->updateOrInsert(
-            self::lookupKey($email),
+            self::lookupKey($email, $tenantId),
             [
                 "token" => $hashedToken,
                 "created_at" => now(),
@@ -58,12 +77,13 @@ final class PasswordResetTokenHelper
     /**
      * @param string $email
      * @param string $token
+     * @param string|null $tenantId
      * @return object|null
      */
-    public static function findSigned(string $email, string $token): ?object
+    public static function findSigned(string $email, string $token, ?string $tenantId = null): ?object
     {
         return DB::table("password_reset_tokens")
-            ->where(self::lookupKey($email))
+            ->where(self::lookupKey($email, $tenantId))
             ->where("token", $token)
             ->first();
     }
@@ -71,12 +91,13 @@ final class PasswordResetTokenHelper
     /**
      * @param string $email
      * @param string $plainToken
+     * @param string|null $tenantId
      * @return bool
      */
-    public static function verifyBrokerToken(string $email, string $plainToken): bool
+    public static function verifyBrokerToken(string $email, string $plainToken, ?string $tenantId = null): bool
     {
         $record = DB::table("password_reset_tokens")
-            ->where(self::lookupKey($email))
+            ->where(self::lookupKey($email, $tenantId))
             ->first();
 
         if ($record === null || ! isset($record->created_at)) {
@@ -94,23 +115,26 @@ final class PasswordResetTokenHelper
 
     /**
      * @param string $email
+     * @param string|null $tenantId
      * @return void
      */
-    public static function delete(string $email): void
+    public static function delete(string $email, ?string $tenantId = null): void
     {
         DB::table("password_reset_tokens")
-            ->where(self::lookupKey($email))
+            ->where(self::lookupKey($email, $tenantId))
             ->delete();
     }
 
     /**
      * @param string $email
-     * @return array<string, string>
+     * @param string|null $tenantId
+     * @return array<string, string|null>
      */
-    private static function lookupKey(string $email): array
+    private static function lookupKey(string $email, ?string $tenantId): array
     {
         return [
             "email" => $email,
+            "tenant_id" => self::normalizeTenantId($tenantId) ?? "",
         ];
     }
 }

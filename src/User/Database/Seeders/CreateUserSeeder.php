@@ -3,10 +3,10 @@
 namespace Modules\User\Database\Seeders;
 
 use App\Models\User;
-use Modules\User\App\Enums\UserEnum;
-use Modules\Acl\App\Enums\RoleEnum;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Modules\Acl\App\Enums\RoleEnum;
+use Modules\User\App\Enums\UserEnum;
 
 class CreateUserSeeder extends Seeder
 {
@@ -20,8 +20,10 @@ class CreateUserSeeder extends Seeder
      */
     public function run(): void
     {
+        sync_permissions_team_context();
+
         $name = UserEnum::SUPERUSER->value;
-        $email = UserEnum::SUPERUSER->value . "@" . config("app.email_server");
+        $email = UserEnum::SUPERUSER->value."@".config("app.email_server");
 
         $user = User::firstOrCreate(
             [ "email" => $email, ],
@@ -29,7 +31,7 @@ class CreateUserSeeder extends Seeder
                 "name" => $name,
                 "password" => Hash::make(self::DEFAULT_PASSWORD),
                 "email_verified_at" => now(),
-            ]
+            ],
         );
 
         $user->assignRole(RoleEnum::SUPERADMIN->value);

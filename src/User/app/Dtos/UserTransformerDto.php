@@ -17,6 +17,7 @@ class UserTransformerDto extends Data
      * @param \DateTimeInterface|null $created_at
      * @param \DateTimeInterface|null $updated_at
      * @param \DateTimeInterface|null $deleted_at
+     * @param string|null $tenant_id
      * @return void
      */
     public function __construct(
@@ -28,6 +29,7 @@ class UserTransformerDto extends Data
         public ?\DateTimeInterface $created_at,
         public ?\DateTimeInterface $updated_at,
         public ?\DateTimeInterface $deleted_at = null,
+        public ?string $tenant_id = null,
     ) {}
 
     /**
@@ -47,6 +49,7 @@ class UserTransformerDto extends Data
             created_at: self::castDate($user->created_at),
             updated_at: self::castDate($user->updated_at),
             deleted_at: self::castDate($user->deleted_at),
+            tenant_id: $user->tenant_id !== null ? (string) $user->tenant_id : null,
         );
     }
 

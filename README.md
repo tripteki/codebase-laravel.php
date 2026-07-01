@@ -174,7 +174,7 @@ All routes are prefixed with `/api`.
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/register` | guest | Register (assigns `visitor` role) |
+| POST | `/register` | guest | Register (assigns `guest` role) |
 | POST | `/login` | guest | Login → `{ accessToken, refreshToken, *Ttl }` |
 | POST | `/logout` | access | Logout → `true` |
 | PUT/PATCH | `/refresh` | refresh | Refresh token pair |

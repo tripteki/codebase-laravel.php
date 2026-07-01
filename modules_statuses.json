@@ -4,5 +4,6 @@
     "Acl": true,
     "Notification": true,
     "Log": true,
-    "I18N": true
+    "I18N": true,
+    "Event": true
 }

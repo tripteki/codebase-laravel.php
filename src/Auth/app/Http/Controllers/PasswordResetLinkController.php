@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller as BaseController;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Modules\Auth\App\Events\UserAuthReset;
 use Modules\Auth\App\Mail\ResetPasswordMail;
 use Modules\Auth\App\Support\PasswordResetTokenHelper;
+use Modules\Event\App\Support\AuthAddOnsHelper;
+use Modules\Event\App\Support\TenantMailHelper;
 use Modules\User\App\Dtos\UserTransformerDto;
 use OpenApi\Attributes as OA;
 
@@ -26,6 +27,7 @@ class PasswordResetLinkController extends BaseController
                     required: ["email"],
                     properties: [
                         new OA\Property(property: "email", type: "string", description: "Email"),
+                        new OA\Property(property: "tenant", type: "string", description: "Tenant slug"),
                     ],
                 ),
             ),
@@ -43,25 +45,53 @@ class PasswordResetLinkController extends BaseController
     {
         $request->validate([
             "email" => [ "required", "email", ],
+            "tenant" => [ "nullable", "string", ],
         ]);
 
         $email = $request->email;
-        $user = User::query()->where("email", $email)->first();
+        $tenantId = $request->string("tenant")->toString() ?: null;
+        $tenantId = is_string($tenantId) && trim($tenantId) !== "" ? trim($tenantId) : null;
+
+        AuthAddOnsHelper::initializeFromTenantId($tenantId);
+        AuthAddOnsHelper::abortIfPasswordResetDisabled();
+
+        $userQuery = User::query()
+            ->withoutTenancy()
+            ->where("email", $email);
+
+        if ($tenantId !== null) {
+            $userQuery->where("tenant_id", $tenantId);
+        } else {
+            $userQuery->whereNull("tenant_id");
+        }
+
+        $user = $userQuery->first();
 
         if ($user) {
-            $signedUrl = signed_frontend_url(auth_reset_password_path($email));
+            $urlTenantId = $tenantId ?? (
+                $user->tenant_id !== null ? (string) $user->tenant_id : null
+            );
+
+            $signedUrl = signed_auth_frontend_url(
+                $urlTenantId,
+                auth_reset_password_path($email),
+            );
             parse_str((string) parse_url($signedUrl, PHP_URL_QUERY), $query);
             $signed = $query["signed"] ?? null;
 
             if (is_string($signed) && $signed !== "") {
-                PasswordResetTokenHelper::upsertSigned($email, $signed);
+                PasswordResetTokenHelper::upsertSigned($email, $signed, $urlTenantId);
 
-                Mail::to($email)->send(new ResetPasswordMail(
-                    userName: $user->displayName(),
-                    userNameLabel: $user->displayNameLabel(),
-                    userEmail: $email,
-                    resetLink: $signedUrl,
-                ));
+                TenantMailHelper::send(
+                    $email,
+                    fn () => new ResetPasswordMail(
+                        userName: $user->displayName(),
+                        userNameLabel: $user->displayNameLabel(),
+                        userEmail: $email,
+                        resetLink: $signedUrl,
+                    ),
+                    $urlTenantId,
+                );
 
                 event(new UserAuthReset(
                     UserTransformerDto::fromUser($user),

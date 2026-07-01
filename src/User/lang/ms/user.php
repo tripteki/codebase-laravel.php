@@ -10,6 +10,7 @@ return [
         "sheet_name" => "Pengguna",
         "column" => [
             "id" => "ID",
+            "tenant" => "Tenant",
             "name" => "Nama",
             "full_name" => "Nama Penuh",
             "email" => "E-mel",
@@ -22,6 +23,7 @@ return [
     "import" => [
         "column" => [
             "id" => "ID",
+            "tenant" => "Tenant",
             "name" => "Nama",
             "full_name" => "Nama Penuh",
             "email" => "E-mel",

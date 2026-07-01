@@ -17,6 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        if ($this->app->environment("production")) {
+            error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+        }
+
         $this->app->singleton(ExceptionHandler::class, Handler::class);
     }
 
@@ -29,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::prependNamespace(
             "l5-swagger",
-            resource_path("views/vendor/l5-swagger")
+            resource_path("views/vendor/l5-swagger"),
         );
     }
 }

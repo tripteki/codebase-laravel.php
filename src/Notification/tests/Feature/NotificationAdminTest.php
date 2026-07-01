@@ -4,10 +4,9 @@ namespace Modules\Notification\Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-use Modules\Acl\App\Enums\RoleEnum;
 use Modules\Acl\Database\Seeders\AclSeeder;
 use Modules\Notification\Database\Seeders\NotificationSeeder;
+use Modules\User\Database\Seeders\CreateUserSeeder;
 use Modules\User\Database\Seeders\UserSeeder;
 use Tests\TestCase;
 
@@ -27,18 +26,16 @@ class NotificationAdminTest extends TestCase
     {
         parent::setUp();
 
+        $this->withoutAdminApiMiddleware();
+        $this->enablePermissionTeams();
+
         $this->artisan("db:seed", [ "--class" => AclSeeder::class, ]);
         $this->artisan("db:seed", [ "--class" => UserSeeder::class, ]);
         $this->artisan("db:seed", [ "--class" => NotificationSeeder::class, ]);
 
-        $this->user = User::factory()->create([
-            "password" => Hash::make("Password123!"),
-            "email_verified_at" => now(),
-        ]);
+        $this->user = $this->resolveCentralAdmin();
 
-        $this->user->assignRole(RoleEnum::ADMIN->value);
-
-        $this->actingAsJwt($this->user, "Password123!");
+        $this->actingAsJwt($this->user, CreateUserSeeder::DEFAULT_PASSWORD);
 
         $this->user->notifications()->create([
             "id" => \Illuminate\Support\Str::uuid()->toString(),

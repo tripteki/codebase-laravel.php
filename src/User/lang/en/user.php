@@ -10,6 +10,7 @@ return [
         "sheet_name" => "Users",
         "column" => [
             "id" => "ID",
+            "tenant" => "Tenant",
             "name" => "Name",
             "full_name" => "Full Name",
             "email" => "Email",
@@ -22,6 +23,7 @@ return [
     "import" => [
         "column" => [
             "id" => "ID",
+            "tenant" => "Tenant",
             "name" => "Name",
             "full_name" => "Full Name",
             "email" => "Email",

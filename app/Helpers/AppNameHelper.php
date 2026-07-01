@@ -30,6 +30,6 @@ class AppNameHelper
      */
     public static function headline(?string $value = null): string
     {
-        return strtoupper(self::format($value));
+        return self::format($value);
     }
 }

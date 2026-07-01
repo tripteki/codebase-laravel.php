@@ -41,6 +41,7 @@ Route::get("v1/auth/me", [ UserController::class, "show", ])
     ->middleware([
         "auth:api",
         "jwt.scope:ACCESS_TOKEN",
+        "tenant.user",
         ...Throttle::middleware("api-read"),
     ]);
 

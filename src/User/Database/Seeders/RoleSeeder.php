@@ -39,28 +39,13 @@ class RoleSeeder extends Seeder
             PermissionEnum::USER_EXPORT->value,
         ]);
 
-        $speaker = Role::where("name", RoleEnum::SPEAKER->value)->where("guard_name", $guard)->first();
-        $speaker?->givePermissionTo([
+        $user = Role::where("name", RoleEnum::USER->value)->where("guard_name", $guard)->first();
+        $user?->givePermissionTo([
             PermissionEnum::USER_VIEW->value,
         ]);
 
-        $delegate = Role::where("name", RoleEnum::DELEGATE->value)->where("guard_name", $guard)->first();
-        $delegate?->givePermissionTo([
-            PermissionEnum::USER_VIEW->value,
-        ]);
-
-        $exhibitor = Role::where("name", RoleEnum::EXHIBITOR->value)->where("guard_name", $guard)->first();
-        $exhibitor?->givePermissionTo([
-            PermissionEnum::USER_VIEW->value,
-        ]);
-
-        $sponsor = Role::where("name", RoleEnum::SPONSOR->value)->where("guard_name", $guard)->first();
-        $sponsor?->givePermissionTo([
-            PermissionEnum::USER_VIEW->value,
-        ]);
-
-        $visitor = Role::where("name", RoleEnum::VISITOR->value)->where("guard_name", $guard)->first();
-        $visitor?->givePermissionTo([
+        $guest = Role::where("name", RoleEnum::GUEST->value)->where("guard_name", $guard)->first();
+        $guest?->givePermissionTo([
             PermissionEnum::USER_VIEW->value,
         ]);
     }

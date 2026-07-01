@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\AdminSearchController;
+use App\Support\Throttle;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -37,6 +39,23 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware("web")
                 ->group(base_path("routes/web.php"));
+
+            $searchMiddleware = [
+                "auth:api",
+                "jwt.scope:ACCESS_TOKEN",
+                "verified",
+                ...Throttle::middleware("api-read"),
+            ];
+
+            Route::middleware("api")->group(function () use ($searchMiddleware): void {
+                Route::middleware([...$searchMiddleware, "central.admin"])
+                    ->prefix("api/v1/admin")
+                    ->get("search", [AdminSearchController::class, "index"]);
+
+                Route::middleware([...$searchMiddleware, "tenant.api"])
+                    ->prefix("api/v1/{tenant}/admin")
+                    ->get("search", [AdminSearchController::class, "index"]);
+            });
         });
     }
 }

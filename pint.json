@@ -28,6 +28,8 @@
 
         "use_arrow_functions": true,
 
+        "no_spaces_after_function_name": false,
+
         "fully_qualified_strict_types": false,
 
         "align_multiline_comment": { "comment_type": "phpdocs_only" },

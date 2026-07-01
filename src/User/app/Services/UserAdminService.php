@@ -2,8 +2,11 @@
 
 namespace Modules\User\App\Services;
 
+use App\Dtos\OffsetPaginationDto;
 use App\Services\Service as BaseService;
+use App\Support\AdminTenancySupport;
 use Illuminate\Support\Facades\Auth;
+use Modules\User\App\Dtos\UserChartStatsDto;
 use Modules\User\App\Dtos\UserDto;
 use Modules\User\App\Dtos\UserIdentifierDto;
 use Modules\User\App\Dtos\UserTransformerDto;
@@ -13,7 +16,6 @@ use Modules\User\App\Events\UserAdminDeactivated;
 use Modules\User\App\Jobs\UserAdminExportJob;
 use Modules\User\App\Jobs\UserAdminImportJob;
 use Modules\User\App\Repositories\UserAdminRepository;
-use App\Dtos\OffsetPaginationDto;
 
 class UserAdminService extends BaseService
 {
@@ -59,9 +61,16 @@ class UserAdminService extends BaseService
      */
     public function create(UserDto $userData): UserTransformerDto
     {
+        $tenantId = is_central()
+            ? AdminTenancySupport::resolveTenantIdFromPayload([
+                "tenant" => $userData->tenant,
+            ])
+            : current_tenant_id();
+
         return UserTransformerDto::fromUser($this->userAdminRepository->create(
             $userData->createPayload(),
             $userData->profilePayload(),
+            $tenantId,
         ));
     }
 
@@ -142,15 +151,43 @@ class UserAdminService extends BaseService
 
     /**
      * @param string $type
+     * @param array<string, mixed> $filters
      * @return string
      */
-    public function export(string $type = "csv"): string
+    public function export(string $type = "csv", array $filters = []): string
     {
         UserAdminExportJob::dispatch(
             (string) Auth::id(),
             $type,
+            $filters,
         );
 
         return __("User export started.");
+    }
+
+    /**
+     * @return \Modules\User\App\Dtos\UserChartStatsDto
+     */
+    public function registrationTrend(): UserChartStatsDto
+    {
+        $stats = $this->userAdminRepository->registrationTrend();
+
+        return new UserChartStatsDto(
+            labels: $stats["labels"],
+            series: $stats["series"],
+        );
+    }
+
+    /**
+     * @return \Modules\User\App\Dtos\UserChartStatsDto
+     */
+    public function usersByRole(): UserChartStatsDto
+    {
+        $stats = $this->userAdminRepository->usersByRole();
+
+        return new UserChartStatsDto(
+            labels: $stats["labels"],
+            series: $stats["series"],
+        );
     }
 }

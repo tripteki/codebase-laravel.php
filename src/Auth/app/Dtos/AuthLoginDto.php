@@ -13,6 +13,7 @@ class AuthLoginDto extends Data
      * @param string|null $identifier
      * @param string|null $password
      * @param bool|null $remember
+     * @param string|null $tenant
      * @return void
      */
     public function __construct(
@@ -21,6 +22,7 @@ class AuthLoginDto extends Data
         public ?string $identifier = null,
         public ?string $password = null,
         public ?bool $remember = null,
+        public ?string $tenant = null,
     ) {}
 
     /**
@@ -67,8 +69,9 @@ class AuthLoginDto extends Data
             "identifierKey" => [ "nullable", "string", "in:email,name", ],
             "identifierValue" => [ "required_without:identifier", "nullable", "string", ],
             "identifier" => [ "required_without:identifierValue", "nullable", "string", ],
-            "password" => [ "required", "string", "min:8", ],
+            "password" => [ "nullable", "string", "min:8", ],
             "remember" => [ "nullable", "boolean", ],
+            "tenant" => [ "nullable", "string", ],
         ];
     }
 

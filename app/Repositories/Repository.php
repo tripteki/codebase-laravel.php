@@ -50,10 +50,11 @@ abstract class Repository
         $sortables = [],
         $filterables = [],
         $defaultSorts = [],
-        $defaultFilters = []
-    )
-    {
-        $content = QueryBuilder::for($callback ());
+        $defaultFilters = [],
+    ) {
+        $this->normalizeListQueryParams(request());
+
+        $content = QueryBuilder::for ($callback ());
 
         if (! empty($sortables)) {
             $content = $content->allowedSorts(...$sortables);
@@ -72,7 +73,7 @@ abstract class Repository
                         return $default !== null
                             ? AllowedFilter::scope($key)->default($default)
                             : AllowedFilter::scope($key);
-                    }, $filterables)
+                    }, $filterables),
                 );
             } else {
                 $content = $content->allowedFilters(...$filterables);
@@ -95,18 +96,10 @@ abstract class Repository
     {
         $request = request();
 
-        $this->applyCompatQueryParams($request);
+        $this->normalizeListQueryParams($request);
 
-        $currentPage = max(1, (int) (
-            $request->query("currentPage")
-            ?? $request->query("current_page")
-            ?? $request->query("page", 1)
-        ));
-        $perPage = max(1, min(100, (int) (
-            $request->query("limitPage")
-            ?? $request->query("limit")
-            ?? $request->query("per_page", 10)
-        )));
+        $currentPage = max(1, (int) $request->query("currentPage", 1));
+        $perPage = max(1, min(100, (int) $request->query("limitPage", 10)));
 
         return [ $currentPage, $perPage, ];
     }
@@ -115,7 +108,7 @@ abstract class Repository
      * @param \Illuminate\Http\Request $request
      * @return void
      */
-    protected function applyCompatQueryParams(\Illuminate\Http\Request $request): void
+    protected function normalizeListQueryParams(\Illuminate\Http\Request $request): void
     {
         if ($request->query("sort") === null && filled($request->query("orders"))) {
             $sorts = collect(QueryParser::parseOrders((string) $request->query("orders")))
@@ -145,9 +138,8 @@ abstract class Repository
      * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
      */
     public function accessGet(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = $callback ();
 
         return $content;
@@ -158,21 +150,17 @@ abstract class Repository
      * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
      */
     public function mutateUpdate(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = null;
 
         DB::beginTransaction();
 
         try {
-
             $content = $callback ();
 
             DB::commit();
-
         } catch (Exception $exception) {
-
             DB::rollback();
 
             Log::info($exception->getMessage());
@@ -186,21 +174,17 @@ abstract class Repository
      * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
      */
     public function mutateCreate(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = null;
 
         DB::beginTransaction();
 
         try {
-
             $content = $callback ();
 
             DB::commit();
-
         } catch (Exception $exception) {
-
             DB::rollback();
 
             Log::info($exception->getMessage());
@@ -214,21 +198,17 @@ abstract class Repository
      * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
      */
     public function mutateDelete(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = null;
 
         DB::beginTransaction();
 
         try {
-
             $content = $callback ();
 
             DB::commit();
-
         } catch (Exception $exception) {
-
             DB::rollback();
 
             Log::info($exception->getMessage());

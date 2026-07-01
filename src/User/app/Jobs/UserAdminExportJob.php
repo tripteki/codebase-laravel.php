@@ -19,11 +19,13 @@ class UserAdminExportJob implements ShouldQueue
     /**
      * @param string $userId
      * @param string $type
+     * @param array<string, mixed> $filters
      * @return void
      */
     public function __construct(
         public string $userId,
         public string $type = "csv",
+        public array $filters = [],
     ) {
         $this->onQueue("user-admin-queue");
     }
@@ -35,22 +37,16 @@ class UserAdminExportJob implements ShouldQueue
     public function handle(UserAdminRepository $userAdminRepository): void
     {
         try {
-            $path = $userAdminRepository->exportToFile($this->type);
+            $path = $userAdminRepository->exportToFile($this->type, $this->filters);
             $filename = basename($path);
             $relative = "exports/".$filename;
-
-            if (! is_dir(storage_path("app/public/exports"))) {
-                mkdir(storage_path("app/public/exports"), 0755, true);
-            }
-
-            copy($path, storage_path("app/public/".$relative));
             $fileUrl = Storage::disk("public")->url($relative);
 
             event(new UserAdminExported(
                 userId: $this->userId,
                 filename: $filename,
                 fileUrl: $fileUrl,
-                filePath: storage_path("app/public/".$relative),
+                filePath: $path,
                 message: __("User export completed."),
             ));
         } catch (\Throwable $exception) {

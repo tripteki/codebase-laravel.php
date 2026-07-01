@@ -96,3 +96,6 @@ CHANGELOG.md
 .editorconfig.backup
 .styleci.yml.backup
 hot
+**/caddy
+/frankenphp
+frankenphp-worker.php

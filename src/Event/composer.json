@@ -1,0 +1,27 @@
+{
+    "name": "tripteki/event",
+    "description": "",
+    "authors": [
+        {
+            "name": "Tripteki",
+            "email": "noreply@tripteki.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Event\\App\\": "app/",
+            "Modules\\Event\\Database\\Seeders\\": "Database/Seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Event\\Tests\\": "tests/"
+        }
+    }
+}

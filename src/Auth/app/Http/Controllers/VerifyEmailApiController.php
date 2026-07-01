@@ -19,6 +19,7 @@ class VerifyEmailApiController extends BaseController
         parameters: [
             new OA\Parameter(name: "email", in: "path", required: true, description: "Email address"),
             new OA\Parameter(name: "signed", in: "query", required: true, description: "Signed verification token"),
+            new OA\Parameter(name: "tenant", in: "query", required: false, description: "Tenant slug"),
         ],
         responses: [
             new OA\Response(response: 200, description: "Success."),
@@ -33,11 +34,24 @@ class VerifyEmailApiController extends BaseController
      */
     public function store(Request $request, string $email): JsonResponse
     {
-        if (! verify_auth_signed_url(auth_verify_email_path($email), $request->query("signed"))) {
+        $tenantId = $request->query("tenant");
+        $tenantId = is_string($tenantId) && trim($tenantId) !== "" ? trim($tenantId) : null;
+
+        if (! verify_auth_signed_url($tenantId, auth_verify_email_path($email), $request->query("signed"))) {
             abort(403, __("auth.token_invalid"));
         }
 
-        $user = User::query()->where("email", $email)->firstOrFail();
+        $userQuery = User::query()
+            ->withoutTenancy()
+            ->where("email", $email);
+
+        if ($tenantId !== null) {
+            $userQuery->where("tenant_id", $tenantId);
+        } else {
+            $userQuery->whereNull("tenant_id");
+        }
+
+        $user = $userQuery->firstOrFail();
 
         if ($user->hasVerifiedEmail()) {
             return response()->json(UserTransformerDto::fromUser($user), 200);

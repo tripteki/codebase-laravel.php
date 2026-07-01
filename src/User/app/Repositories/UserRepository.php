@@ -22,12 +22,25 @@ class UserRepository extends BaseRepository
 
     /**
      * @param array $userData
+     * @param array<string, mixed> $profileData
      * @return \App\Models\User|null
      */
-    public function create(array $userData): ?User
+    public function create(array $userData, array $profileData = []): ?User
     {
         return parent::mutateCreate(
-            fn () => User::create($userData) ?? null,
+            function () use ($userData, $profileData): User {
+                $user = filled($userData["tenant_id"] ?? null)
+                    ? User::query()->withoutTenancy()->create($userData)
+                    : User::create($userData);
+
+                if (filled($profileData["full_name"] ?? null)) {
+                    Profile::query()->create(array_merge($profileData, [
+                        "user_id" => $user->getKey(),
+                    ]));
+                }
+
+                return $user->fresh([ "profile", ]);
+            },
         );
     }
 

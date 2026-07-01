@@ -19,5 +19,10 @@
             "Modules\\Log\\App\\": "app/",
             "Modules\\Log\\Database\\Seeders\\": "Database/Seeders/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Log\\Tests\\": "tests/"
+        }
     }
 }

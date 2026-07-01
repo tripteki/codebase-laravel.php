@@ -1,6 +1,5 @@
 @php
-    use App\Helpers\CopyrightHelper;
-    $mailFooterDefault = CopyrightHelper::footer($displayName);
+    $mailFooterDefault = '© ' . date('Y') . ' ' . ($displayName ?? $appName);
     $logoUrl = $logoUrl ?? frontend_url('manifest/asset/logo.png');
 
     $defaultPrimaryHex = '#2563eb';
@@ -17,15 +16,18 @@
 
         return strlen($hex) === 6 && ctype_xdigit($hex) ? $hex : '2563eb';
     };
-    $primaryHexNorm = $normalizeHex((string) ($primaryHex ?? ''));
-    if (strlen($primaryHexNorm) !== 6 && $defaultPrimaryHex !== null && $defaultPrimaryHex !== '') {
-        $primaryHexNorm = $normalizeHex(ltrim((string) $defaultPrimaryHex, '#'));
-    }
-    $primaryRgb = implode(',', [
-        hexdec(substr($primaryHexNorm, 0, 2)),
-        hexdec(substr($primaryHexNorm, 2, 2)),
-        hexdec(substr($primaryHexNorm, 4, 2)),
-    ]);
+    $hexToRgb = static function (string $hex) use ($normalizeHex): string {
+        $normalized = $normalizeHex($hex);
+
+        return implode(',', [
+            hexdec(substr($normalized, 0, 2)),
+            hexdec(substr($normalized, 2, 2)),
+            hexdec(substr($normalized, 4, 2)),
+        ]);
+    };
+    $primaryRgb = $hexToRgb((string) $primaryHex);
+    $secondaryRgb = $hexToRgb((string) $secondaryHex);
+    $tertiaryRgb = $hexToRgb((string) $tertiaryHex);
 @endphp
 
 <!DOCTYPE html>
@@ -40,7 +42,9 @@
             --brand-primary: {{ $primaryHex }};
             --brand-primary-rgb: {{ $primaryRgb }};
             --brand-secondary: {{ $secondaryHex }};
+            --brand-secondary-rgb: {{ $secondaryRgb }};
             --brand-tertiary: {{ $tertiaryHex }};
+            --brand-tertiary-rgb: {{ $tertiaryRgb }};
         }
 
         body {

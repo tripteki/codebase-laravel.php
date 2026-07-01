@@ -90,10 +90,20 @@ class UserService extends BaseService
 
     /**
      * @param \Modules\User\App\Dtos\UserDto $userData
+     * @param string|null $tenantId
      * @return \Modules\User\App\Dtos\UserTransformerDto
      */
-    public function create(UserDto $userData): UserTransformerDto
+    public function create(UserDto $userData, ?string $tenantId = null): UserTransformerDto
     {
-        return UserTransformerDto::fromUser($this->userRepository->create($userData->toArray()));
+        $userPayload = $userData->createPayload();
+
+        if (filled($tenantId)) {
+            $userPayload["tenant_id"] = $tenantId;
+        }
+
+        return UserTransformerDto::fromUser($this->userRepository->create(
+            $userPayload,
+            $userData->profilePayload(),
+        ));
     }
 }

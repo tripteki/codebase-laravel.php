@@ -3,8 +3,10 @@
 namespace Modules\User\App\Dtos;
 
 use App\Models\User;
+use App\Support\AdminTenancySupport;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use Modules\Event\App\Support\AuthAddOnsHelper;
+use Modules\User\App\Support\UserDefaultsHelper;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
@@ -19,6 +21,7 @@ class UserDto extends Data
      * @param \DateTime|null $updated_at
      * @param \DateTime|null $deleted_at
      * @param string|null $full_name
+     * @param string|null $tenant
      * @return void
      */
     public function __construct(
@@ -30,6 +33,7 @@ class UserDto extends Data
         public ?\DateTime $updated_at,
         public ?\DateTime $deleted_at,
         public ?string $full_name = null,
+        public ?string $tenant = null,
     ) {}
 
     /**
@@ -39,15 +43,28 @@ class UserDto extends Data
     public static function rules(ValidationContext $context): array
     {
         $user = Auth::user();
+        $tenantId = UserDefaultsHelper::resolveTenantIdForValidation($context->payload);
+        $payloadHasTenant = AdminTenancySupport::payloadHasTenant($context->payload);
+
+        if (is_string($tenantId) && trim($tenantId) !== "") {
+            AuthAddOnsHelper::initializeFromTenantId($tenantId);
+        } elseif ($user instanceof User) {
+            AuthAddOnsHelper::initializeForUser($user);
+        }
+
+        $passwordless = AuthAddOnsHelper::isPasswordless();
 
         $validation = [
+            "tenant" => array_filter([
+                $payloadHasTenant ? "required" : "prohibited",
+                "string",
+            ]),
 
             "name" => [
                 "required",
                 "string",
                 "min:2",
                 "max:16",
-                Rule::unique(User::class)->ignore($user),
             ],
             "full_name" => [
                 "nullable",
@@ -60,14 +77,12 @@ class UserDto extends Data
                 "min:8",
                 "max:48",
                 "email",
-                Rule::unique(User::class)->ignore($user),
+                UserDefaultsHelper::uniqueEmailRule($tenantId, $user),
             ],
-            "password" => [
-                "required",
-                "string",
-                "min:8",
-                "max:16",
-            ],
+            "password" => array_merge(
+                $passwordless ? [ "nullable", ] : [ "required", ],
+                [ "string", "min:8", "max:16", ],
+            ),
         ];
 
         if (@$context->payload["password_confirmation"]) {
@@ -85,10 +100,16 @@ class UserDto extends Data
      */
     public function createPayload(): array
     {
+        $password = $this->password;
+
+        if (($password === null || $password === "") && AuthAddOnsHelper::isPasswordless()) {
+            $password = UserDefaultsHelper::defaultPassword();
+        }
+
         return [
             "name" => $this->name,
             "email" => $this->email,
-            "password" => $this->password,
+            "password" => $password,
         ];
     }
 

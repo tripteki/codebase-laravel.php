@@ -4,6 +4,11 @@ namespace Modules\Notification\Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Modules\Event\App\Enums\AddOnEnum;
 use Tests\TestCase;
 
 class NotificationTest extends TestCase
@@ -13,12 +18,17 @@ class NotificationTest extends TestCase
     /**
      * @var \App\Models\User
      */
-    protected $user;
+    protected User $centralUser;
 
     /**
-     * @var \Illuminate\Notifications\DatabaseNotification
+     * @var \App\Models\User
      */
-    protected $notification;
+    protected User $tenantUser;
+
+    /**
+     * @var string
+     */
+    protected string $password = "Password123!";
 
     /**
      * @return void
@@ -27,12 +37,43 @@ class NotificationTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
-        $this->actingAsJwt($this->user);
+        $this->withoutAdminApiMiddleware();
 
-        $this->notification = $this->user->notifications()->create([
-            "id" => \Illuminate\Support\Str::uuid()->toString(),
-            "type" => \Illuminate\Notifications\Notification::class,
+        $this->centralUser = User::factory()->create([
+            "password" => Hash::make($this->password),
+            "email_verified_at" => now(),
+        ]);
+
+        $this->tenantId = "notification-tenant";
+
+        $this->createTenantEvent($this->tenantId, [
+            "title" => "Notification Tenant",
+            "add_ons_modules" => [
+                AddOnEnum::MODULES_NOTIFICATION->value,
+            ],
+        ]);
+
+        $this->tenantUser = User::factory()->create([
+            "password" => Hash::make($this->password),
+            "email_verified_at" => now(),
+            "tenant_id" => $this->tenantId,
+        ]);
+
+        if (function_exists("tenancy") && tenancy()->initialized) {
+            tenancy()->end();
+            sync_permissions_team_context();
+        }
+    }
+
+    /**
+     * @param \App\Models\User $user
+     * @return \Illuminate\Notifications\DatabaseNotification
+     */
+    protected function createNotification(User $user): DatabaseNotification
+    {
+        return $user->notifications()->create([
+            "id" => Str::uuid()->toString(),
+            "type" => Notification::class,
             "data" => [],
         ]);
     }
@@ -42,9 +83,12 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_index(): void
     {
-        $test = $this->getJson("/api/v1/notifications");
+        $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200)
+        $this->authGet(
+            "/api/v1/notifications",
+            $this->loginToken($this->centralUser, $this->password),
+        )->assertStatus(200)
             ->assertJsonStructure([
                 "totalPage",
                 "perPage",
@@ -55,6 +99,13 @@ class NotificationTest extends TestCase
                 "lastPage",
                 "data",
             ]);
+
+        $this->createNotification($this->tenantUser);
+
+        $this->authGet(
+            "/api/v1/notifications",
+            $this->loginToken($this->tenantUser, $this->password),
+        )->assertStatus(200);
     }
 
     /**
@@ -62,9 +113,22 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_readall(): void
     {
-        $test = $this->putJson("/api/v1/notifications/read-all");
+        $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200)
+        $this->authPut(
+            "/api/v1/notifications/read-all",
+            $this->loginToken($this->centralUser, $this->password),
+        )
+            ->assertStatus(200)
+            ->assertJsonStructure([ "count", ]);
+
+        $this->createNotification($this->tenantUser);
+
+        $this->authPut(
+            "/api/v1/notifications/read-all",
+            $this->loginToken($this->tenantUser, $this->password),
+        )
+            ->assertStatus(200)
             ->assertJsonStructure([ "count", ]);
     }
 
@@ -73,9 +137,19 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_read(): void
     {
-        $test = $this->putJson("/api/v1/notifications/read/".$this->notification->id);
+        $centralNotification = $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200);
+        $this->authPut(
+            "/api/v1/notifications/read/".$centralNotification->id,
+            $this->loginToken($this->centralUser, $this->password),
+        )->assertStatus(200);
+
+        $tenantNotification = $this->createNotification($this->tenantUser);
+
+        $this->authPut(
+            "/api/v1/notifications/read/".$tenantNotification->id,
+            $this->loginToken($this->tenantUser, $this->password),
+        )->assertStatus(200);
     }
 
     /**
@@ -83,9 +157,22 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_count(): void
     {
-        $test = $this->getJson("/api/v1/notifications/count");
+        $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200)
+        $this->authGet(
+            "/api/v1/notifications/count",
+            $this->loginToken($this->centralUser, $this->password),
+        )
+            ->assertStatus(200)
+            ->assertJsonStructure([ "count", ]);
+
+        $this->createNotification($this->tenantUser);
+
+        $this->authGet(
+            "/api/v1/notifications/count",
+            $this->loginToken($this->tenantUser, $this->password),
+        )
+            ->assertStatus(200)
             ->assertJsonStructure([ "count", ]);
     }
 
@@ -94,9 +181,22 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_unread(): void
     {
-        $test = $this->getJson("/api/v1/notifications/unread");
+        $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200)
+        $this->authGet(
+            "/api/v1/notifications/unread",
+            $this->loginToken($this->centralUser, $this->password),
+        )
+            ->assertStatus(200)
+            ->assertJsonStructure([ "unread", ]);
+
+        $this->createNotification($this->tenantUser);
+
+        $this->authGet(
+            "/api/v1/notifications/unread",
+            $this->loginToken($this->tenantUser, $this->password),
+        )
+            ->assertStatus(200)
             ->assertJsonStructure([ "unread", ]);
     }
 
@@ -105,9 +205,19 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_show(): void
     {
-        $test = $this->getJson("/api/v1/notifications/".$this->notification->id);
+        $centralNotification = $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200);
+        $this->authGet(
+            "/api/v1/notifications/".$centralNotification->id,
+            $this->loginToken($this->centralUser, $this->password),
+        )->assertStatus(200);
+
+        $tenantNotification = $this->createNotification($this->tenantUser);
+
+        $this->authGet(
+            "/api/v1/notifications/".$tenantNotification->id,
+            $this->loginToken($this->tenantUser, $this->password),
+        )->assertStatus(200);
     }
 
     /**
@@ -115,8 +225,18 @@ class NotificationTest extends TestCase
      */
     public function test_notifications_destroy(): void
     {
-        $test = $this->deleteJson("/api/v1/notifications/".$this->notification->id);
+        $centralNotification = $this->createNotification($this->centralUser);
 
-        $test->assertStatus(200);
+        $this->authDelete(
+            "/api/v1/notifications/".$centralNotification->id,
+            $this->loginToken($this->centralUser, $this->password),
+        )->assertStatus(200);
+
+        $tenantNotification = $this->createNotification($this->tenantUser);
+
+        $this->authDelete(
+            "/api/v1/notifications/".$tenantNotification->id,
+            $this->loginToken($this->tenantUser, $this->password),
+        )->assertStatus(200);
     }
 }

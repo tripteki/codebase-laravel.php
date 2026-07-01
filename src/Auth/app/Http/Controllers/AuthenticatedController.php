@@ -7,9 +7,11 @@ use App\Http\Responses\ApiErrorResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Modules\Auth\App\Dtos\AuthLoginDto;
 use Modules\Auth\App\Events\UserAuthLoggedIn;
 use Modules\Auth\App\Services\AuthTokenService;
+use Modules\Event\App\Support\AuthAddOnsHelper;
 use Modules\User\App\Dtos\UserTransformerDto;
 use OpenApi\Attributes as OA;
 
@@ -44,6 +46,7 @@ class AuthenticatedController extends BaseController
                         new OA\Property(property: "identifier", type: "string", description: "Email or username (alternative to identifierKey/identifierValue)."),
                         new OA\Property(property: "password", type: "string", description: "Password"),
                         new OA\Property(property: "remember", type: "boolean", description: "Keep refresh token valid for the full refresh TTL."),
+                        new OA\Property(property: "tenant", type: "string", description: "Tenant event id for tenant-scoped login."),
                     ],
                 ),
             ),
@@ -64,10 +67,48 @@ class AuthenticatedController extends BaseController
      */
     public function store(AuthLoginDto $request): JsonResponse
     {
-        $field = $request->field();
-        $user = User::where($field, $request->credentialValue())->first();
+        $tenantId = $request->tenant;
+        $tenantId = is_string($tenantId) && trim($tenantId) !== "" ? trim($tenantId) : null;
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        AuthAddOnsHelper::initializeFromTenantId($tenantId);
+
+        $field = $request->field();
+        $userQuery = User::query()
+            ->withoutTenancy()
+            ->where($field, $request->credentialValue());
+
+        if ($tenantId !== null) {
+            $userQuery->where("tenant_id", $tenantId);
+        } else {
+            $userQuery->whereNull("tenant_id");
+        }
+
+        $user = $userQuery->first();
+
+        if (! AuthAddOnsHelper::isLoginEnabled()) {
+            $bootstrapAdminEmail = $tenantId !== null
+                ? "admin.".$tenantId."@".config("app.email_server")
+                : null;
+
+            if (
+                ! $user
+                || $bootstrapAdminEmail === null
+                || $user->email !== $bootstrapAdminEmail
+            ) {
+                return ApiErrorResponse::message(__("event.add_ons.auth.login_disabled"), 403);
+            }
+        }
+
+        if (! AuthAddOnsHelper::isPasswordless()) {
+            Validator::make(
+                [ "password" => $request->password, ],
+                [ "password" => [ "required", "string", "min:8", ], ],
+            )->validate();
+        }
+
+        $password = AuthAddOnsHelper::resolveLoginPassword($request->password);
+
+        if (! $user || ! Hash::check($password, $user->password)) {
             return ApiErrorResponse::message(__("auth.invalid_credentials"), 401);
         }
 

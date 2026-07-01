@@ -4,6 +4,9 @@ namespace Modules\I18N\App\Http\Middlewares;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Modules\Event\App\Enums\AddOnEnum;
+use Modules\Event\App\Support\AddOnsHelper;
 use Modules\I18N\App\Services\I18NService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,11 +35,27 @@ class I18NApiMiddleware
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
         if ($request->expectsJson()) {
-            $this->i18nService->getLanguageFromQueryString($request) ??
-            $this->i18nService->getLanguageFromAcceptHeader($request) ??
-            $this->i18nService->getLanguageFromCustomHeader($request);
+            if ($this->shouldRestrictLocaleToFallback()) {
+                App::setLocale($this->i18nService->fallbackLang());
+            } else {
+                $this->i18nService->getLanguageFromQueryString($request) ??
+                $this->i18nService->getLanguageFromAcceptHeader($request) ??
+                $this->i18nService->getLanguageFromCustomHeader($request);
+            }
         }
 
         return $next($request);
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldRestrictLocaleToFallback(): bool
+    {
+        if (! function_exists("tenancy") || ! tenancy()->initialized) {
+            return false;
+        }
+
+        return ! AddOnsHelper::has(AddOnEnum::FEATURES_MULTI_LANGUAGE);
     }
 }

@@ -5,26 +5,83 @@ namespace Modules\User\App\Repositories;
 use App\Models\Profile;
 use App\Models\User;
 use App\Repositories\Repository as BaseRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Support\AdminSpreadsheetSupport;
+use App\Support\AdminTenancySupport;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Excel as ExcelFormat;
-use Maatwebsite\Excel\Facades\Excel;
+use Modules\Acl\App\Models\Role;
+use Modules\Log\App\Support\ActivityRecorder;
 use Modules\User\App\Exports\UserAdminExport;
 use Modules\User\App\Imports\UserAdminImport;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class UserAdminRepository extends BaseRepository
 {
+    use AdminSpreadsheetSupport {
+        importColumnValue as spreadsheetImportColumnValue;
+        writerType as spreadsheetWriterType;
+        resolveImportTenantId as spreadsheetResolveImportTenantId;
+    }
+
     /**
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function all(): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $model = User::with("profile");
-
         return parent::accessAll(
-            fn () => $model,
+            fn () => $this->scopedUsersQuery(),
             sortables: [ "id", "name", "email", "created_at", "updated_at", ],
             defaultSorts: [ "-created_at", ],
-            filterables: [ "id", "name", "email", "created_at", "updated_at", ],
+            filterables: [
+                AllowedFilter::callback("q", function ($query, $value): void {
+                    $term = trim((string) $value);
+
+                    if ($term === "") {
+                        return;
+                    }
+
+                    $query->where(function ($nested) use ($term): void {
+                        $nested->where("name", "like", "%{$term}%")
+                            ->orWhere("email", "like", "%{$term}%")
+                            ->orWhereHas("profile", function ($profile) use ($term): void {
+                                $profile->where("full_name", "like", "%{$term}%");
+                            });
+                    });
+                }),
+                AllowedFilter::partial("name"),
+                AllowedFilter::partial("email"),
+                AllowedFilter::callback("verified", function ($query, $value): void {
+                    if ((string) $value === "yes") {
+                        $query->whereNotNull("email_verified_at");
+
+                        return;
+                    }
+
+                    if ((string) $value === "no") {
+                        $query->whereNull("email_verified_at");
+                    }
+                }),
+                AllowedFilter::callback("status", function ($query, $value): void {
+                    if ((string) $value === "all") {
+                        $query->withTrashed();
+
+                        return;
+                    }
+
+                    if ((string) $value === "inactive") {
+                        $query->onlyTrashed();
+
+                        return;
+                    }
+
+                    if ((string) $value === "active") {
+                        $query->whereNull("deleted_at");
+                    }
+                }),
+                AdminTenancySupport::allowedTenantScope(),
+            ],
             defaultFilters: [],
         );
     }
@@ -36,22 +93,31 @@ class UserAdminRepository extends BaseRepository
     public function get(string $id): ?User
     {
         return parent::accessGet(
-            fn () => User::with("profile")->findOrFail($id),
+            fn () => $this->scopedUsersQuery()->findOrFail($id),
         );
     }
 
     /**
      * @param array $userData
      * @param array<string, mixed> $profileData
+     * @param string|null $tenantId
      * @return \App\Models\User|null
      */
-    public function create(array $userData, array $profileData = []): ?User
+    public function create(array $userData, array $profileData = [], ?string $tenantId = null): ?User
     {
         return parent::mutateCreate(
-            function () use ($userData, $profileData): User {
-                $user = User::create(array_merge($userData, [
+            function () use ($userData, $profileData, $tenantId): User {
+                $payload = array_merge($userData, [
                     "email_verified_at" => now(),
-                ]));
+                ]);
+
+                if (filled(current_tenant_id())) {
+                    $payload["tenant_id"] = current_tenant_id();
+                } elseif (is_central()) {
+                    $payload["tenant_id"] = $tenantId;
+                }
+
+                $user = User::create($payload);
 
                 if (filled($profileData["full_name"] ?? null)) {
                     Profile::query()->create(array_merge($profileData, [
@@ -74,7 +140,7 @@ class UserAdminRepository extends BaseRepository
     {
         return parent::mutateUpdate(
             function () use ($id, $userData, $profileData): User {
-                $user = User::findOrFail($id);
+                $user = $this->scopedUsersQuery()->findOrFail($id);
                 $user->update($userData);
 
                 if ($profileData !== []) {
@@ -97,7 +163,7 @@ class UserAdminRepository extends BaseRepository
     {
         return parent::mutateDelete(
             function () use ($id): User {
-                $user = User::withTrashed()->findOrFail($id);
+                $user = $this->scopedUsersQuery()->withTrashed()->findOrFail($id);
                 $user->delete();
 
                 return $user;
@@ -113,7 +179,7 @@ class UserAdminRepository extends BaseRepository
     {
         return parent::mutateDelete(
             function () use ($id): User {
-                $user = User::withTrashed()->findOrFail($id);
+                $user = $this->scopedUsersQuery()->withTrashed()->findOrFail($id);
                 $user->forceDelete();
 
                 return $user;
@@ -129,7 +195,7 @@ class UserAdminRepository extends BaseRepository
     {
         return parent::mutateUpdate(
             function () use ($id): User {
-                $user = User::withTrashed()->findOrFail($id);
+                $user = $this->scopedUsersQuery()->withTrashed()->findOrFail($id);
                 $user->restore();
 
                 return $user->fresh();
@@ -145,10 +211,15 @@ class UserAdminRepository extends BaseRepository
     {
         return parent::mutateUpdate(
             function () use ($id): User {
-                $user = User::whereNull("email_verified_at")->findOrFail($id);
+                $user = $this->scopedUsersQuery()
+                    ->whereNull("email_verified_at")
+                    ->findOrFail($id);
                 $user->forceFill([ "email_verified_at" => now(), ])->save();
+                $user = $user->fresh();
 
-                return $user->fresh();
+                ActivityRecorder::userEmailVerified($user);
+
+                return $user;
             },
         );
     }
@@ -159,11 +230,7 @@ class UserAdminRepository extends BaseRepository
      */
     public function importFromFile(string $path): array
     {
-        if (! is_file($path)) {
-            throw new ModelNotFoundException("Import file not found.");
-        }
-
-        $rows = Excel::toArray(new UserAdminImport, $path)[0] ?? [];
+        $rows = $this->readAdminImport(new UserAdminImport, $path);
         $imported = 0;
         $skipped = 0;
 
@@ -185,6 +252,7 @@ class UserAdminRepository extends BaseRepository
             $email = $this->importColumnValue($normalized, "email");
             $password = $this->importColumnValue($normalized, "password") ?: "12345678";
             $verifiedRaw = $this->importColumnValue($normalized, "email_verified");
+            $tenantId = $this->resolveImportTenantIdFromRow($normalized);
 
             if ($email === null) {
                 $skipped++;
@@ -202,18 +270,26 @@ class UserAdminRepository extends BaseRepository
                 continue;
             }
 
-            if (User::where("email", $email)->orWhere("name", $name)->exists()) {
+            if ($this->importUserExists($email, $name, $tenantId)) {
                 $skipped++;
 
                 continue;
             }
 
-            $user = User::create([
+            $payload = [
                 "name" => $name,
                 "email" => $email,
                 "password" => $password,
                 "email_verified_at" => $this->isImportVerified($verifiedRaw) ? now() : null,
-            ]);
+            ];
+
+            if (! is_central()) {
+                $payload["tenant_id"] = current_tenant_id();
+            } elseif ($tenantId !== null) {
+                $payload["tenant_id"] = $tenantId;
+            }
+
+            $user = User::create($payload);
 
             Profile::query()->create([
                 "user_id" => $user->getKey(),
@@ -231,22 +307,20 @@ class UserAdminRepository extends BaseRepository
 
     /**
      * @param string $type
+     * @param array<string, mixed> $filters
      * @return string
      */
-    public function exportToFile(string $type = "csv"): string
+    public function exportToFile(string $type = "csv", array $filters = []): string
     {
         $type = in_array($type, [ "csv", "xls", "xlsx", ], true) ? $type : "csv";
-        $directory = storage_path("app/exports");
-
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
         $filename = "users_export_".now()->timestamp.".".$type;
         $relativePath = "exports/".$filename;
 
+        Storage::disk("public")->makeDirectory("exports");
+
         $headings = [
             __("user.export.column.id"),
+            __("user.export.column.tenant"),
             __("user.export.column.name"),
             __("user.export.column.full_name"),
             __("user.export.column.email"),
@@ -255,8 +329,13 @@ class UserAdminRepository extends BaseRepository
             __("user.export.column.updated_at"),
         ];
 
-        $rows = User::query()->with("profile")->orderBy("created_at")->get()->map(fn (User $user): array => [
+        $query = User::query()->with("profile");
+        AdminTenancySupport::applyActiveTenantScope($query);
+        $this->applyExportFilters($query, $filters);
+
+        $rows = $query->orderBy("created_at")->get()->map(fn (User $user): array => [
             (string) $user->getKey(),
+            AdminTenancySupport::formatExportTenantId($user->tenant_id),
             $user->name,
             $user->profile?->full_name,
             $user->email,
@@ -265,14 +344,166 @@ class UserAdminRepository extends BaseRepository
             $user->updated_at?->toIso8601String(),
         ])->all();
 
-        Excel::store(
+        $this->storeAdminExport(
             new UserAdminExport($rows, $headings, __("user.export.sheet_name")),
             $relativePath,
-            "local",
-            $this->writerType($type),
+            $type,
         );
 
-        return storage_path("app/".$relativePath);
+        return Storage::disk("public")->path($relativePath);
+    }
+
+    /**
+     * @param int $months
+     * @return array{labels: list<string>, series: list<int>}
+     */
+    public function registrationTrend(int $months = 12): array
+    {
+        $labels = [];
+        $series = [];
+
+        for ($offset = $months - 1; $offset >= 0; $offset--) {
+            $month = Carbon::now()->subMonths($offset)->startOfMonth();
+            $labels[] = $month->format("M Y");
+            $series[] = $this->scopedUsersQuery()
+                ->whereNull("deleted_at")
+                ->whereBetween("created_at", [
+                    $month->copy()->startOfMonth(),
+                    $month->copy()->endOfMonth(),
+                ])
+                ->count();
+        }
+
+        return [
+            "labels" => $labels,
+            "series" => $series,
+        ];
+    }
+
+    /**
+     * @return array{labels: list<string>, series: list<int>}
+     */
+    public function usersByRole(): array
+    {
+        $roles = Role::query()
+            ->withCount([
+                "users" => function (Builder $query): void {
+                    $query->whereNull("deleted_at");
+                    AdminTenancySupport::applyActiveTenantScope($query, "users.tenant_id");
+                },
+            ])
+            ->orderByDesc("users_count")
+            ->orderBy("name")
+            ->get()
+            ->filter(static fn (Role $role): bool => $role->users_count > 0)
+            ->values();
+
+        return [
+            "labels" => $roles->pluck("name")->all(),
+            "series" => $roles->pluck("users_count")
+                ->map(static fn (mixed $count): int => (int) $count)
+                ->values()
+                ->all(),
+        ];
+    }
+
+    /**
+     * @return Builder
+     */
+    protected function scopedUsersQuery(): Builder
+    {
+        return tap(User::query()->with("profile"), function (Builder $query): void {
+            AdminTenancySupport::applyActiveTenantScope($query);
+
+            $status = trim((string) (AdminTenancySupport::fromRequest(request())["status"] ?? ""));
+
+            if ($status === "all") {
+                $query->withTrashed();
+            }
+        });
+    }
+
+    /**
+     * @param Builder $query
+     * @param array<string, mixed> $filters
+     * @return void
+     */
+    protected function applyExportFilters(Builder $query, array $filters): void
+    {
+        $status = trim((string) ($filters["status"] ?? ""));
+
+        if ($status === "all") {
+            $query->withTrashed();
+        } elseif ($status === "inactive") {
+            $query->onlyTrashed();
+        } elseif ($status === "active" || $status === "") {
+            $query->whereNull("deleted_at");
+        }
+
+        $search = trim((string) ($filters["q"] ?? ""));
+
+        if ($search !== "") {
+            $query->where(function ($nested) use ($search): void {
+                $nested->where("name", "like", "%{$search}%")
+                    ->orWhere("email", "like", "%{$search}%")
+                    ->orWhereHas("profile", function ($profile) use ($search): void {
+                        $profile->where("full_name", "like", "%{$search}%");
+                    });
+            });
+        }
+
+        $verified = trim((string) ($filters["verified"] ?? ""));
+
+        if ($verified === "yes") {
+            $query->whereNotNull("email_verified_at");
+        } elseif ($verified === "no") {
+            $query->whereNull("email_verified_at");
+        }
+
+        AdminTenancySupport::scopeByTenant($query, $filters["tenant_id"] ?? "");
+    }
+
+    /**
+     * @param string $email
+     * @param string $name
+     * @param ?string $tenantId
+     * @return bool
+     */
+    protected function importUserExists(string $email, string $name, ?string $tenantId = null): bool
+    {
+        $query = User::query();
+
+        if (is_central()) {
+            AdminTenancySupport::applyImportTenantScope($query, $tenantId);
+        } else {
+            AdminTenancySupport::applyActiveTenantScope($query);
+        }
+
+        return $query
+            ->where(function ($nested) use ($email, $name): void {
+                $nested->where("email", $email)
+                    ->orWhere("name", $name);
+            })
+            ->exists();
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     * @return string|null
+     */
+    protected function resolveImportTenantIdFromRow(array $row): ?string
+    {
+        if (! is_central()) {
+            return current_tenant_id();
+        }
+
+        $raw = $this->importColumnValue($row, "tenant")
+            ?? $this->importColumnValue($row, "tenant_id");
+
+        return AdminTenancySupport::resolveTenantIdFromPayload([
+            "tenant" => $raw,
+            "tenant_id" => $raw,
+        ]);
     }
 
     /**
@@ -285,6 +516,8 @@ class UserAdminRepository extends BaseRepository
         $candidates = array_unique(array_filter([
             strtolower($column),
             strtolower((string) __("user.import.column.{$column}")),
+            $column === "tenant_id" ? "tenant" : null,
+            $column === "tenant" ? "tenant_id" : null,
             $column === "full_name" ? "name" : null,
             $column === "full_name" ? strtolower((string) __("user.import.column.name")) : null,
             $column === "email_verified" ? "email_verified_at" : null,

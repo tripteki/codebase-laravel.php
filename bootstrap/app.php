@@ -3,6 +3,7 @@
 use App\Http\Middleware\ApiMiddleware;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnsureCentralAdmin;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
@@ -33,13 +34,21 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Modules\Auth\App\Http\Middleware\EnsureJwtScopeMiddleware;
+use Modules\Event\App\Http\Middleware\EnsureTenantAddOn;
+use Modules\Event\App\Http\Middleware\InitializeTenancyForApi;
+use Modules\Event\App\Http\Middleware\InitializeTenancyForAuthenticatedUser;
 use Modules\I18N\App\Http\Middlewares\I18NApiMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         commands: __DIR__."/../routes/console.php",
-        channels: __DIR__."/../routes/channels.php",
         health: "/up",
+    )
+    ->withBroadcasting(
+        __DIR__."/../routes/channels.php",
+        [
+            "middleware" => [ "auth:api", "jwt.scope:ACCESS_TOKEN", ],
+        ],
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->use([
@@ -79,6 +88,10 @@ return Application::configure(basePath: dirname(__DIR__))
             "throttle" => ThrottleRequests::class,
             "verified" => EnsureEmailIsVerified::class,
             "jwt.scope" => EnsureJwtScopeMiddleware::class,
+            "central.admin" => EnsureCentralAdmin::class,
+            "tenant.api" => InitializeTenancyForApi::class,
+            "tenant.user" => InitializeTenancyForAuthenticatedUser::class,
+            "tenant.addon" => EnsureTenantAddOn::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

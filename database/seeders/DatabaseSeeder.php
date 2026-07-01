@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use Modules\Acl\Database\Seeders\AclSeeder;
-use Modules\User\Database\Seeders\UserSeeder;
 use Modules\Log\Database\Seeders\LogSeeder;
 use Modules\Notification\Database\Seeders\NotificationSeeder;
-use Illuminate\Database\Seeder;
+use Modules\User\Database\Seeders\SettingSeeder;
+use Modules\User\Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
 
             AclSeeder::class,
             UserSeeder::class,
+            SettingSeeder::class,
             LogSeeder::class,
             NotificationSeeder::class,
         ]);

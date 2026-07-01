@@ -15,6 +15,7 @@ class UserMeTransformerDto extends Data
      * @param \DateTimeInterface|null $email_verified_at
      * @param \DateTimeInterface|null $created_at
      * @param \DateTimeInterface|null $updated_at
+     * @param string|null $tenant_id
      * @param \Modules\User\App\Dtos\UserProfileTransformerDto|null $profile
      * @return void
      */
@@ -25,6 +26,7 @@ class UserMeTransformerDto extends Data
         public ?\DateTimeInterface $email_verified_at,
         public ?\DateTimeInterface $created_at,
         public ?\DateTimeInterface $updated_at,
+        public ?string $tenant_id = null,
         public ?UserProfileTransformerDto $profile = null,
     ) {}
 
@@ -43,6 +45,7 @@ class UserMeTransformerDto extends Data
             email_verified_at: self::castDate($user->email_verified_at),
             created_at: self::castDate($user->created_at),
             updated_at: self::castDate($user->updated_at),
+            tenant_id: $user->tenant_id !== null ? (string) $user->tenant_id : null,
             profile: UserProfileTransformerDto::fromProfile($user->profile),
         );
     }

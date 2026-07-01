@@ -24,8 +24,7 @@ class UserAdminImportedFailed implements ShouldBroadcast
         public string $filename,
         public string $message,
         public string $error,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, \Illuminate\Broadcasting\Channel>
@@ -51,6 +50,7 @@ class UserAdminImportedFailed implements ShouldBroadcast
         return [
             "userId" => $this->userId,
             "filename" => $this->filename,
+            "message" => $this->message,
             "error" => $this->error,
         ];
     }

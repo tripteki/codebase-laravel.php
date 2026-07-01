@@ -4,6 +4,7 @@ namespace Modules\User\App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
 use App\Models\User;
+use App\Support\AdminTenancySupport;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -314,8 +315,51 @@ class UserAdminController extends BaseController
         $type = (string) ($request->query("export_type") ?? $request->query("type", "csv"));
 
         return response()->json(
-            $this->userAdminService->export($type),
+            $this->userAdminService->export(
+                $type,
+                AdminTenancySupport::fromRequest($request),
+            ),
             200,
         );
+    }
+
+    #[OA\Get(
+        path: "/api/v1/admin/users/stats/registrations",
+        tags: ["Admin Users"],
+        summary: "Registration trend",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success."),
+            new OA\Response(response: 403, description: "Forbidden."),
+        ],
+    )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function registrationTrend(): JsonResponse
+    {
+        $this->authorize("viewAny", User::class);
+
+        return response()->json($this->userAdminService->registrationTrend(), 200);
+    }
+
+    #[OA\Get(
+        path: "/api/v1/admin/users/stats/roles",
+        tags: ["Admin Users"],
+        summary: "Users by role",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success."),
+            new OA\Response(response: 403, description: "Forbidden."),
+        ],
+    )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function usersByRole(): JsonResponse
+    {
+        $this->authorize("viewAny", User::class);
+
+        return response()->json($this->userAdminService->usersByRole(), 200);
     }
 }

@@ -20,25 +20,22 @@ enum RoleEnum: string
     /**
      * @var string
      */
-    case SPEAKER = "speaker";
+    case USER = "user";
 
     /**
      * @var string
      */
-    case EXHIBITOR = "exhibitor";
+    case GUEST = "guest";
 
     /**
-     * @var string
+     * @return list<self>
      */
-    case SPONSOR = "sponsor";
-
-    /**
-     * @var string
-     */
-    case DELEGATE = "delegate";
-
-    /**
-     * @var string
-     */
-    case VISITOR = "visitor";
+    public static function tenantBootstrapRoles(): array
+    {
+        return [
+            self::ADMIN,
+            self::USER,
+            self::GUEST,
+        ];
+    }
 }

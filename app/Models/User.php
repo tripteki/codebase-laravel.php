@@ -17,19 +17,23 @@ use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
 use Illuminate\Support\Facades\Hash;
-use Modules\Auth\App\Notifications\VerifyNotification;
+use Modules\Auth\App\Mail\VerifyEmailMail;
+use Modules\Event\App\Support\AuthAddOnsHelper;
+use Modules\Event\App\Support\TenantMailHelper;
 use Modules\Notification\App\Models\Notification as NotificationModel;
 use Modules\User\Database\Factories\UserFactory;
 use NotificationChannels\WebPush\HasPushSubscriptions as NotifiablePushTrait;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
 use Spatie\Permission\Traits\HasRoles as ACLTrait;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 use Tymon\JWTAuth\Contracts\JWTSubject as IAuthJWT;
 
 class User extends Authenticatable implements AuthenticatableContract, AuthorizableContract, IAuthJWT, ResetableContract, VerifyableContract
 {
     use ACLTrait,
         AuthorizableTrait,
+        BelongsToTenant,
         CanResetPasswordTrait,
         HasFactory,
         HasUlids,
@@ -53,6 +57,7 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
         "email",
         "password",
         "log_activities",
+        "tenant_id",
     ];
 
     /**
@@ -239,6 +244,26 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyNotification);
+        AuthAddOnsHelper::initializeForUser($this);
+
+        if (! AuthAddOnsHelper::isMailingEnabled()) {
+            return;
+        }
+
+        $email = $this->getEmailForVerification();
+
+        TenantMailHelper::send(
+            $email,
+            fn () => new VerifyEmailMail(
+                userName: $this->displayName(),
+                userNameLabel: $this->displayNameLabel(),
+                userEmail: $email,
+                verificationUrl: signed_auth_frontend_url(
+                    $this->tenant_id !== null ? (string) $this->tenant_id : null,
+                    auth_verify_email_path($email),
+                ),
+            ),
+            $this->tenant_id !== null ? (string) $this->tenant_id : null,
+        );
     }
 }
