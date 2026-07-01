@@ -3,7 +3,7 @@
 namespace Modules\Notification\App\Enums;
 
 /**
- * @enum PermissionEnum
+ * @enum \Modules\Notification\App\Enums\PermissionEnum
  */
 enum PermissionEnum: string
 {

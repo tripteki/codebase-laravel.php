@@ -40,20 +40,21 @@ class UserAdminImportJob implements ShouldQueue
     {
         try {
             $result = $userAdminRepository->importFromFile($this->path);
-            $message = __("User import completed.");
-
             event(new UserAdminImported(
                 userId: $this->userId,
                 filename: $this->filename,
                 totalImported: $result["imported"],
                 totalSkipped: $result["skipped"],
-                message: $message,
+                message: __("user.import.completed", [
+                    "totalImported" => $result["imported"],
+                    "totalSkipped" => $result["skipped"],
+                ]),
             ));
         } catch (\Throwable $exception) {
             event(new UserAdminImportedFailed(
                 userId: $this->userId,
                 filename: $this->filename,
-                message: __("User import failed."),
+                message: __("user.import.failed"),
                 error: $exception->getMessage(),
             ));
         }

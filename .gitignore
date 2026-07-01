@@ -56,6 +56,7 @@ rdocs/
 
 .env
 .env.*
+!.env.example
 *-env.d.ts
 *.key
 *.debug*
@@ -96,3 +97,6 @@ CHANGELOG.md
 .editorconfig.backup
 .styleci.yml.backup
 hot
+**/caddy
+/frankenphp
+frankenphp-worker.php

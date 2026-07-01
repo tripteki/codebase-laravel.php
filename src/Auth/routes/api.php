@@ -41,6 +41,7 @@ Route::get("v1/auth/me", [ UserController::class, "show", ])
     ->middleware([
         "auth:api",
         "jwt.scope:ACCESS_TOKEN",
+        "tenant.user",
         ...Throttle::middleware("api-read"),
     ]);
 
@@ -48,6 +49,12 @@ Route::post("v1/auth/email/verification-notification", [ EmailVerificationNotifi
     ->middleware([
         "auth:api",
         "jwt.scope:ACCESS_TOKEN",
+        ...Throttle::middleware("3,1"),
+    ]);
+
+Route::post("v1/auth/resend-verification", [ EmailVerificationNotificationController::class, "resend", ])
+    ->middleware([
+        "guest:api",
         ...Throttle::middleware("3,1"),
     ]);
 

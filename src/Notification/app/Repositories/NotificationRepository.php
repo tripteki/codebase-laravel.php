@@ -19,10 +19,23 @@ class NotificationRepository extends BaseRepository
         return parent::accessAll(
             fn () => $model,
             sortables: [ "id", "type", "updated_at", "read_at", ],
-            defaultSorts: [ "-updated_at", "-read_at", ],
+            defaultSorts: [ "-updated_at", ],
             filterables: [
-                AllowedFilter::partial("type"),
-                AllowedFilter::exact("id"),
+                AllowedFilter::exact("type"),
+                AllowedFilter::callback("q", function ($query, $value): void {
+                    $term = trim((string) $value);
+
+                    if ($term !== "") {
+                        $query->where("type", "like", "%{$term}%");
+                    }
+                }),
+                AllowedFilter::callback("search", function ($query, $value): void {
+                    $term = trim((string) $value);
+
+                    if ($term !== "") {
+                        $query->where("type", "like", "%{$term}%");
+                    }
+                }),
                 AllowedFilter::callback("status", function ($query, $value): void {
                     if ((string) $value === "unread") {
                         $query->whereNull("read_at");
@@ -54,6 +67,20 @@ class NotificationRepository extends BaseRepository
     /**
      * @return int
      */
+    public function deleteAll(): int
+    {
+        $count = $this->getUser()->notifications()->count();
+
+        parent::mutateDelete(function (): void {
+            $this->getUser()->notifications()->delete();
+        });
+
+        return $count;
+    }
+
+    /**
+     * @return int
+     */
     public function count(): int
     {
         return $this->getUser()->notifications()->count();
@@ -65,7 +92,7 @@ class NotificationRepository extends BaseRepository
      */
     public function read(int|string $id): ?Notification
     {
-        $model = $this->getUser()->unreadNotifications()->findOrFail($id);
+        $model = $this->getUser()->notifications()->findOrFail($id);
 
         return parent::mutateUpdate(
             fn () => $model->markAsRead() ? null : $model,

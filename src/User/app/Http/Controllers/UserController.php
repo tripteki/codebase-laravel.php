@@ -3,6 +3,7 @@
 namespace Modules\User\App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
+use App\Rules\ImageUpload;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\User\App\Dtos\UserMeUpdateDto;
@@ -47,6 +48,9 @@ class UserController extends BaseController
             new OA\Response(ref: "#/components/responses/Forbidden", response: 403),
         ],
     )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show(): JsonResponse
     {
         return response()->json($this->userService->getMe(), 200);
@@ -94,7 +98,7 @@ class UserController extends BaseController
     public function update(UserMeUpdateDto $userData, Request $request): JsonResponse
     {
         $request->validate([
-            "avatar" => ["nullable", "image", "mimes:jpeg,jpg,png,gif,webp", "max:2048"],
+            "avatar" => [ "nullable", new ImageUpload(), ],
         ]);
 
         return response()->json(
@@ -146,7 +150,7 @@ class UserController extends BaseController
     public function updateMultipart(UserMeUpdateDto $userData, Request $request): JsonResponse
     {
         $request->validate([
-            "avatar" => ["nullable", "image", "mimes:jpeg,jpg,png,gif,webp", "max:2048"],
+            "avatar" => [ "nullable", new ImageUpload(), ],
         ]);
 
         return response()->json(
@@ -192,6 +196,8 @@ class UserController extends BaseController
      */
     public function access(): JsonResponse
     {
+        sync_permissions_team_context();
+
         return response()->json($this->userService->access(), 200);
     }
 }

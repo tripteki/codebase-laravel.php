@@ -16,20 +16,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
+use App\Http\Responses\ApiErrorResponse;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Hash;
-use Modules\Auth\App\Notifications\VerifyNotification;
+use Modules\Auth\App\Mail\VerifyEmailMail;
+use Modules\Event\App\Support\AuthAddOnsHelper;
+use Modules\Event\App\Support\TenantMailHelper;
 use Modules\Notification\App\Models\Notification as NotificationModel;
 use Modules\User\Database\Factories\UserFactory;
 use NotificationChannels\WebPush\HasPushSubscriptions as NotifiablePushTrait;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity as LogTrait;
 use Spatie\Permission\Traits\HasRoles as ACLTrait;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 use Tymon\JWTAuth\Contracts\JWTSubject as IAuthJWT;
 
 class User extends Authenticatable implements AuthenticatableContract, AuthorizableContract, IAuthJWT, ResetableContract, VerifyableContract
 {
+    /**
+     * @var list<string>
+     */
+    public static array $recordEvents = [
+        "created",
+        "updated",
+    ];
+
     use ACLTrait,
         AuthorizableTrait,
+        BelongsToTenant,
         CanResetPasswordTrait,
         HasFactory,
         HasUlids,
@@ -53,6 +67,7 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
         "email",
         "password",
         "log_activities",
+        "tenant_id",
     ];
 
     /**
@@ -138,6 +153,15 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
     }
 
     /**
+     * @param string $eventName
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "user ".$eventName;
+    }
+
+    /**
      * @return mixed
      */
     public function getJWTIdentifier()
@@ -170,6 +194,96 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    /**
+     * @param string $name
+     * @param string|null $exceptId
+     * @param string|null $tenantId
+     * @return bool
+     */
+    public static function nameIsTaken(string $name, ?string $exceptId = null, ?string $tenantId = null): bool
+    {
+        $name = trim($name);
+
+        if ($name === "") {
+            return false;
+        }
+
+        $query = static::query()
+            ->withoutTenancy()
+            ->withTrashed()
+            ->where("name", $name);
+
+        if ($exceptId !== null && $exceptId !== "") {
+            $query->whereKeyNot($exceptId);
+        }
+
+        if ($tenantId === null || $tenantId === "") {
+            $query->whereNull("tenant_id");
+        } else {
+            $query->where("tenant_id", $tenantId);
+        }
+
+        return $query->exists();
+    }
+
+    /**
+     * @param string $name
+     * @param string|null $exceptId
+     * @param string|null $tenantId
+     * @return void
+     */
+    public static function ensureNameIsAvailable(string $name, ?string $exceptId = null, ?string $tenantId = null): void
+    {
+        if (static::nameIsTaken($name, $exceptId, $tenantId)) {
+            throw new HttpResponseException(ApiErrorResponse::message(__("user.name_already_exists"), 400));
+        }
+    }
+
+    /**
+     * @param string $email
+     * @param string|null $exceptId
+     * @param string|null $tenantId
+     * @return bool
+     */
+    public static function emailIsTaken(string $email, ?string $exceptId = null, ?string $tenantId = null): bool
+    {
+        $email = trim($email);
+
+        if ($email === "") {
+            return false;
+        }
+
+        $query = static::query()
+            ->withoutTenancy()
+            ->withTrashed()
+            ->where("email", $email);
+
+        if ($exceptId !== null && $exceptId !== "") {
+            $query->whereKeyNot($exceptId);
+        }
+
+        if ($tenantId === null || $tenantId === "") {
+            $query->whereNull("tenant_id");
+        } else {
+            $query->where("tenant_id", $tenantId);
+        }
+
+        return $query->exists();
+    }
+
+    /**
+     * @param string $email
+     * @param string|null $exceptId
+     * @param string|null $tenantId
+     * @return void
+     */
+    public static function ensureEmailIsAvailable(string $email, ?string $exceptId = null, ?string $tenantId = null): void
+    {
+        if (static::emailIsTaken($email, $exceptId, $tenantId)) {
+            throw new HttpResponseException(ApiErrorResponse::message(__("user.email_already_exists"), 400));
+        }
     }
 
     /**
@@ -239,6 +353,26 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyNotification);
+        AuthAddOnsHelper::initializeForUser($this);
+
+        if (! AuthAddOnsHelper::isMailingEnabled()) {
+            return;
+        }
+
+        $email = $this->getEmailForVerification();
+
+        TenantMailHelper::send(
+            $email,
+            fn () => new VerifyEmailMail(
+                userName: $this->displayName(),
+                userNameLabel: $this->displayNameLabel(),
+                userEmail: $email,
+                verificationUrl: signed_auth_frontend_url(
+                    $this->tenant_id !== null ? (string) $this->tenant_id : null,
+                    auth_verify_email_path($email),
+                ),
+            ),
+            $this->tenant_id !== null ? (string) $this->tenant_id : null,
+        );
     }
 }

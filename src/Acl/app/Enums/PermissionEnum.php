@@ -3,7 +3,7 @@
 namespace Modules\Acl\App\Enums;
 
 /**
- * @enum PermissionEnum
+ * @enum \Modules\Acl\App\Enums\PermissionEnum
  */
 enum PermissionEnum: string
 {

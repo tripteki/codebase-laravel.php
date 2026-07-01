@@ -3,6 +3,7 @@
 namespace Modules\User\App\Providers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Modules\User\App\Events\UserAdminActivated;
 use Modules\User\App\Events\UserAdminDeactivated;
@@ -12,6 +13,7 @@ use Modules\User\App\Events\UserAdminImported;
 use Modules\User\App\Events\UserAdminImportedFailed;
 use Modules\User\App\Listeners\UserAdminAccountMailListener;
 use Modules\User\App\Listeners\UserAdminOperationDatabaseListener;
+use Modules\User\App\Support\AccountNotifier;
 use Modules\User\App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +53,13 @@ class UserServiceProvider extends ServiceProvider
         Event::listen(UserAdminExportedFailed::class, [ $databaseListener, "handleExportedFailed", ]);
         Event::listen(UserAdminActivated::class, [ $mailListener, "handleActivated", ]);
         Event::listen(UserAdminDeactivated::class, [ $mailListener, "handleDeactivated", ]);
+        Event::listen(Verified::class, function (Verified $event): void {
+            $verifiedUser = $event->user;
+
+            if ($verifiedUser instanceof User) {
+                AccountNotifier::afterEmailVerified($verifiedUser->fresh() ?? $verifiedUser);
+            }
+        });
     }
 
     /**

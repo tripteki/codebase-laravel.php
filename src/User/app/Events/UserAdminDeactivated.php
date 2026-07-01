@@ -29,7 +29,7 @@ class UserAdminDeactivated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [ new PrivateChannel("user.".$this->userId), ];
+        return [ new PrivateChannel("user.".$this->user->getKey()), ];
     }
 
     /**

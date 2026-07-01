@@ -41,10 +41,10 @@ return [
     "env" => env("APP_ENV", "production"),
     "debug" => (bool) env("APP_DEBUG", false),
 
-    "timezone" => env("APP_TIMEZONE", "UTC"),
-    "locale" => env("APP_LOCALE", "en"),
-    "fallback_locale" => env("APP_FALLBACK_LOCALE", "en"),
-    "faker_locale" => env("APP_FAKER_LOCALE", "en_US"),
+    "timezone" => env("APP_TIMEZONE", env("TIMEZONE", "UTC")),
+    "locale" => env("APP_LOCALE", env("LOCALE", "en")),
+    "fallback_locale" => env("APP_FALLBACK_LOCALE", env("FALLBACK_LOCALE", "en")),
+    "faker_locale" => env("APP_FAKER_LOCALE", env("FAKER_LOCALE", "en_US")),
 
     "key" => env("APP_KEY"),
     "cipher" => "AES-256-CBC",

@@ -12,7 +12,9 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Modules\Auth\App\Support\PasswordResetTokenHelper;
+use Modules\Event\App\Support\AuthAddOnsHelper;
 use Modules\User\App\Dtos\UserTransformerDto;
+use Modules\User\App\Support\SecurityNotifier;
 use OpenApi\Attributes as OA;
 
 class NewPasswordController extends BaseController
@@ -31,6 +33,7 @@ class NewPasswordController extends BaseController
                         new OA\Property(property: "email", type: "string", description: "Email"),
                         new OA\Property(property: "password", type: "string", description: "Password"),
                         new OA\Property(property: "password_confirmation", type: "string", description: "Password Confirmation"),
+                        new OA\Property(property: "tenant", type: "string", description: "Tenant slug"),
                     ],
                 ),
             ),
@@ -48,12 +51,29 @@ class NewPasswordController extends BaseController
     {
         $request->validate([
             "token" => [ "required", "string", ],
-            "email" => [ "required", "string", "email", ],
-            "password" => [ "required", "confirmed", Rules\Password::defaults(), ],
+            "email" => [ "required", "string", "email:rfc,filter", ],
+            "password" => [ "required", "string", "min:8", Rules\Password::defaults(), ],
+            "password_confirmation" => [ "bail", "required", "string", "same:password", ],
+            "tenant" => [ "nullable", "string", ],
+        ], [
+            "password_confirmation.required" => __("user.auth.password_confirmation_required"),
+            "password_confirmation.same" => __("user.auth.password_mismatch"),
         ]);
 
         $email = $request->email;
-        $user = User::query()->where("email", $email)->first();
+        $tenantId = PasswordResetTokenHelper::normalizeTenantId($request->input("tenant"));
+
+        $userQuery = User::query()
+            ->withoutTenancy()
+            ->where("email", $email);
+
+        if ($tenantId !== null) {
+            $userQuery->where("tenant_id", $tenantId);
+        } else {
+            $userQuery->whereNull("tenant_id");
+        }
+
+        $user = $userQuery->first();
 
         if ($user === null) {
             throw ValidationException::withMessages([
@@ -61,7 +81,10 @@ class NewPasswordController extends BaseController
             ]);
         }
 
-        if (! PasswordResetTokenHelper::verifyBrokerToken($email, $request->token)) {
+        AuthAddOnsHelper::initializeForUser($user);
+        AuthAddOnsHelper::abortIfPasswordResetDisabled();
+
+        if (! PasswordResetTokenHelper::verifyHashedToken($email, $request->token, $tenantId)) {
             throw ValidationException::withMessages([
                 "email" => [ __("passwords.token"), ],
             ]);
@@ -72,7 +95,9 @@ class NewPasswordController extends BaseController
             "remember_token" => Str::random(60),
         ])->save();
 
-        PasswordResetTokenHelper::delete($email);
+        PasswordResetTokenHelper::delete($email, $tenantId);
+
+        SecurityNotifier::passwordChanged($user->fresh() ?? $user);
 
         event(new PasswordReset($user));
 

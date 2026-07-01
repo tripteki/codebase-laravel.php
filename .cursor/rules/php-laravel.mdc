@@ -1,143 +1,176 @@
 ---
-description: Laravel module patterns — controllers, OpenAPI, events, validation, queues
-globs: "src/**/*.php"
+description: Laravel module patterns — controllers, OpenAPI, events, validation, queues, mail
+globs: "{src,app}/**/*.php"
 alwaysApply: false
 ---
 
 # Laravel Module Implementation Patterns
 
+## Format
+
+Pint `laravel` preset with `pint.json`. Indent 4, double quotes, trailing commas in multiline arrays, arguments, and parameters. No space before `(`. Class and method braces go on the next line. Arrays keep inner spaces.
+
+```php
+$roles = array_map(fn (RoleEnum $role): string => $role->value, RoleEnum::cases());
+
+return [ new PrivateChannel("user.".$this->userId), ];
+```
+
+Every property, method, and constructor has PHPDoc. Class names in tags are fully qualified with a leading `\`. Constructors use `@return void`.
+
+```php
+/**
+ * @param \Modules\User\App\Repositories\UserAdminRepository $userAdminRepository
+ * @return void
+ */
+public function handle(UserAdminRepository $userAdminRepository): void
+```
+
 ## Controller → Service → Repository
 
 ```php
-// Controller: thin, delegates everything
-class UserAdminController extends Controller
+class UserAdminController extends BaseController
 {
-    public function __construct(private UserAdminService $service) {}
-
-    #[OA\Get(path: '/api/v1/admin/users', tags: ['User'])]
-    public function index(Request $request): JsonResponse
+    #[OA\Get(
+        path: "/api/v1/admin/users",
+        tags: ["Admin Users"],
+        summary: "Index",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(ref: "#/components/responses/OffsetPaginationSuccess", response: 200),
+        ],
+    )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(): JsonResponse
     {
-        return response()->json($this->service->paginate($request));
+        $this->authorize("viewAny", User::class);
+
+        return response()->json($this->userAdminService->all(), 200);
     }
-}
-
-// Service: business logic, dispatches events
-class UserAdminService
-{
-    public function paginate(Request $request): array { /* ... */ }
-}
-
-// Repository: database queries only
-class UserRepository
-{
-    public function findById(int $id): ?User { /* ... */ }
 }
 ```
 
-- Never put business logic in controllers
-- Never put HTTP concerns in services
-- Use Spatie Query Builder in services for filterable/sortable list endpoints
+- Controllers stay thin: authorize, read the DTO, call the service, return JSON
+- Services hold business rules and dispatch events
+- Repositories hold queries
+- PHPDoc sits between the `#[OA\...]` attribute and the method
 
 ## OpenAPI documentation
 
-```php
-use Modules\User\App\Helpers\OpenApiDocument;
-
-// Use OpenApiDocument helper for consistent swagger structure
-#[OA\Get(
-    path: '/api/v1/auth/login',
-    tags: ['UserAuth'],          // Always 'UserAuth' for auth endpoints
-    summary: 'Login user',
-    // ...
-)]
-```
-
-- All auth endpoints: tag = `UserAuth`
-- All admin endpoints: tag = `User` (or domain-specific)
 - Use PHP 8 attributes (`#[OA\...]`), not annotations
+- Auth endpoints use tag `UserAuth`
+- Admin endpoints use `Admin Users`, `Admin Roles`, `Admin Permissions`, `Admin Activities`, `Admin Notifications`, `Admin Settings`
+- User endpoints use `Users`, `Notifications`, `Settings`
 
 ## Validation & error format
 
-```php
-// Custom exception handler returns FastAPI-style errors
-// HTTP 422:
-return response()->json([
-    'detail' => [
-        ['loc' => ['body', 'email'], 'msg' => 'The email field is required.', 'type' => 'value_error'],
-    ],
-], 422);
+`ApiValidationResponse` turns every `ValidationException` into the FastAPI shape:
+
+```json
+{ "detail": [{ "type": "value_error", "loc": ["body", "email"], "msg": "value is not a valid email address: An email address must have an @-sign.", "input": "ab", "ctx": { "reason": "An email address must have an @-sign." } }] }
 ```
 
-- Do **not** return Laravel's default `{ "message": "...", "errors": { "email": ["..."] } }` format
-- Use Spatie Data DTOs in `Dtos/` for request validation and response shaping
+- Default rule messages become the FastAPI sentences (`Field required`, `String should have at least 8 characters`, …)
+- Email rules use `email:rfc,filter` so `a@b` and `test@localhost` fail like FastAPI's email validator
+- Name-taken and email-taken are HTTP 400 `{ "detail": "..." }`, not 422
+- Other errors use `ApiErrorResponse::message($message, $status)` → `{ "detail": "..." }`
+- Do **not** return Laravel's default `{ "message": "...", "errors": { ... } }`
 
 ## Events & broadcasting
 
 ```php
-// Event
-class UserAdminImported extends ShouldBroadcast
+class UserAdminExported implements ShouldBroadcast
 {
+    /**
+     * @return array<int, \Illuminate\Broadcasting\Channel>
+     */
     public function broadcastOn(): array
     {
-        return [new PrivateChannel("user.{$this->userId}")];
+        return [ new PrivateChannel("user.".$this->userId), ];
     }
 
+    /**
+     * @return string
+     */
     public function broadcastAs(): string
     {
-        return 'v1.user.admin.imported';
+        return "v1.user.admin.exported";
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            "userId" => $this->userId,
+            "filename" => $this->filename,
+            "fileUrl" => $this->fileUrl,
+        ];
     }
 }
 ```
 
-- Event prefix: `.v1.user.admin.*` on private channel `user.{id}`
-- Frontend listens via Laravel Echo (Reverb driver)
-- Event names must match NestJS and FastAPI exactly
+- Event names and `broadcastWith()` keys must match FastAPI and Nest exactly
+- Internal fields (`filePath`, `message`) stay on the event for listeners and do not go into `broadcastWith()`
+- The frontend listens with Echo on `user.{id}` and a leading dot (`.v1.user.admin.exported`)
 
 ## Async jobs (import/export)
 
 ```php
-// Jobs run on dedicated queue
-dispatch(new UserAdminImportJob($file))->onQueue('user-admin-queue');
+UserAdminExportJob::dispatch($userId, $type, $filters, $orders);
 ```
 
-- Import: `Imports/` classes (maatwebsite/excel)
-- Export: `Exports/` classes
-- Queue name: `user-admin-queue`
-- Dispatch event after job completes
+- Jobs set their queue in the constructor: `user-admin-queue`, `acl-admin-queue`, or `event-admin-queue`
+- Queued broadcasts (`ShouldBroadcast`) go to `default`. The worker must list every queue: `user-admin-queue,acl-admin-queue,event-admin-queue,notifications,default`
+- Import: `Imports/` classes. Export: `Exports/` classes (maatwebsite/excel)
+- Export files go to the public disk under `export/`. `fileUrl` is `"storage/export/".$filename`
+- Fire the completed or failed event at the end of the job
 
 ## DTOs (Spatie Data)
 
 ```php
-class UserDto extends Data
+class UserIdentifierDto extends Data
 {
-    public function __construct(
-        public int $id,
-        public string $email,
-        public string $name,
-    ) {}
+    #[FromRouteParameter("id")]
+    /**
+     * @var string|null
+     */
+    public ?string $id;
 }
 ```
 
-- Request DTOs: validate input via `Data::from($request)`
-- Response DTOs: shape consistent API output
-- Located in `{Module}/app/Dtos/`
+- IDs are ULID strings
+- Validator DTOs read and validate the request (`rules()`, `withValidator()`)
+- Transformer DTOs shape the response (`UserTransformerDto::fromUser($user)`)
+- Located in `src/{Module}/app/Dtos/`
+
+## Mail
+
+- Blade views in `src/Auth/resources/views/emails/` extend `auth::layouts.mail` (dark card, header in the primary color, logo, app name pill, user panel, button, signature, footer)
+- Copy comes from `auth.*` and `user.account_*` translations so the text matches FastAPI and Nest
+- Single-button mails use the 180px button. Only mails with a second button use the 140px pair
 
 ## Adding a new module
 
-1. Create `src/{Module}/` following existing module structure
+1. Create `src/{Module}/` following the existing module structure
 2. Add `composer.json` with module dependencies
-3. Register module in `modules_statuses.json`
-4. Add routes in `{Module}/routes/`
-5. Add feature tests in `{Module}/tests/Feature/`
-6. Add translations in `{Module}/lang/{en,ms,id}/`
+3. Register the module in `modules_statuses.json`
+4. Add routes in `src/{Module}/routes/`
+5. Add translations in `src/{Module}/lang/{en,id,ms}/`
 
 ## Common pitfalls (avoid)
 
 | Problem | Fix |
 |---------|-----|
-| Laravel default error format | Return `{ detail: [...] }` for 422 |
+| Laravel default error format | Return `{ detail: [...] }` for 422 and `{ detail }` otherwise |
+| Plain `email` rule | Use `email:rfc,filter` |
 | Swagger tag `Auth` | Use `UserAuth` for auth endpoints |
-| GraphQL endpoint | This project is REST-only — do not add GraphQL |
-| Missing queue worker | Run `queue:work` alongside Octane |
-| Error shape change without frontend update | Keep contract aligned with Nest/FastAPI/Next/Nuxt |
-| Business logic in controller | Extract to Service class |
+| GraphQL endpoint | REST only. Do not add GraphQL |
+| Extra keys in `broadcastWith()` | Keep the FastAPI and Nest payload keys only |
+| Absolute export URL | Use `storage/export/{filename}` |
+| Missing queue worker | Run `queue:work` alongside Octane unless `QUEUE_CONNECTION=sync` |
+| Contract change without frontend update | Keep the contract aligned with FastAPI, Nest, Nuxt, and Next |
+| Business logic in controller | Move it to the service |

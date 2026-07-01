@@ -11,6 +11,8 @@ class AclSeeder extends Seeder
      */
     public function run(): void
     {
+        sync_permissions_team_context();
+
         $this->call([
 
             PermissionSeeder::class,

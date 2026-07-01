@@ -96,6 +96,7 @@ use OpenApi\Attributes as OA;
     description: "Success.",
     content: new OA\JsonContent(
         properties: [
+            new OA\Property(property: "total", type: "integer"),
             new OA\Property(property: "totalPage", type: "integer"),
             new OA\Property(property: "perPage", type: "integer"),
             new OA\Property(property: "currentPage", type: "integer"),

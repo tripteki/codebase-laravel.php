@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
+    /**
+     * @var string
+     */
     protected string $moduleNamespace = "Modules\\Auth\\App\\Http\\Controllers";
 
     /**

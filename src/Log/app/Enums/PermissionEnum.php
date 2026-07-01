@@ -3,7 +3,7 @@
 namespace Modules\Log\App\Enums;
 
 /**
- * @enum PermissionEnum
+ * @enum \Modules\Log\App\Enums\PermissionEnum
  */
 enum PermissionEnum: string
 {

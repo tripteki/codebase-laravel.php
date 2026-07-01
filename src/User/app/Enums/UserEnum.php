@@ -3,7 +3,7 @@
 namespace Modules\User\App\Enums;
 
 /**
- * @enum UserEnum
+ * @enum \Modules\User\App\Enums\UserEnum
  */
 enum UserEnum: string
 {

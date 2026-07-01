@@ -1,4 +1,8 @@
-<div class="email-signature mt-4">
-    <p class="mb-1 text-muted small">{{ __('auth.thanks') }}</p>
-    <p class="mb-0 signature-brand"><strong>{{ $displayName }}</strong></p>
-</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;border-top:1px solid #374151;">
+    <tr>
+        <td style="padding-top:18px;">
+            <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;line-height:1.5;">{{ __('auth.thanks') }}</p>
+            <p style="margin:0;font-size:15px;font-weight:700;letter-spacing:0.08em;color:#f9fafb;">{{ $appName }}</p>
+        </td>
+    </tr>
+</table>

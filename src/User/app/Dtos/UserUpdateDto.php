@@ -4,6 +4,7 @@ namespace Modules\User\App\Dtos;
 
 use App\Models\User;
 use Illuminate\Validation\Rule;
+use Modules\Acl\App\Enums\RoleEnum;
 use Spatie\LaravelData\Attributes\FromRouteParameter;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
@@ -22,6 +23,7 @@ class UserUpdateDto extends Data
      * @param string|null $email
      * @param string|null $password
      * @param string|null $password_confirmation
+     * @param string|null $role
      * @return void
      */
     public function __construct(
@@ -30,6 +32,7 @@ class UserUpdateDto extends Data
         public ?string $email = null,
         public ?string $password = null,
         public ?string $password_confirmation = null,
+        public ?string $role = null,
     ) {}
 
     /**
@@ -38,22 +41,24 @@ class UserUpdateDto extends Data
      */
     public static function rules(ValidationContext $context): array
     {
-        $userId = $context->payload["id"] ?? null;
-
         return [
-            "name" => [ "sometimes", "nullable", "string", "min:2", "max:16", ],
+            "name" => [ "sometimes", "nullable", "string", "min:1", "max:255", ],
             "full_name" => [ "sometimes", "nullable", "string", "max:255", ],
+            "role" => [
+                "sometimes",
+                "nullable",
+                "string",
+                Rule::enum(RoleEnum::class),
+            ],
             "email" => [
                 "sometimes",
                 "nullable",
                 "string",
-                "min:8",
-                "max:48",
-                "email",
-                Rule::unique(User::class)->ignore($userId),
+                "max:255",
+                "email:rfc,filter",
             ],
-            "password" => [ "sometimes", "nullable", "string", "min:8", "max:16", ],
-            "password_confirmation" => [ "nullable", "string", ],
+            "password" => [ "bail", "sometimes", "nullable", "string", "min:8", "required_with:password_confirmation", ],
+            "password_confirmation" => [ "bail", "nullable", "string", "required_with:password", "same:password", ],
         ];
     }
 
@@ -105,5 +110,17 @@ class UserUpdateDto extends Data
     public static function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function messages(): array
+    {
+        return [
+            "password.required_with" => __("user.auth.password_required"),
+            "password_confirmation.required_with" => __("user.auth.password_confirmation_required"),
+            "password_confirmation.same" => __("user.auth.password_mismatch"),
+        ];
     }
 }

@@ -52,6 +52,16 @@ class NotificationService extends BaseService
     }
 
     /**
+     * @return \Modules\Notification\App\Dtos\NotificationBatchPayloadDto
+     */
+    public function deleteAll(): NotificationBatchPayloadDto
+    {
+        return NotificationBatchPayloadDto::from([
+            "count" => $this->notificationRepository->deleteAll(),
+        ]);
+    }
+
+    /**
      * @param \Modules\Notification\App\Dtos\UnreadNotificationValidatorDto $notificationData
      * @return \Modules\Notification\App\Dtos\NotificationTransformerDto
      */

@@ -16,6 +16,11 @@ use Spatie\QueryBuilder\QueryBuilder;
 abstract class Repository
 {
     /**
+     * @var int
+     */
+    protected int $maxLimitPage = 100;
+
+    /**
      * @var \Illuminate\Database\Eloquent\Model
      */
     protected Model $user;
@@ -50,10 +55,11 @@ abstract class Repository
         $sortables = [],
         $filterables = [],
         $defaultSorts = [],
-        $defaultFilters = []
-    )
-    {
-        $content = QueryBuilder::for($callback ());
+        $defaultFilters = [],
+    ) {
+        $this->normalizeListQueryParams(request(), $sortables);
+
+        $content = QueryBuilder::for ($callback ());
 
         if (! empty($sortables)) {
             $content = $content->allowedSorts(...$sortables);
@@ -72,7 +78,7 @@ abstract class Repository
                         return $default !== null
                             ? AllowedFilter::scope($key)->default($default)
                             : AllowedFilter::scope($key);
-                    }, $filterables)
+                    }, $filterables),
                 );
             } else {
                 $content = $content->allowedFilters(...$filterables);
@@ -93,32 +99,24 @@ abstract class Repository
      */
     protected function resolvePaginationParams(): array
     {
-        $request = request();
-
-        $this->applyCompatQueryParams($request);
-
-        $currentPage = max(1, (int) (
-            $request->query("currentPage")
-            ?? $request->query("current_page")
-            ?? $request->query("page", 1)
-        ));
-        $perPage = max(1, min(100, (int) (
-            $request->query("limitPage")
-            ?? $request->query("limit")
-            ?? $request->query("per_page", 10)
-        )));
-
-        return [ $currentPage, $perPage, ];
+        return QueryParser::parsePage(request(), $this->maxLimitPage);
     }
 
     /**
      * @param \Illuminate\Http\Request $request
+     * @param array $sortables
      * @return void
      */
-    protected function applyCompatQueryParams(\Illuminate\Http\Request $request): void
+    protected function normalizeListQueryParams(\Illuminate\Http\Request $request, array $sortables = []): void
     {
+        $allowedSorts = array_map(
+            static fn (mixed $sort): string => is_string($sort) ? ltrim($sort, "-") : (string) $sort->getName(),
+            $sortables,
+        );
+
         if ($request->query("sort") === null && filled($request->query("orders"))) {
             $sorts = collect(QueryParser::parseOrders((string) $request->query("orders")))
+                ->filter(fn (array $order): bool => in_array($order["field"], $allowedSorts, true))
                 ->map(fn (array $order): string => ($order["direction"] === "desc" ? "-" : "").$order["field"])
                 ->implode(",");
 
@@ -142,12 +140,11 @@ abstract class Repository
 
     /**
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
     public function accessGet(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = $callback ();
 
         return $content;
@@ -155,24 +152,20 @@ abstract class Repository
 
     /**
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
     public function mutateUpdate(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = null;
 
         DB::beginTransaction();
 
         try {
-
             $content = $callback ();
 
             DB::commit();
-
         } catch (Exception $exception) {
-
             DB::rollback();
 
             Log::info($exception->getMessage());
@@ -183,24 +176,20 @@ abstract class Repository
 
     /**
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
     public function mutateCreate(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = null;
 
         DB::beginTransaction();
 
         try {
-
             $content = $callback ();
 
             DB::commit();
-
         } catch (Exception $exception) {
-
             DB::rollback();
 
             Log::info($exception->getMessage());
@@ -211,24 +200,20 @@ abstract class Repository
 
     /**
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Model|Illuminate\Database\Eloquent\Collection|null
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
     public function mutateDelete(
-        callable $callback
-    ): Model|Collection|null
-    {
+        callable $callback,
+    ): Model|Collection|null {
         $content = null;
 
         DB::beginTransaction();
 
         try {
-
             $content = $callback ();
 
             DB::commit();
-
         } catch (Exception $exception) {
-
             DB::rollback();
 
             Log::info($exception->getMessage());

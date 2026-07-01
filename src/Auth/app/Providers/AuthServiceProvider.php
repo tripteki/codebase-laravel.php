@@ -73,13 +73,15 @@ class AuthServiceProvider extends ServiceProvider
     protected function registerVerificationUrls(): void
     {
         VerifyEmail::createUrlUsing(
-            fn ($notifiable): string => signed_frontend_url(
+            fn ($notifiable): string => signed_auth_frontend_url(
+                $notifiable->tenant_id !== null ? (string) $notifiable->tenant_id : null,
                 auth_verify_email_path($notifiable->getEmailForVerification()),
             ),
         );
 
         ResetPassword::createUrlUsing(
-            fn ($notifiable, $token): string => signed_frontend_url(
+            fn ($notifiable, $token): string => signed_auth_frontend_url(
+                $notifiable->tenant_id !== null ? (string) $notifiable->tenant_id : null,
                 auth_reset_password_path($notifiable->getEmailForPasswordReset()),
             ),
         );

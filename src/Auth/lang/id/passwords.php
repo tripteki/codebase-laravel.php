@@ -7,14 +7,12 @@ return [
     | Baris Bahasa Reset Kata Sandi
     |--------------------------------------------------------------------------
     |
-    | Baris bahasa berikut adalah baris default yang cocok dengan alasan
-    | yang diberikan oleh broker kata sandi untuk hasil percobaan
-    | pembaruan kata sandi, seperti kegagalan akibat kata sandi atau token reset yang tidak valid.
+    | Pesan untuk hasil reset kata sandi, seperti token reset yang tidak valid.
     |
     */
 
     'reset' => 'Kata sandi Anda telah direset.',
-    'sent' => 'Kami telah mengirimkan tautan reset kata sandi ke email Anda.',
+    'sent' => 'Jika email terdaftar, tautan reset telah dikirim',
     'throttled' => 'Silakan tunggu sebelum mencoba lagi.',
     'token' => 'Token reset kata sandi ini tidak valid.',
     'user' => "Kami tidak dapat menemukan pengguna dengan alamat email tersebut.",

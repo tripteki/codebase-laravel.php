@@ -3,7 +3,7 @@
 namespace Modules\Acl\App\Enums;
 
 /**
- * @enum RoleEnum
+ * @enum \Modules\Acl\App\Enums\RoleEnum
  */
 enum RoleEnum: string
 {
@@ -20,25 +20,16 @@ enum RoleEnum: string
     /**
      * @var string
      */
-    case SPEAKER = "speaker";
+    case USER = "user";
 
     /**
-     * @var string
+     * @return list<self>
      */
-    case EXHIBITOR = "exhibitor";
-
-    /**
-     * @var string
-     */
-    case SPONSOR = "sponsor";
-
-    /**
-     * @var string
-     */
-    case DELEGATE = "delegate";
-
-    /**
-     * @var string
-     */
-    case VISITOR = "visitor";
+    public static function tenantBootstrapRoles(): array
+    {
+        return [
+            self::ADMIN,
+            self::USER,
+        ];
+    }
 }

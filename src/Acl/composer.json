@@ -19,5 +19,10 @@
             "Modules\\Acl\\App\\": "app/",
             "Modules\\Acl\\Database\\Seeders\\": "Database/Seeders/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Acl\\Tests\\": "tests/"
+        }
     }
 }

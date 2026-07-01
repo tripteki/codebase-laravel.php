@@ -36,17 +36,10 @@ class NotificationTransformerDto extends Data
 
     /**
      * @param \Modules\Notification\App\Models\Notification $notification
-     * @param bool $withUser
      * @return self
      */
-    public static function fromNotification(Notification $notification, bool $withUser = false): self
+    public static function fromNotification(Notification $notification): self
     {
-        $user = null;
-
-        if ($withUser && $notification->relationLoaded("notifiable") && $notification->notifiable instanceof \App\Models\User) {
-            $user = UserTransformerDto::fromUser($notification->notifiable);
-        }
-
         return new self(
             id: $notification->id,
             user_id: (string) $notification->notifiable_id,
@@ -56,7 +49,7 @@ class NotificationTransformerDto extends Data
             created_at: self::castDate($notification->created_at),
             updated_at: self::castDate($notification->updated_at),
             deleted_at: self::castDate($notification->deleted_at),
-            user: $user,
+            user: null,
         );
     }
 

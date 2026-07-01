@@ -54,7 +54,6 @@ class UserAdminExported implements ShouldBroadcast
             "userId" => $this->userId,
             "filename" => $this->filename,
             "fileUrl" => $this->fileUrl,
-            "filePath" => $this->filePath,
         ];
     }
 }

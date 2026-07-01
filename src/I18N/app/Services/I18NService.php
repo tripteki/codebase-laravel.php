@@ -63,42 +63,53 @@ class I18NService extends BaseService
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return string
+     * @return string|null
      */
-    public function getLanguageFromCustomHeader(Request $request): string
+    public function getLanguageFromCustomHeader(Request $request): ?string
     {
-        if ($language = $request->header("x-lang")) $this->setLang($language);
-
-        return $language ?? $this->fallbackLang();
+        return $this->applyLang($request->header("x-lang"));
     }
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return string
+     * @return string|null
      */
-    public function getLanguageFromQueryString(Request $request): string
+    public function getLanguageFromQueryString(Request $request): ?string
     {
-        if ($language = $request->query("lang")) $this->setLang($language);
+        $language = $request->query("lang");
 
-        return $language ?? $this->fallbackLang();
+        return $this->applyLang(is_string($language) ? $language : null);
     }
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return string
+     * @return string|null
      */
-    public function getLanguageFromAcceptHeader(Request $request): string
+    public function getLanguageFromAcceptHeader(Request $request): ?string
     {
-        $language = null;
+        foreach (explode(",", (string) $request->header("accept-language", "")) as $part) {
+            $language = $this->applyLang(strtolower(trim(explode("-", explode(";", $part)[0])[0])));
 
-        if ($acceptLanguage = $request->header("accept-language")) {
-
-            $languages = explode(",", $acceptLanguage);
-            $language = strtok($languages[0], "-");
-
-            $this->setLang($language);
+            if ($language !== null) {
+                return $language;
+            }
         }
 
-        return $language ?? $this->fallbackLang();
+        return null;
+    }
+
+    /**
+     * @param string|null $lang
+     * @return string|null
+     */
+    protected function applyLang(?string $lang): ?string
+    {
+        if ($lang === null || $lang === "" || ! in_array($lang, $this->availableLangs(), true)) {
+            return null;
+        }
+
+        App::setLocale($lang);
+
+        return $lang;
     }
 }

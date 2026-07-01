@@ -2,10 +2,10 @@
 
 namespace Modules\Notification\Database\Seeders;
 
+use App\Support\AdminTenancySupport;
 use Illuminate\Database\Seeder;
 use Modules\Acl\App\Enums\GuardEnum;
 use Modules\Acl\App\Enums\RoleEnum;
-use Modules\Acl\App\Models\Role;
 use Modules\Notification\App\Enums\PermissionEnum;
 
 class RoleSeeder extends Seeder
@@ -16,17 +16,13 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $guard = GuardEnum::WEB->value;
-
-        $permissions = [
+        $permissions = AdminTenancySupport::currentTenantPermissions([
             PermissionEnum::NOTIFICATION_VIEW->value,
             PermissionEnum::NOTIFICATION_DELETE->value,
-            PermissionEnum::NOTIFICATION_RESTORE->value,
-        ];
+        ], $guard);
 
-        $superadmin = Role::where("name", RoleEnum::SUPERADMIN->value)->where("guard_name", $guard)->first();
-        $superadmin?->givePermissionTo($permissions);
-
-        $admin = Role::where("name", RoleEnum::ADMIN->value)->where("guard_name", $guard)->first();
-        $admin?->givePermissionTo($permissions);
+        foreach ([ RoleEnum::SUPERADMIN, RoleEnum::ADMIN, RoleEnum::USER, ] as $role) {
+            AdminTenancySupport::currentTenantRole($role->value, $guard)?->givePermissionTo($permissions);
+        }
     }
 }

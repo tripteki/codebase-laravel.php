@@ -84,10 +84,8 @@ return [
          * Change this if you want to use the teams feature and your related model's
          * foreign key is other than `team_id`.
          */
-        'team_foreign_key' => 'team_id',
+        'team_foreign_key' => 'tenant_id',
     ],
-
-
 
     /**
      * The class to use for interpreting wildcard permissions.
@@ -115,8 +113,6 @@ return [
          */
         'store' => 'default',
     ],
-
-
 
     /**
      * When set to true, the method for checking permissions will be registered on the gate.
@@ -152,7 +148,7 @@ return [
      * add 'team_foreign_key' to 'roles', 'model_has_roles', and 'model_has_permissions'
      * (view the latest version of this package's migration file)
      */
-    'teams' => false,
+    'teams' => env('PERMISSION_TEAMS', true),
 
     /**
      * The class to use to resolve the permissions team id

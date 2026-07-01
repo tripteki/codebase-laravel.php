@@ -2,15 +2,19 @@
 
 namespace Modules\User\App\Services;
 
+use App\Models\User;
 use App\Services\Service as BaseService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Modules\Event\App\Support\AuthAddOnsHelper;
 use Modules\User\App\Dtos\UserAccessTransformerDto;
 use Modules\User\App\Dtos\UserDto;
 use Modules\User\App\Dtos\UserMeTransformerDto;
 use Modules\User\App\Dtos\UserMeUpdateDto;
 use Modules\User\App\Dtos\UserTransformerDto;
 use Modules\User\App\Repositories\UserRepository;
+use Modules\User\App\Support\EmailChange;
+use Modules\User\App\Support\SecurityNotifier;
 
 class UserService extends BaseService
 {
@@ -53,6 +57,34 @@ class UserService extends BaseService
     {
         $user = $this->userRepository->get();
         $avatarPath = null;
+        $payload = $userData->userPayload();
+        $nextEmail = trim((string) ($payload["email"] ?? $user->email));
+        $emailChanged = strcasecmp($nextEmail, (string) $user->email) !== 0;
+
+        AuthAddOnsHelper::initializeForUser($user);
+
+        if ($emailChanged) {
+            User::ensureEmailIsAvailable(
+                $nextEmail,
+                (string) $user->getKey(),
+                $user->tenant_id !== null ? (string) $user->tenant_id : null,
+            );
+        }
+
+        $nextName = trim((string) ($payload["name"] ?? ""));
+
+        if ($nextName !== "" && $nextName !== (string) $user->name) {
+            User::ensureNameIsAvailable(
+                $nextName,
+                (string) $user->getKey(),
+                $user->tenant_id !== null ? (string) $user->tenant_id : null,
+            );
+        }
+
+        if ($emailChanged && AuthAddOnsHelper::isMailingEnabled()) {
+            unset($payload["email"]);
+            EmailChange::request($user, $nextEmail);
+        }
 
         if ($avatar instanceof UploadedFile) {
             if ($user->profile?->avatar) {
@@ -64,10 +96,14 @@ class UserService extends BaseService
 
         $updated = $this->userRepository->updateMe(
             $user,
-            $userData->userPayload(),
+            $payload,
             $userData->profilePayload(),
             $avatarPath,
         );
+
+        if (filled($userData->password)) {
+            SecurityNotifier::passwordChanged($updated, (string) $user->getKey());
+        }
 
         return UserMeTransformerDto::fromUser($updated);
     }
@@ -90,10 +126,23 @@ class UserService extends BaseService
 
     /**
      * @param \Modules\User\App\Dtos\UserDto $userData
+     * @param string|null $tenantId
      * @return \Modules\User\App\Dtos\UserTransformerDto
      */
-    public function create(UserDto $userData): UserTransformerDto
+    public function create(UserDto $userData, ?string $tenantId = null): UserTransformerDto
     {
-        return UserTransformerDto::fromUser($this->userRepository->create($userData->toArray()));
+        $userPayload = $userData->createPayload();
+
+        if (filled($tenantId)) {
+            $userPayload["tenant_id"] = $tenantId;
+        }
+
+        User::ensureNameIsAvailable((string) ($userPayload["name"] ?? ""), null, $tenantId);
+        User::ensureEmailIsAvailable((string) ($userPayload["email"] ?? ""), null, $tenantId);
+
+        return UserTransformerDto::fromUser($this->userRepository->create(
+            $userPayload,
+            $userData->profilePayload(),
+        ));
     }
 }

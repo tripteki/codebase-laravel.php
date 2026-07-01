@@ -20,6 +20,7 @@ class PermissionSeeder extends Seeder
             Permission::firstOrCreate([
                 "name" => $permission->value,
                 "guard_name" => $guard,
+                "tenant_id" => current_tenant_id(),
             ]);
         }
     }

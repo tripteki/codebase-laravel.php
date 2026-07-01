@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        if ($this->app->environment("production")) {
+            error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+        }
+
         $this->app->singleton(ExceptionHandler::class, Handler::class);
     }
 
@@ -26,10 +31,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(NotificationFailed::class, LogWebPushNotificationFailed::class);
+        Event::listen(JobProcessing::class, static fn () => sync_permissions_team_context());
 
         View::prependNamespace(
             "l5-swagger",
-            resource_path("views/vendor/l5-swagger")
+            resource_path("views/vendor/l5-swagger"),
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Modules\Auth\App\Dtos;
 
+use Illuminate\Validation\Rule;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
@@ -13,6 +14,7 @@ class AuthLoginDto extends Data
      * @param string|null $identifier
      * @param string|null $password
      * @param bool|null $remember
+     * @param string|null $tenant
      * @return void
      */
     public function __construct(
@@ -21,6 +23,7 @@ class AuthLoginDto extends Data
         public ?string $identifier = null,
         public ?string $password = null,
         public ?bool $remember = null,
+        public ?string $tenant = null,
     ) {}
 
     /**
@@ -40,9 +43,7 @@ class AuthLoginDto extends Data
             return $this->identifierKey;
         }
 
-        $value = $this->credentialValue();
-
-        return filter_var($value, FILTER_VALIDATE_EMAIL) ? "email" : "name";
+        return str_contains($this->credentialValue(), "@") ? "email" : "name";
     }
 
     /**
@@ -65,10 +66,15 @@ class AuthLoginDto extends Data
     {
         return [
             "identifierKey" => [ "nullable", "string", "in:email,name", ],
-            "identifierValue" => [ "required_without:identifier", "nullable", "string", ],
-            "identifier" => [ "required_without:identifierValue", "nullable", "string", ],
+            "identifierValue" => [
+                Rule::requiredIf(static fn (): bool => blank($context->payload["identifier"] ?? null)),
+                "nullable",
+                "string",
+            ],
+            "identifier" => [ "nullable", "string", ],
             "password" => [ "required", "string", "min:8", ],
             "remember" => [ "nullable", "boolean", ],
+            "tenant" => [ "nullable", "string", ],
         ];
     }
 

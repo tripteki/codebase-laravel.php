@@ -25,10 +25,22 @@ return [
         "*",
     ],
 
-    "allowed_origins" => array_values(array_filter([
+    "allowed_origins" => (static function (): array {
+        $raw = trim((string) env("CORS_ORIGIN", ""));
 
-        env("FRONTEND_URL"),
-    ])),
+        if ($raw === "") {
+            return array_values(array_filter([ env("FRONTEND_URL"), ]));
+        }
+
+        $origins = str_starts_with($raw, "[")
+            ? (array) json_decode($raw, true)
+            : explode(",", $raw);
+
+        return array_values(array_filter(array_map(
+            static fn (mixed $origin): string => trim((string) $origin),
+            $origins,
+        )));
+    })(),
 
     "allowed_origins_patterns" => [
 

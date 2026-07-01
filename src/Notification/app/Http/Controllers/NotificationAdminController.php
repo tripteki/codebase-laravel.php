@@ -45,6 +45,9 @@ class NotificationAdminController extends BaseController
             new OA\Response(ref: "#/components/responses/Forbidden", response: 403),
         ]
     )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(): JsonResponse
     {
         $this->authorize("viewAny", Notification::class);
@@ -66,6 +69,10 @@ class NotificationAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ]
     )]
+    /**
+     * @param \Modules\Notification\App\Dtos\NotificationValidatorDto $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show(NotificationValidatorDto $request): JsonResponse
     {
         $notification = Notification::withTrashed()->findOrFail($request->id);
@@ -88,6 +95,10 @@ class NotificationAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ]
     )]
+    /**
+     * @param \Modules\Notification\App\Dtos\NotificationValidatorDto $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deactivate(NotificationValidatorDto $request): JsonResponse
     {
         $notification = Notification::findOrFail($request->id);
@@ -110,6 +121,10 @@ class NotificationAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ]
     )]
+    /**
+     * @param \Modules\Notification\App\Dtos\NotificationValidatorDto $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function activate(NotificationValidatorDto $request): JsonResponse
     {
         $notification = Notification::withTrashed()->findOrFail($request->id);

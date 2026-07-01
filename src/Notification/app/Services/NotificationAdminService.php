@@ -33,7 +33,7 @@ class NotificationAdminService extends BaseService
 
         return $this->toOffsetPagination(
             $paginator,
-            fn ($notification) => NotificationTransformerDto::fromNotification($notification, true),
+            fn ($notification) => NotificationTransformerDto::fromNotification($notification),
         );
     }
 
@@ -44,8 +44,7 @@ class NotificationAdminService extends BaseService
     public function get(NotificationValidatorDto $notificationData): NotificationTransformerDto
     {
         return NotificationTransformerDto::fromNotification(
-            $this->notificationAdminRepository->get($notificationData->id),
-            true
+            $this->notificationAdminRepository->get($notificationData->id)
         );
     }
 
@@ -56,8 +55,7 @@ class NotificationAdminService extends BaseService
     public function delete(NotificationValidatorDto $notificationData): NotificationTransformerDto
     {
         return NotificationTransformerDto::fromNotification(
-            $this->notificationAdminRepository->delete($notificationData->id),
-            true
+            $this->notificationAdminRepository->delete($notificationData->id)
         );
     }
 
@@ -68,8 +66,7 @@ class NotificationAdminService extends BaseService
     public function restore(NotificationValidatorDto $notificationData): NotificationTransformerDto
     {
         return NotificationTransformerDto::fromNotification(
-            $this->notificationAdminRepository->restore($notificationData->id),
-            true
+            $this->notificationAdminRepository->restore($notificationData->id)
         );
     }
 }

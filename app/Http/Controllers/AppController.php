@@ -17,10 +17,17 @@ class AppController extends Controller
             new OA\Response(response: 200, description: "Success."),
         ]
     )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function version(): JsonResponse
     {
         return response()->json([
-            "version" => (string) config("app.version"),
+            "status" => 200,
+            "message" => "Ok",
+            "data" => [
+                "version" => (string) config("app.version"),
+            ],
         ], 200);
     }
 
@@ -29,10 +36,12 @@ class AppController extends Controller
         tags: ["App"],
         summary: "Status",
         responses: [
-            new OA\Response(response: 200, description: "Healthy."),
-            new OA\Response(response: 503, description: "Unhealthy."),
+            new OA\Response(response: 200, description: "Health status."),
         ]
     )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function status(): JsonResponse
     {
         $memoryThreshold = app()->isProduction() ? 150 * 1024 * 1024 : 500 * 1024 * 1024;
@@ -42,9 +51,17 @@ class AppController extends Controller
         $info = [
             "memory_allocation" => [
                 "status" => $heapUsage < $memoryThreshold ? "up" : "down",
+                "heap_used" => $heapUsage,
+                "heap_used_mb" => round($heapUsage / (1024 * 1024), 2),
+                "threshold" => $memoryThreshold,
+                "threshold_mb" => round($memoryThreshold / (1024 * 1024), 2),
             ],
             "memory_total" => [
                 "status" => $rssUsage < $memoryThreshold ? "up" : "down",
+                "rss_used" => $rssUsage,
+                "rss_used_mb" => round($rssUsage / (1024 * 1024), 2),
+                "threshold" => $memoryThreshold,
+                "threshold_mb" => round($memoryThreshold / (1024 * 1024), 2),
             ],
         ];
 
@@ -65,10 +82,17 @@ class AppController extends Controller
         $healthy = collect($info)->every(fn (array $check) => ($check["status"] ?? "down") === "up");
 
         return response()->json([
-            "status" => $healthy ? "ok" : "error",
-            "info" => $info,
-            "error" => $healthy ? (object) [] : $info,
-            "details" => $info,
-        ], $healthy ? 200 : 503);
+            "status" => 200,
+            "message" => "Ok",
+            "data" => [
+                "status" => $healthy ? "up" : "down",
+                "memory" => [
+                    "memory_allocation" => $info["memory_allocation"],
+                    "memory_total" => $info["memory_total"],
+                ],
+                "database" => $info["database"],
+                "cache" => $info["cache"],
+            ],
+        ], 200);
     }
 }

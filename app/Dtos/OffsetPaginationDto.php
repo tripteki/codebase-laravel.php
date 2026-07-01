@@ -8,6 +8,7 @@ use Spatie\LaravelData\Data;
 class OffsetPaginationDto extends Data
 {
     /**
+     * @param int $total
      * @param int $totalPage
      * @param int $perPage
      * @param int $currentPage
@@ -19,6 +20,7 @@ class OffsetPaginationDto extends Data
      * @return void
      */
     public function __construct(
+        public int $total,
         public int $totalPage,
         public int $perPage,
         public int $currentPage,
@@ -40,6 +42,7 @@ class OffsetPaginationDto extends Data
         $lastPage = max(1, $paginator->lastPage());
 
         return new self(
+            total: $paginator->total(),
             totalPage: $lastPage,
             perPage: $paginator->perPage(),
             currentPage: $currentPage,

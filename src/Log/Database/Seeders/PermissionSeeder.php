@@ -2,10 +2,10 @@
 
 namespace Modules\Log\Database\Seeders;
 
-use Modules\Log\App\Enums\PermissionEnum;
+use Illuminate\Database\Seeder;
 use Modules\Acl\App\Enums\GuardEnum;
 use Modules\Acl\App\Models\Permission;
-use Illuminate\Database\Seeder;
+use Modules\Log\App\Enums\PermissionEnum;
 
 class PermissionSeeder extends Seeder
 {
@@ -17,11 +17,11 @@ class PermissionSeeder extends Seeder
         $guard = GuardEnum::WEB->value;
 
         foreach (PermissionEnum::cases() as $permission) {
-
             Permission::firstOrCreate([
 
                 "name" => $permission->value,
                 "guard_name" => $guard,
+                "tenant_id" => current_tenant_id(),
             ]);
         }
     }

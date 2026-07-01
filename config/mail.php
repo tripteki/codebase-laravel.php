@@ -34,7 +34,7 @@ return [
         "log" => [
 
             "transport" => "log",
-            "channel" => "",
+            "channel" => env("MAIL_LOG_CHANNEL"),
         ],
 
         "array" => [

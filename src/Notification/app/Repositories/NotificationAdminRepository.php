@@ -12,7 +12,7 @@ class NotificationAdminRepository extends BaseRepository
      */
     public function all(): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $model = Notification::query()->with("notifiable");
+        $model = Notification::query();
 
         return parent::accessAll(
             fn () => $model,
@@ -30,7 +30,7 @@ class NotificationAdminRepository extends BaseRepository
     public function get(string $id): ?Notification
     {
         return parent::accessGet(
-            fn () => Notification::with("notifiable")->findOrFail($id)
+            fn () => Notification::query()->findOrFail($id)
         );
     }
 
@@ -61,7 +61,7 @@ class NotificationAdminRepository extends BaseRepository
                 $notification = Notification::withTrashed()->findOrFail($id);
                 $notification->restore();
 
-                return $notification->fresh(["notifiable"]);
+                return $notification->fresh();
             }
         );
     }

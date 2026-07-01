@@ -2,9 +2,7 @@
 
 namespace Modules\User\App\Dtos;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
@@ -34,23 +32,56 @@ class UserMeUpdateDto extends Data
      */
     public static function rules(ValidationContext $context): array
     {
-        $userId = Auth::id();
-
         return [
             "name" => [ "required", "string", "min:2", "max:255", ],
             "email" => [
                 "required",
                 "string",
-                "email",
+                "email:rfc,filter",
                 "max:255",
-                Rule::unique(User::class)->ignore($userId),
             ],
             "full_name" => [ "nullable", "string", "max:255", ],
             "interests" => [ "nullable", "array", ],
-            "interests.*" => [ "string", "max:100", ],
-            "password" => [ "nullable", "string", "min:8", "max:16", ],
-            "password_confirmation" => [ "nullable", "string", "same:password", "required_with:password", ],
+            "interests.*" => [ "string", ],
+            "password" => [ "bail", "nullable", "string", "min:8", "max:16", ],
+            "password_confirmation" => [ "bail", "nullable", "string", "min:8", "max:16", ],
         ];
+    }
+
+    /**
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public static function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $raw = json_decode((string) request()->getContent(), true);
+
+            if (is_array($raw) && array_key_exists("password", $raw) && $raw["password"] === "") {
+                $validator->errors()->add("password", __("validation.min.string", [
+                    "attribute" => "password",
+                    "min" => 8,
+                ]));
+
+                return;
+            }
+
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
+            $password = $validator->getData()["password"] ?? null;
+
+            if (! is_string($password) || $password === "") {
+                return;
+            }
+
+            $confirmation = $validator->getData()["password_confirmation"] ?? null;
+
+            if (! is_string($confirmation) || $password !== $confirmation) {
+                $validator->errors()->add("password_confirmation", __("user.auth.password_mismatch"));
+            }
+        });
     }
 
     /**
@@ -83,4 +114,5 @@ class UserMeUpdateDto extends Data
             ))),
         ];
     }
+
 }

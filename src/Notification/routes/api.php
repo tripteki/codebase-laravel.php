@@ -8,6 +8,8 @@ Route::middleware([
     "auth:api",
     "jwt.scope:ACCESS_TOKEN",
     "verified",
+    "tenant.user",
+    "tenant.addon:modules_notification",
     ...Throttle::middleware("api-read"),
 ])->group(function (): void {
     Route::get("v1/notifications", [ NotificationController::class, "index", ]);
@@ -20,9 +22,12 @@ Route::middleware([
     "auth:api",
     "jwt.scope:ACCESS_TOKEN",
     "verified",
+    "tenant.user",
+    "tenant.addon:modules_notification",
     ...Throttle::middleware("api-write"),
 ])->group(function (): void {
     Route::match([ "put", "patch", ], "v1/notifications/read-all", [ NotificationController::class, "readall", ]);
     Route::match([ "put", "patch", ], "v1/notifications/read/{id}", [ NotificationController::class, "read", ]);
+    Route::delete("v1/notifications/delete-all", [ NotificationController::class, "deleteAll", ]);
     Route::delete("v1/notifications/{id}", [ NotificationController::class, "destroy", ]);
 });

@@ -21,6 +21,44 @@ if (! function_exists("frontend_url")) {
 }
 
 /**
+ * @param string|null $path
+ * @return bool
+ */
+if (! function_exists("is_setting_file_path")) {
+    function is_setting_file_path(?string $path): bool
+    {
+        $relative = ltrim((string) $path, "/");
+
+        return str_starts_with($relative, "settings/")
+            || str_starts_with($relative, "setting-files/");
+    }
+}
+
+/**
+ * @param string|null $path
+ * @return string|null
+ */
+if (! function_exists("public_storage_url")) {
+    function public_storage_url(?string $path): ?string
+    {
+        $relative = ltrim((string) $path, "/");
+
+        if ($relative === "") {
+            return null;
+        }
+
+        $storagePath = "storage/".$relative;
+        $base = rtrim((string) config("app.frontend_url"), "/");
+
+        if ($base === "") {
+            return "/".$storagePath;
+        }
+
+        return $base."/".$storagePath;
+    }
+}
+
+/**
  * @param string $url
  * @return string
  */
@@ -85,25 +123,59 @@ if (! function_exists("auth_reset_password_path")) {
 }
 
 /**
+ * @param string|null $tenantId
+ * @param string $path
+ * @return string
+ */
+if (! function_exists("tenant_frontend_auth_path")) {
+    function tenant_frontend_auth_path(?string $tenantId, string $path): string
+    {
+        $path = ltrim($path, "/");
+
+        if ($tenantId !== null && trim($tenantId) !== "") {
+            return trim($tenantId)."/".$path;
+        }
+
+        return $path;
+    }
+}
+
+/**
+ * @param string|null $tenantId
+ * @param string $path
+ * @return string
+ */
+if (! function_exists("signed_auth_frontend_url")) {
+    function signed_auth_frontend_url(?string $tenantId, string $path): string
+    {
+        return signed_url(frontend_url(tenant_frontend_auth_path($tenantId, $path)));
+    }
+}
+
+/**
+ * @param string|null $tenantId
+ * @param string $path
+ * @param string|null $signed
+ * @return bool
+ */
+if (! function_exists("verify_auth_signed_url")) {
+    function verify_auth_signed_url(?string $tenantId, string $path, ?string $signed): bool
+    {
+        return verify_signed_url(
+            frontend_url(tenant_frontend_auth_path($tenantId, $path)),
+            $signed,
+        );
+    }
+}
+
+/**
  * @param string $path
  * @return string
  */
 if (! function_exists("signed_frontend_url")) {
     function signed_frontend_url(string $path): string
     {
-        return signed_url(frontend_url($path));
-    }
-}
-
-/**
- * @param string $path
- * @param string|null $signed
- * @return bool
- */
-if (! function_exists("verify_auth_signed_url")) {
-    function verify_auth_signed_url(string $path, ?string $signed): bool
-    {
-        return verify_signed_url(frontend_url($path), $signed);
+        return signed_auth_frontend_url(null, $path);
     }
 }
 

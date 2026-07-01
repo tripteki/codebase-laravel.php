@@ -14,16 +14,34 @@ class UserAccountMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * @var string
+     */
     public string $appName;
 
+    /**
+     * @var string
+     */
     public string $displayName;
 
+    /**
+     * @var string
+     */
     public string $logoUrl;
 
+    /**
+     * @var string|null
+     */
     public ?string $primaryColor;
 
+    /**
+     * @var string|null
+     */
     public ?string $secondaryColor;
 
+    /**
+     * @var string|null
+     */
     public ?string $tertiaryColor;
 
     /**
@@ -37,7 +55,7 @@ class UserAccountMail extends Mailable
      * @param string $subjectKey
      * @param string $headingKey
      * @param string $lineKey
-     * @param ?string $userNameLabel
+     * @param string|null $userNameLabel
      * @return void
      */
     public function __construct(

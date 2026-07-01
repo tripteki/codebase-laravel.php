@@ -30,7 +30,7 @@ class UserAdminActivated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [ new PrivateChannel("user.".$this->userId), ];
+        return [ new PrivateChannel("user.".$this->user->getKey()), ];
     }
 
     /**
@@ -61,10 +61,10 @@ class UserAdminActivated implements ShouldBroadcast
             "id" => $dto->id,
             "name" => $dto->name,
             "email" => $dto->email,
-            "email_verified_at" => $dto->email_verified_at?->format("c"),
-            "created_at" => $dto->created_at?->format("c"),
-            "updated_at" => $dto->updated_at?->format("c"),
-            "deleted_at" => $dto->deleted_at?->format("c"),
+            "email_verified_at" => $dto->email_verified_at?->format("Y-m-d H:i:s"),
+            "created_at" => $dto->created_at?->format("Y-m-d H:i:s"),
+            "updated_at" => $dto->updated_at?->format("Y-m-d H:i:s"),
+            "deleted_at" => $dto->deleted_at?->format("Y-m-d H:i:s"),
         ];
     }
 }

@@ -24,6 +24,7 @@
         <ini name="default_charset" value="UTF-8"/>
 
         <env name="APP_ENV" value="testing"/>
+        <env name="IS_TENANCY" value="true"/>
         <env name="APP_KEY" value="base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

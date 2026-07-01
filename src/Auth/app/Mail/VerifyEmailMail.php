@@ -14,16 +14,34 @@ class VerifyEmailMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * @var string
+     */
     public string $appName;
 
+    /**
+     * @var string
+     */
     public string $displayName;
 
+    /**
+     * @var string
+     */
     public string $logoUrl;
 
+    /**
+     * @var string|null
+     */
     public ?string $primaryColor;
 
+    /**
+     * @var string|null
+     */
     public ?string $secondaryColor;
 
+    /**
+     * @var string|null
+     */
     public ?string $tertiaryColor;
 
     /**
@@ -35,7 +53,7 @@ class VerifyEmailMail extends Mailable
      * @param string|null $userName
      * @param string|null $userEmail
      * @param string|null $verificationUrl
-     * @param ?string $userNameLabel
+     * @param string|null $userNameLabel
      * @return void
      */
     public function __construct(

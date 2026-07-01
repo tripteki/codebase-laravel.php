@@ -24,8 +24,7 @@ class UserAdminImportedFailed implements ShouldBroadcast
         public string $filename,
         public string $message,
         public string $error,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, \Illuminate\Broadcasting\Channel>

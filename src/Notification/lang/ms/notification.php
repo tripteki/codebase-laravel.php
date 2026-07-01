@@ -1,6 +1,7 @@
 <?php
 
 return [
+    "not_found" => "Pemberitahuan tidak dijumpai",
     "webpush" => [
         "download" => "Muat turun",
         "open" => "Buka",

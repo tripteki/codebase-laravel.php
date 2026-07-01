@@ -16,7 +16,7 @@ return [
             "driver" => "database",
             "connection" => env("DB_CONNECTION", "sqlite"),
             "table" => "jobs",
-            "queue" => "job",
+            "queue" => "default",
             "retry_after" => 90,
             "after_commit" => false,
         ],
@@ -25,7 +25,7 @@ return [
 
             "driver" => "redis",
             "connection" => "queue",
-            "queue" => "job",
+            "queue" => "default",
             "retry_after" => 90,
             "block_for" => null,
             "after_commit" => false,

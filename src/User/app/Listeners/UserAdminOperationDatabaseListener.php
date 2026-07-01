@@ -4,6 +4,7 @@ namespace Modules\User\App\Listeners;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use Modules\Log\App\Support\AdminRefreshBroadcaster;
 use Modules\User\App\Events\UserAdminExported;
 use Modules\User\App\Events\UserAdminExportedFailed;
 use Modules\User\App\Events\UserAdminImported;
@@ -23,6 +24,10 @@ class UserAdminOperationDatabaseListener
             "totalSkipped" => $event->totalSkipped,
             "message" => $event->message,
         ]);
+
+        if ($event->totalImported > 0) {
+            AdminRefreshBroadcaster::broadcast([ "users", ], $event->userId);
+        }
     }
 
     /**

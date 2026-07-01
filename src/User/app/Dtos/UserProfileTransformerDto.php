@@ -35,7 +35,7 @@ class UserProfileTransformerDto extends Data
         $avatarUrl = null;
 
         if (filled($avatar)) {
-            $avatarUrl = asset("storage/".ltrim((string) $avatar, "/"));
+            $avatarUrl = public_storage_url((string) $avatar);
         }
 
         return new self(

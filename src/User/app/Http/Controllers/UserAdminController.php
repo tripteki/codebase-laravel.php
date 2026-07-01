@@ -3,7 +3,11 @@
 namespace Modules\User\App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
+use App\Http\Responses\ApiErrorResponse;
 use App\Models\User;
+use App\Rules\ImageUpload;
+use App\Rules\ImportUpload;
+use App\Support\AdminTenancySupport;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,6 +53,9 @@ class UserAdminController extends BaseController
             new OA\Response(ref: "#/components/responses/Forbidden", response: 403),
         ],
     )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(): JsonResponse
     {
         $this->authorize("viewAny", User::class);
@@ -70,9 +77,13 @@ class UserAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ],
     )]
+    /**
+     * @param \Modules\User\App\Dtos\UserIdentifierDto $identifier
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show(UserIdentifierDto $identifier): JsonResponse
     {
-        $user = User::findOrFail($identifier->id);
+        $user = User::withTrashed()->findOrFail($identifier->id);
         $this->authorize("view", $user);
 
         return response()->json($this->userAdminService->get($identifier), 200);
@@ -94,6 +105,8 @@ class UserAdminController extends BaseController
                         new OA\Property(property: "email", type: "string", description: "Email"),
                         new OA\Property(property: "password", type: "string", description: "Password"),
                         new OA\Property(property: "password_confirmation", type: "string", description: "Password Confirmation"),
+                        new OA\Property(property: "role", type: "string", description: "Role"),
+                        new OA\Property(property: "avatar", type: "string", format: "binary", description: "Avatar"),
                     ],
                 ),
             ),
@@ -104,11 +117,20 @@ class UserAdminController extends BaseController
             new OA\Response(response: 422, description: "Validation Error."),
         ],
     )]
-    public function store(UserDto $userData): JsonResponse
+    /**
+     * @param \Modules\User\App\Dtos\UserDto $userData
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(UserDto $userData, Request $request): JsonResponse
     {
         $this->authorize("create", User::class);
 
-        return response()->json($this->userAdminService->create($userData), 201);
+        $request->validate([
+            "avatar" => [ "nullable", new ImageUpload(), ],
+        ]);
+
+        return response()->json($this->userAdminService->create($userData, $request->file("avatar")), 201);
     }
 
     #[OA\Put(
@@ -129,6 +151,8 @@ class UserAdminController extends BaseController
                         new OA\Property(property: "email", type: "string", description: "Email"),
                         new OA\Property(property: "password", type: "string", description: "Password"),
                         new OA\Property(property: "password_confirmation", type: "string", description: "Password Confirmation"),
+                        new OA\Property(property: "role", type: "string", description: "Role"),
+                        new OA\Property(property: "avatar", type: "string", format: "binary", description: "Avatar"),
                     ],
                 ),
             ),
@@ -140,12 +164,21 @@ class UserAdminController extends BaseController
             new OA\Response(response: 422, description: "Validation Error."),
         ],
     )]
-    public function update(UserUpdateDto $userData): JsonResponse
+    /**
+     * @param \Modules\User\App\Dtos\UserUpdateDto $userData
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UserUpdateDto $userData, Request $request): JsonResponse
     {
-        $user = User::findOrFail($userData->id);
+        $user = User::withTrashed()->findOrFail($userData->id);
         $this->authorize("update", $user);
 
-        return response()->json($this->userAdminService->update($userData), 200);
+        $request->validate([
+            "avatar" => [ "nullable", new ImageUpload(), ],
+        ]);
+
+        return response()->json($this->userAdminService->update($userData, $request->file("avatar")), 200);
     }
 
     #[OA\Put(
@@ -162,6 +195,10 @@ class UserAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ],
     )]
+    /**
+     * @param \Modules\User\App\Dtos\UserIdentifierDto $identifier
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function verify(UserIdentifierDto $identifier): JsonResponse
     {
         $user = User::findOrFail($identifier->id);
@@ -184,12 +221,16 @@ class UserAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ],
     )]
+    /**
+     * @param \Modules\User\App\Dtos\UserIdentifierDto $identifier
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deactivate(UserIdentifierDto $identifier): JsonResponse
     {
         $user = User::withTrashed()->findOrFail($identifier->id);
 
         if ($user->trashed()) {
-            return ApiErrorResponse::message(__("user.admin.already_inactive"), 422);
+            return ApiErrorResponse::message(__("user.auth.user_not_found"), 404);
         }
 
         $this->authorize("delete", $user);
@@ -209,7 +250,6 @@ class UserAdminController extends BaseController
             new OA\Response(response: 200, description: "Success."),
             new OA\Response(response: 403, description: "Forbidden."),
             new OA\Response(response: 404, description: "Not Found."),
-            new OA\Response(response: 422, description: "Validation Error."),
         ],
     )]
     /**
@@ -219,11 +259,6 @@ class UserAdminController extends BaseController
     public function forceDelete(UserIdentifierDto $identifier): JsonResponse
     {
         $user = User::withTrashed()->findOrFail($identifier->id);
-
-        if (! $user->trashed()) {
-            return ApiErrorResponse::message(__("user.admin.not_inactive"), 422);
-        }
-
         $this->authorize("delete", $user);
 
         return response()->json($this->userAdminService->forceDelete($identifier), 200);
@@ -243,9 +278,18 @@ class UserAdminController extends BaseController
             new OA\Response(response: 404, description: "Not Found."),
         ],
     )]
+    /**
+     * @param \Modules\User\App\Dtos\UserIdentifierDto $identifier
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function activate(UserIdentifierDto $identifier): JsonResponse
     {
         $user = User::withTrashed()->findOrFail($identifier->id);
+
+        if (! $user->trashed()) {
+            return ApiErrorResponse::message(__("user.auth.user_not_found"), 404);
+        }
+
         $this->authorize("restore", $user);
 
         return response()->json($this->userAdminService->restore($identifier), 200);
@@ -273,12 +317,16 @@ class UserAdminController extends BaseController
             new OA\Response(response: 422, description: "Validation Error."),
         ],
     )]
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function import(Request $request): JsonResponse
     {
         $this->authorize("import", User::class);
 
         $request->validate([
-            "file" => [ "required", "file", "mimes:csv,txt,xls,xlsx", ],
+            "file" => [ "required", new ImportUpload(), ],
         ]);
 
         $file = $request->file("file");
@@ -307,6 +355,10 @@ class UserAdminController extends BaseController
             new OA\Response(response: 403, description: "Forbidden."),
         ],
     )]
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function export(Request $request): JsonResponse
     {
         $this->authorize("export", User::class);
@@ -314,8 +366,52 @@ class UserAdminController extends BaseController
         $type = (string) ($request->query("export_type") ?? $request->query("type", "csv"));
 
         return response()->json(
-            $this->userAdminService->export($type),
+            $this->userAdminService->export(
+                $type,
+                AdminTenancySupport::fromRequest($request),
+                \App\Support\QueryParser::parseOrders($request->query("orders")),
+            ),
             200,
         );
+    }
+
+    #[OA\Get(
+        path: "/api/v1/admin/users/stats/registrations",
+        tags: ["Admin Users"],
+        summary: "Registration trend",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success."),
+            new OA\Response(response: 403, description: "Forbidden."),
+        ],
+    )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function registrationTrend(): JsonResponse
+    {
+        $this->authorize("viewAny", User::class);
+
+        return response()->json($this->userAdminService->registrationTrend(), 200);
+    }
+
+    #[OA\Get(
+        path: "/api/v1/admin/users/stats/roles",
+        tags: ["Admin Users"],
+        summary: "Users by role",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success."),
+            new OA\Response(response: 403, description: "Forbidden."),
+        ],
+    )]
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function usersByRole(): JsonResponse
+    {
+        $this->authorize("viewAny", User::class);
+
+        return response()->json($this->userAdminService->usersByRole(), 200);
     }
 }

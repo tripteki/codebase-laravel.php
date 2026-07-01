@@ -3,7 +3,7 @@
 namespace Modules\I18N\App\Enums;
 
 /**
- * @enum LanguageEnum
+ * @enum \Modules\I18N\App\Enums\LanguageEnum
  */
 enum LanguageEnum: string
 {

@@ -3,7 +3,7 @@
 namespace Modules\Acl\App\Enums;
 
 /**
- * @enum GuardEnum
+ * @enum \Modules\Acl\App\Enums\GuardEnum
  */
 enum GuardEnum: string
 {

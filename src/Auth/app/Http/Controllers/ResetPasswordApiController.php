@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Modules\Auth\App\Support\PasswordResetTokenHelper;
+use Modules\Event\App\Support\AuthAddOnsHelper;
 use Modules\User\App\Dtos\UserTransformerDto;
+use Modules\User\App\Support\SecurityNotifier;
 use OpenApi\Attributes as OA;
 
 class ResetPasswordApiController extends BaseController
@@ -23,6 +25,7 @@ class ResetPasswordApiController extends BaseController
         parameters: [
             new OA\Parameter(name: "email", in: "path", required: true, description: "Email address"),
             new OA\Parameter(name: "signed", in: "query", required: true, description: "Signed reset token"),
+            new OA\Parameter(name: "tenant", in: "query", required: false, description: "Tenant slug"),
         ],
         requestBody: new OA\RequestBody(
             content: new OA\MediaType(
@@ -50,17 +53,36 @@ class ResetPasswordApiController extends BaseController
      */
     public function store(Request $request, string $email): JsonResponse
     {
-        if (! verify_auth_signed_url(auth_reset_password_path($email), $request->query("signed"))) {
-            abort(403, __("auth.token_invalid"));
+        $tenantId = $request->query("tenant");
+        $tenantId = is_string($tenantId) && trim($tenantId) !== "" ? trim($tenantId) : null;
+
+        if (! verify_auth_signed_url($tenantId, auth_reset_password_path($email), $request->query("signed"))) {
+            abort(403, __("auth.reset_link_invalid"));
         }
 
+        $userQuery = User::query()
+            ->withoutTenancy()
+            ->where("email", $email);
+
+        if ($tenantId !== null) {
+            $userQuery->where("tenant_id", $tenantId);
+        } else {
+            $userQuery->whereNull("tenant_id");
+        }
+
+        $user = $userQuery->firstOrFail();
+
         $request->validate([
-            "password" => [ "required", "confirmed", Rules\Password::defaults(), ],
+            "password" => [ "required", "string", "min:8", Rules\Password::defaults(), ],
+            "password_confirmation" => [ "bail", "required", "string", "same:password", ],
+        ], [
+            "password_confirmation.required" => __("user.auth.password_confirmation_required"),
+            "password_confirmation.same" => __("user.auth.password_mismatch"),
         ]);
 
         $signed = $request->query("signed");
 
-        $resetter = PasswordResetTokenHelper::findSigned($email, (string) $signed);
+        $resetter = PasswordResetTokenHelper::findSigned($email, (string) $signed, $tenantId);
 
         if (! $resetter) {
             throw ValidationException::withMessages([
@@ -68,14 +90,18 @@ class ResetPasswordApiController extends BaseController
             ]);
         }
 
-        $user = User::query()->where("email", $email)->firstOrFail();
+        AuthAddOnsHelper::initializeForUser($user);
+        AuthAddOnsHelper::abortIfPasswordResetDisabled();
+
         $user->forceFill([
             "password" => Hash::make($request->password),
         ])->save();
 
-        PasswordResetTokenHelper::delete($email);
+        PasswordResetTokenHelper::delete($email, $tenantId);
 
         event(new PasswordReset($user));
+
+        SecurityNotifier::passwordChanged($user->fresh() ?? $user);
 
         return response()->json(UserTransformerDto::fromUser($user->fresh()), 200);
     }

@@ -22,8 +22,7 @@ class UserAdminExportedFailed implements ShouldBroadcast
         public string $userId,
         public string $message,
         public string $error,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, \Illuminate\Broadcasting\Channel>
